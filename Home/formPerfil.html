@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Perfil</title>
+  <link rel="stylesheet" href="./css/form.css">
+  <link rel="stylesheet" href="./css/globals.css">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #f8f5ff;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .option-btn {
+      width: 100%;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .form2-container {
+      padding: 40px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      font-family: "Nunito", sans-serif;
+    }
+
+    .option-btn {
+      background-color: rgba(255, 255, 255, 0.61);
+      border: 2px solid #8273ab;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      color: #583E8E;
+      font-family: "Nunito", sans-serif, bold;
+    }
+
+  </style>
+
+</head>
+
+<body>
+  <div class="form2-container">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <img src="./img/logo_icon.png" alt="Logo" style="width: 100px;">
+    </div>
+    <h2>Você se identifica como:</h2>
+
+    <div class="options-grid">
+      <button class="option-btn" data-link="cadMae.html">Mãe</button>
+      <button class="option-btn" data-link="cadParc.html">Parcerias</button>
+      <button class="option-btn" data-link="cadPsi.html">Psicólogo(a)</button>
+      <button class="option-btn" data-link="cadEstu.html">Psicólogo Estudante</button>
+      <button class="option-btn" data-link="cadAdv.html">Advogado(a)</button>
+    </div>
+
+    <div class="navigation" style="justify-content: center;">
+      <a id="avancarBtn" href="#">
+        <button type="button">Avançar</button>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.option-btn');
+    let selectedLink = null;
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedLink = btn.getAttribute('data-link');
+      });
+    });
+
+    document.getElementById('avancarBtn').addEventListener('click', (event) => {
+      if (!selectedLink) {
+        event.preventDefault();
+        alert('Selecione uma opção antes de avançar');
+      } else {
+        window.location.href = selectedLink;
+      }
+    });
+  </script>
+</body>
+
+</html>
