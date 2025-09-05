@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Psicólogo</title>
+    <link rel="stylesheet" href="./css/homePsi.css">
+    <link rel="stylesheet" href="./css/globals.css">
+    <link rel="stylesheet" href="./css/calendario.css">
+
+</head>
+
+<body>
+    <header class="header">
+        <h1>Bem vindo(a) Dr. Gustavo Lindo</h1>
+        <img src="./img/account_psi_icon.png" alt="Foto de perfil" class="profile-img">
+    </header>
+
+    <main class="main-container">
+        <aside class="sidebar">
+            <button class="menu-btn active" data-target="dashboard">
+                <img src="./img/painel_icon.png" alt="ícone painel">
+                <span>Painel de controle</span>
+            </button>
+            <button class="menu-btn" data-target="agenda">
+                <img src="./img/agenda_icon.png" alt="ícone agenda">
+                <span>Agenda</span>
+            </button>
+            <button class="menu-btn" data-target="pacientes">
+                <img src="./img/pacientes_icon.png" alt="ícone pacientes">
+                <span>Pacientes</span>
+            </button>
+
+            <div class="last-activities">
+                <h3>Últimas Atividades</h3>
+                <ul>
+                    <li>Paciente Maria - Sessão concluída às 14:00</li>
+                    <li>Novo paciente - Consulta agendada às 16:00</li>
+                </ul>
+            </div>
+        </aside>
+
+        <section class="content" id="dashboard">
+            <h2>Consultas Agendadas</h2>
+
+            <div class="appointment-card">
+                <div>
+                    <strong>Mariana Souza</strong>
+                    <p>2 de maio de 2024 - 10:00</p>
+                </div>
+                <button class="contact-btn">Entrar em contato</button>
+            </div>
+
+            <div class="appointment-card">
+                <div>
+                    <strong>Patrícia Lima</strong>
+                    <p>6 de maio de 2024 - 14:00</p>
+                </div>
+                <button class="contact-btn">Entrar em contato</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <span>2</span>
+                    <p>Consultas agendadas hoje</p>
+                </div>
+                <div class="stat-card">
+                    <span>5</span>
+                    <p>Sessões realizadas essa semana</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content hidden" id="agenda">
+            <div class="container">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button onclick="prevMonth()">&lt;</button>
+                        <div class="month-year-select">
+                            <select id="month-select" onchange="onMonthChange()"></select>
+                            <select id="year-select" onchange="onYearChange()"></select>
+                        </div>
+                        <button onclick="nextMonth()">&gt;</button>
+                    </div>
+
+                    <div class="calendar-days">
+                        <div>D</div>
+                        <div>S</div>
+                        <div>T</div>
+                        <div>Q</div>
+                        <div>Q</div>
+                        <div>S</div>
+                        <div>S</div>
+                    </div>
+                    <div class="calendar-dates" id="calendarDates"></div>
+                </div>
+
+                <div class="events-container">
+                    <h3>Próximas Consultas</h3>
+                    <div class="event-list">
+                        <div class="event">
+                            <strong>João Pedro</strong>
+                            <p>10 de maio - 15:00</p>
+                        </div>
+                        <div class="event">
+                            <strong>Ana Clara</strong>
+                            <p>12 de maio - 09:30</p>
+                        </div>
+                    </div>
+
+                    <button class="add-consult-btn">+ Adicionar Consulta</button>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="content hidden" id="pacientes">
+            <h2>Histórico de Pacientes</h2>
+            <div class="patients-grid">
+                <div class="patient-card" data-id="1">
+                    <div class="patient-header">
+                        <span>Maria da Silva | 09:00</span>
+                        <button class="note-btn">
+                            <img src="./img/edit_icon.png" alt="Editar">
+                        </button>
+                    </div>
+
+                    <div class="patient-body">
+                        <p class="patient-notes">Nenhuma anotação adicionada.</p>
+                        <button class="contact-btn">Entrar em contato</button>
+                    </div>
+                </div>
+
+                <div class="patient-card" data-id="2">
+                    <div class="patient-header">
+                        <span>Maria da Silva | 09:00</span>
+                        <button class="note-btn">
+                            <img src="./img/edit_icon.png" alt="Editar">
+                        </button>
+                    </div>
+
+                    <div class="patient-body">
+                        <p class="patient-notes">Nenhuma anotação adicionada.</p>
+                        <button class="contact-btn">Entrar em contato</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="popup hidden" id="notesPopup">
+            <div class="popup-content">
+                <h3>Anotações do Paciente</h3>
+                <textarea id="notesArea" placeholder="Escreva suas anotações aqui..."></textarea>
+                <div class="popup-actions">
+                    <button id="saveNote" class="contact-btn">Salvar</button>
+                    <button id="closePopup" class="add-consult-btn" type="button">Fechar</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="./js/homePsi.js"></script>
+    <script src="./js/calendario.js"></script>
+
+</body>
+
+</html>
