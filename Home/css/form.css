@@ -1,0 +1,88 @@
+body {
+    margin: 0;
+    color: #583E8E;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.logo {
+    width: 100px;
+}
+
+.form-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    font-family: "Nunito", sans-serif;
+}
+
+#question-number {
+    color: #999;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+h2 {
+    margin-bottom: 30px;
+    font-size: 22px;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+    font-family: "Nunito", sans-serif;
+}
+
+.option-btn {
+    background-color: rgba(255, 255, 255, 0.61);
+    border: 2px solid #583E8E;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    color: #583E8E;
+    font-family: "Nunito", sans-serif, bold;
+}
+
+.option-btn:hover {
+    transform: scale(1.07);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.option-btn.selected {
+    background-color: #583E8E;
+    border-color: #fff;
+    color: white;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navigation button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #583E8E;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    font-family: "Nunito", sans-serif;
+}
+
+.navigation button:hover {
+    background-color: #6e50b4;
+}
+
