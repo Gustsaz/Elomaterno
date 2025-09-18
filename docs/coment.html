@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EloMaterno - Comentário</title>
+    <link rel="stylesheet" href="./css/globals.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/coment.css">
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+    <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="top-header">
+        <div class="left-section">
+            <div class="logo-area">
+                <a href="home.html" class="botao-link">
+                    <img src="./img/logo_icon.png" alt="Ícone Empresa" class="icon">
+                </a>
+                <span class="company-name">elomaterno</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Pesquisar...">
+                <button class="btn-search">
+                    <img src="./img/pesquisa_icon.png" alt="Ícone Buscar">
+                </button>
+                <button class="btn-voice">
+                    <img src="./img/microfone_icon.png" alt="Ícone Microfone">
+                </button>
+            </div>
+        </div>
+
+        <div class="user-avatar">
+            <a href="perfil.html">
+                <img src="./img/account_icon.png" alt="Avatar Usuário">
+            </a>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="coment-container">
+        <!-- Post principal -->
+        <div class="post-card com-brilho">
+            <!-- Botão de voltar -->
+            <a href="forum.html" class="back-btn">
+                <img src="./img/back_icon.png" alt="Voltar ao fórum">
+            </a>
+
+            <div class="post-header">
+                <img src="./img/account_icon.png" alt="Avatar" class="post-avatar">
+                <div class="post-info">
+                    <h4>Emily Rodrigues</h4>
+                    <span class="post-date">02 de setembro, 2025 - 14:31</span>
+                </div>
+                <button class="menu-btn">⋮</button>
+            </div>
+
+            <h2 class="post-title">Meu filho está tendo dificuldades na alimentação</h2>
+            <p class="post-content">
+                Ele se recusa a ingerir os vegetais e só pensa em comer doces<br>
+                Gostaria de saber se alguma mãe já passou por isso e como lidou com a situação.
+            </p>
+
+            <div class="post-footer">
+                <div class="like-wrap">
+                    <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+                    <span class="like-count">5</span>
+                </div>
+                <span class="comment-count">2 respostas</span>
+            </div>
+        </div>
+
+        <!-- Lista de respostas -->
+        <div class="respostas">
+            <div class="post-card resposta-card">
+                <div class="post-header">
+                    <img src="./img/account_icon.png" alt="Avatar" class="post-avatar">
+                    <div class="post-info">
+                        <h4>Emily Rodrigues</h4>
+                        <span class="post-date">02 de setembro, 2025 - 14:31</span>
+                    </div>
+                    <button class="menu-btn">⋮</button>
+                </div>
+                <p class="post-content">Já passei por isso, sei como é...</p>
+                <div class="post-footer">
+                    <div class="like-wrap">
+                        <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+                        <span class="like-count">5</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-card resposta-card">
+                <div class="post-header">
+                    <img src="./img/account_icon.png" alt="Avatar" class="post-avatar">
+                    <div class="post-info">
+                        <h4>Emily Rodrigues</h4>
+                        <span class="post-date">02 de setembro, 2025 - 14:31</span>
+                    </div>
+                    <button class="menu-btn">⋮</button>
+                </div>
+                <p class="post-content">Já passei por isso, sei como é...</p>
+                <div class="post-footer">
+                    <div class="like-wrap">
+                        <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+                        <span class="like-count">3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botão flutuante -->
+    <button class="botao-nova">Nova Publicação</button>
+
+    <script src="./js/globals.js"></script>
+</body>
+
+</html>
