@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EloMaterno - Eventos</title>
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/eventos.css">
+    <link rel="stylesheet" href="./css/globals.css">
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+    <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+</head>
+
+<body>
+
+    <header class="top-header">
+        <div class="left-section">
+            <div class="logo-area">
+                <a href="home.html" class="botao-link">
+                    <img src="./img/logo_icon.png" alt="Ícone Empresa" class="icon">
+                </a>
+                <span class="company-name">elomaterno</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Pesquisar eventos...">
+                <button class="btn-search">
+                    <img src="./img/pesquisa_icon.png" alt="Ícone Buscar">
+                </button>
+                <button class="btn-voice">
+                    <img src="./img/microfone_icon.png" alt="Ícone Microfone">
+                </button>
+            </div>
+        </div>
+
+        <div class="user-avatar">
+            <a href="perfil.html">
+                <img src="./img/account_icon.png" alt="Avatar Usuário">
+            </a>
+        </div>
+    </header>
+
+    <main class="eventos-wrapper">
+        <div class="botoes">
+            <a href="consultoria.html" class="botao-link">
+                <div class="botao-item">
+                    <img src="./img/consult_icon.png" alt="Consultorias">
+                </div>
+            </a>
+
+            <a href="forum.html" class="botao-link">
+                <div class="botao-item">
+                    <img src="./img/forum_icon.png" alt="Fórum">
+                </div>
+            </a>
+
+            <a href="home.html" class="botao-link home-btn">
+                <div class="botao-item">
+                    <img src="./img/home_icon.png" alt="Home">
+                </div>
+            </a>
+
+            <a href="artigos.html" class="botao-link">
+                <div class="botao-item">
+                    <img src="./img/artigo_icon.png" alt="Artigos">
+                </div>
+            </a>
+
+            <a href="calendario.html" class="botao-link">
+                <div class="botao-item">
+                    <img src="./img/calend_icon.png" alt="Calendário">
+                </div>
+            </a>
+
+            <a href="eventos.html" class="botao-link">
+                <div class="botao-item">
+                    <img src="./img/agenda_icon.png" alt="Eventos">
+                </div>
+            </a>
+        </div>
+        <section class="eventos-hero com-brilho">
+            <div class="hero-text">
+                <h1>Eventos para você</h1>
+                <p>Participe de palestras, encontros e atividades da comunidade. Inscreva-se e veja no calendário.</p>
+            </div>
+        </section>
+
+        <section class="eventos-grid">
+            <article class="evento-card com-brilho" data-evento-id="evt-1" data-date="2025-06-24">
+                <img src="./img/palestra1_img.jpeg" alt="Palestra" class="evento-cover">
+                <div class="evento-body">
+                    <h3>Palestra Mãe informada</h3>
+                    <span class="evento-meta">24 Jun • 19:00 • Online</span>
+                    <p>Informações jurídicas sobre guarda, pensão e proteção legal.</p>
+                    <button class="btn-inscrever">Inscrever-se</button>
+                </div>
+            </article>
+
+            <article class="evento-card com-brilho" data-evento-id="evt-2" data-date="2025-07-05">
+                <img src="./img/palestra2_img.jpg" alt="Encontro" class="evento-cover">
+                <div class="evento-body">
+                    <h3>Palestra Amamentação: Direito e Ação</h3>
+                    <span class="evento-meta">5 Jul • 09:30 • Presencial</span>
+                    <p>Atividades lúdicas e informativas com especialistas.</p>
+                    <button class="btn-inscrever">Inscrever-se</button>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script src="./js/globals.js"></script>
+    <script src="./js/eventos.js"></script>
+</body>
+
+</html>
+
+
