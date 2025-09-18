@@ -1,8 +1,9 @@
 * {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    box-sizing: border-box;
 }
+
 
 body {
     font-family: 'Nunito', sans-serif;
@@ -12,7 +13,11 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 100vh;
+    transform: scale(1.2);
+    transform-origin:  center;
 }
+
 
 .cadastro-container {
     display: flex;

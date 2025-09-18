@@ -265,7 +265,6 @@ input:focus-visible {
     cursor: pointer;
 }
 
-
 .hero {
     padding-top: 70px;
     background-color: var(--bg-color);
