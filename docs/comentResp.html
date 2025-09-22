@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EloMaterno - Comentário</title>
+    <link rel="stylesheet" href="./css/globals.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/coment.css">
+    <script type="module" src="/firebase-config.js"></script>
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+    <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="top-header">
+        <div class="left-section">
+            <div class="logo-area">
+                <a href="home.html" class="botao-link">
+                    <img src="./img/logo_icon.png" alt="Ícone Empresa" class="icon">
+                </a>
+                <span class="company-name">elomaterno</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Pesquisar...">
+                <button class="btn-search">
+                    <img src="./img/pesquisa_icon.png" alt="Ícone Buscar">
+                </button>
+                <button class="btn-voice">
+                    <img src="./img/microfone_icon.png" alt="Ícone Microfone">
+                </button>
+            </div>
+        </div>
+
+        <div class="user-avatar">
+            <a href="perfil.html">
+                <img src="./img/account_icon.png" alt="Avatar Usuário">
+            </a>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="coment-container">
+        <!-- Post principal (vazio, será preenchido pelo JS) -->
+        <div class="post-card com-brilho" id="post-container"></div>
+
+        <!-- Campo de comentário -->
+        <div class="comment-input">
+            <input type="text" placeholder="Escreva seu comentário..." class="comment-field">
+            <button class="send-btn">
+                <img src="./img/send_icon.png" alt="Enviar">
+            </button>
+        </div>
+
+        <!-- Lista de respostas (também preenchida pelo JS) -->
+        <div class="respostas"></div>
+    </main>
+
+
+    <!-- Botão flutuante -->
+    <button class="botao-nova">Nova Publicação</button>
+
+    <script src="./js/globals.js"></script>
+
+    <script type="module">
+        import { auth, db } from "./js/firebase.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+        import {
+            doc, getDoc, collection, addDoc, serverTimestamp,
+            query, orderBy, onSnapshot,
+            setDoc, deleteDoc, updateDoc, increment
+        } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+        const params = new URLSearchParams(window.location.search);
+        const postId = params.get("postId");
+
+        const postContainer = document.getElementById("post-container");
+        const respostasContainer = document.querySelector(".respostas");
+        const campoComentario = document.querySelector(".comment-field");
+        const btnEnviar = document.querySelector(".send-btn");
+
+        let usuarioLogado = null;
+        onAuthStateChanged(auth, (user) => {
+            usuarioLogado = user;
+            ajustarLikesVisuais(); // sempre que mudar login, atualizar ícones
+        });
+
+        // 🔹 carregar post
+        async function carregarPost() {
+            if (!postId) return;
+            const snap = await getDoc(doc(db, "posts", postId));
+            if (!snap.exists()) {
+                postContainer.innerHTML = "<p>Post não encontrado.</p>";
+                return;
+            }
+
+            const p = snap.data();
+            const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
+
+            const linkPerfil = usuarioLogado && usuarioLogado.uid === p.autorId
+                ? "perfil.html"
+                : `perfilPessoa.html?uid=${p.autorId}`;
+
+            postContainer.innerHTML = `
+            <a href="forum.html" class="back-btn">
+              <img src="./img/back_icon.png" alt="Voltar ao fórum">
+            </a>
+            <div class="post-header">
+              <img src="${p.autorFoto}" alt="Avatar" class="post-avatar">
+              <div class="post-info">
+                <h4><a href="${linkPerfil}">${p.autorNome}</a></h4>
+                <span class="post-date">${dataFormatada}</span>
+              </div>
+              <button class="menu-btn">⋮</button>
+            </div>
+            <h2 class="post-title">${p.titulo}</h2>
+            <p class="post-content">${p.conteudo}</p>
+      
+            <!-- Like no post -->
+            <div class="like-wrap" data-type="post" data-id="${postId}">
+              <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+              <span class="like-count">${p.likes || 0}</span>
+            </div>
+          `;
+
+            ajustarLikesVisuais(); // corrige ícone se já tiver curtido
+        }
+
+        // 🔹 carregar comentários
+        function carregarComentarios() {
+            const q = query(
+                collection(db, "posts", postId, "comentarios"),
+                orderBy("data", "asc")
+            );
+
+            onSnapshot(q, (snapshot) => {
+                respostasContainer.innerHTML = "";
+                snapshot.forEach((docSnap) => {
+                    const c = docSnap.data();
+                    const dataFormatada = c.data?.toDate().toLocaleString("pt-BR") || "Agora";
+
+                    const linkPerfil = usuarioLogado && usuarioLogado.uid === c.autorId
+                        ? "perfil.html"
+                        : `perfilPessoa.html?uid=${c.autorId}`;
+
+                    respostasContainer.innerHTML += `
+                <div class="post-card resposta-card">
+                  <div class="post-header">
+                    <img src="${c.autorFoto}" alt="Avatar" class="post-avatar">
+                    <div class="post-info">
+                      <h4><a href="${linkPerfil}">${c.autorNome}</a></h4>
+                      <span class="post-date">${dataFormatada}</span>
+                    </div>
+                  </div>
+                  <p class="post-content">${c.conteudo}</p>
+      
+                  <!-- Like em comentário -->
+                  <div class="like-wrap" data-type="comentario" data-id="${docSnap.id}">
+                    <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+                    <span class="like-count">${c.likes || 0}</span>
+                  </div>
+                </div>
+              `;
+                });
+
+                ajustarLikesVisuais();
+            });
+        }
+
+        // 🔹 enviar comentário
+        btnEnviar.addEventListener("click", async () => {
+            const conteudo = campoComentario.value.trim();
+            if (!conteudo) return;
+
+            if (!usuarioLogado) {
+                alert("Você precisa estar logado para comentar.");
+                return;
+            }
+
+            const usuarioSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
+            const dadosUsuario = usuarioSnap.exists() ? usuarioSnap.data() : {};
+
+            await addDoc(collection(db, "posts", postId, "comentarios"), {
+                autorId: usuarioLogado.uid,
+                autorNome: dadosUsuario.nome || "Usuário",
+                autorFoto: dadosUsuario.fotoURL || "./img/account_icon.png",
+                conteudo,
+                likes: 0,
+                data: serverTimestamp()
+            });
+
+            campoComentario.value = "";
+        });
+
+        // 🔹 evento de like (post e comentários)
+        document.body.addEventListener("click", async (e) => {
+            const likeBtn = e.target.closest(".like-icon");
+            if (!likeBtn) return;
+
+            if (!usuarioLogado) {
+                alert("Você precisa estar logado para curtir.");
+                return;
+            }
+
+            const wrap = likeBtn.closest(".like-wrap");
+            const tipo = wrap.getAttribute("data-type"); // "post" ou "comentario"
+            const id = wrap.getAttribute("data-id");
+
+            const countEl = wrap.querySelector(".like-count");
+            const current = parseInt(countEl.textContent, 10) || 0;
+
+            try {
+                if (tipo === "post") {
+                    const likeRef = doc(db, "posts", postId, "likes", usuarioLogado.uid);
+                    const likeSnap = await getDoc(likeRef);
+
+                    if (likeSnap.exists()) {
+                        // já curtiu -> descurtir
+                        await deleteDoc(likeRef);
+                        await updateDoc(doc(db, "posts", postId), { likes: increment(-1) });
+                        countEl.textContent = Math.max(0, current - 1);
+                        likeBtn.src = "./img/like_icon.png";
+                    } else {
+                        // curtir
+                        await setDoc(likeRef, { curtido: true });
+                        await updateDoc(doc(db, "posts", postId), { likes: increment(1) });
+                        countEl.textContent = current + 1;
+                        likeBtn.src = "./img/like_curtido.png";
+                    }
+                } else if (tipo === "comentario") {
+                    const likeRef = doc(db, "posts", postId, "comentarios", id, "likes", usuarioLogado.uid);
+                    const likeSnap = await getDoc(likeRef);
+
+                    if (likeSnap.exists()) {
+                        await deleteDoc(likeRef);
+                        await updateDoc(doc(db, "posts", postId, "comentarios", id), { likes: increment(-1) });
+                        countEl.textContent = Math.max(0, current - 1);
+                        likeBtn.src = "./img/like_icon.png";
+                    } else {
+                        await setDoc(likeRef, { curtido: true });
+                        await updateDoc(doc(db, "posts", postId, "comentarios", id), { likes: increment(1) });
+                        countEl.textContent = current + 1;
+                        likeBtn.src = "./img/like_curtido.png";
+                    }
+                }
+            } catch (err) {
+                console.error("Erro ao (des)curtir:", err);
+            }
+        });
+
+        // 🔹 Ajustar ícones de likes
+        async function ajustarLikesVisuais() {
+            if (!usuarioLogado) return;
+
+            // Post principal
+            const postLikeImg = document.querySelector('#post-container .like-icon');
+            if (postLikeImg) {
+                const likeRef = doc(db, "posts", postId, "likes", usuarioLogado.uid);
+                const s = await getDoc(likeRef);
+                postLikeImg.src = s.exists() ? "./img/like_curtido.png" : "./img/like_icon.png";
+            }
+
+            // Comentários
+            const commentLikeImgs = document.querySelectorAll('.respostas .like-wrap');
+            for (const wrap of commentLikeImgs) {
+                const img = wrap.querySelector(".like-icon");
+                const comentId = wrap.getAttribute('data-id');
+                const likeRef = doc(db, "posts", postId, "comentarios", comentId, "likes", usuarioLogado.uid);
+                const s = await getDoc(likeRef);
+                img.src = s.exists() ? "./img/like_curtido.png" : "./img/like_icon.png";
+            }
+        }
+
+        // inicializar
+        carregarPost();
+        carregarComentarios();
+    </script>
+
+</body>
+
+</html>
