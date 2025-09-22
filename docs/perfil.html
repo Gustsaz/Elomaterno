@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EloMaterno - Perfil</title>
+    <link rel="stylesheet" href="./css/header.css" />
+    <link rel="stylesheet" href="./css/perfil.css" />
+    <link rel="stylesheet" href="./css/globals.css">
+    <script type="module" src="/firebase-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="top-header">
+        <div class="left-section">
+            <div class="logo-area">
+                <a href="home.html" class="botao-link">
+                    <img src="./img/logo_icon.png" alt="Ícone Empresa" class="icon" />
+                </a>
+                <span class="company-name">elomaterno</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" placeholder="Pesquisar..." />
+                <button class="btn-search">
+                    <img src="./img/pesquisa_icon.png" alt="Ícone Buscar" />
+                </button>
+                <button class="btn-voice">
+                    <img src="./img/microfone_icon.png" alt="Ícone Microfone" />
+                </button>
+            </div>
+        </div>
+
+        <div class="user-avatar">
+            <img src="./img/avatar_usuario.png" alt="Avatar" class="perfil-avatar" id="perfil-foto" />
+
+        </div>
+    </header>
+   <!-- Modal de Edição de Perfil -->
+<div class="modal" id="modal-editar">
+  <div class="modal-content">
+    <h3>Editar Perfil</h3>
+    <form id="form-editar">
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome" placeholder="Digite seu nome">
+
+      <label for="cidade">Cidade:</label>
+      <input type="text" id="cidade" name="cidade" placeholder="Digite sua cidade">
+
+      <label for="filhos">Filhos:</label>
+      <input type="text" id="filhos" name="filhos" placeholder="Quantos filhos?">
+
+      <label for="foto">Foto de Perfil:</label>
+      <input type="file" id="foto" accept="image/*">
+
+      <div class="modal-actions">
+        <button type="button" id="cancelar">Cancelar</button>
+        <button type="submit">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+    <main class="perfil-container">
+        <section class="perfil-top">
+            <img src="./img/avatar_usuario.png" alt="Avatar" class="perfil-avatar" />
+            <div class="perfil-info">
+                <h2>Gustavo Almeida</h2>
+                <span class="perfil-tag">Mãe Solo</span>
+            </div>
+            <button class="btn-editar">Editar Perfil</button>
+        </section>
+
+        <section class="perfil-cards">
+            <div class="card">
+                <h3>Informações Principais</h3>
+                <p>Email: gustavo@gmail.com</p>
+                <p>Cidade: São Paulo - SP</p>
+                <p>Filhos: 23 filhos</p>
+            </div>
+
+            <div class="card">
+                <h3>Consultorias agendadas</h3>
+                <p>Marcela - 24 mar de 2025 - 14:00</p>
+                <a href="#">Ver Histórico</a>
+            </div>
+
+            <div class="card">
+                <h3>Minhas interações</h3>
+                <p>Meus relatos, tópicos ativos..</p>
+                <a href="#">Ver Interações</a>
+            </div>
+
+            <div class="card">
+                <h3>Artigos favoritados</h3>
+                <a href="#">Ver Artigos</a>
+            </div>
+        </section>
+    </main>
+    <script src="./js/globals.js"></script>
+    <script type="module" src="./js/perfil.js"></script>
+
+</body>
+</html>
