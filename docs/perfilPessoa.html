@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EloMaterno - Perfil Público</title>
+  <link rel="stylesheet" href="./css/header.css" />
+  <link rel="stylesheet" href="./css/perfil.css" />
+  <link rel="stylesheet" href="./css/globals.css">
+  <script type="module" src="/firebase-config.js"></script>
+</head>
+<body>
+  <header class="top-header">
+    <div class="left-section">
+      <div class="logo-area">
+        <a href="home.html" class="botao-link">
+          <img src="./img/logo_icon.png" alt="Ícone Empresa" class="icon" />
+        </a>
+        <span class="company-name">elomaterno</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="perfil-container">
+    <section class="perfil-top">
+      <img src="./img/avatar_usuario.png" alt="Avatar" class="perfil-avatar" id="perfil-foto" />
+      <div class="perfil-info">
+        <h2 id="perfil-nome"></h2>
+        <span class="perfil-tag" id="perfil-tipo"></span>
+      </div>
+    </section>
+
+    <section class="perfil-cards">
+      <div class="card">
+        <h3>Informações</h3>
+        <p id="perfil-email"></p>
+        <p id="perfil-cidade"></p>
+        <p id="perfil-filhos"></p>
+      </div>
+
+      <div class="card">
+        <h3>Posts recentes</h3>
+        <div id="perfil-posts"></div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./js/perfilPessoa.js"></script>
+</body>
+</html>
