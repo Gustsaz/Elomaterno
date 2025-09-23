@@ -1,0 +1,155 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #f7f5ff;
+}
+
+@keyframes fadeSlideLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.consultoria-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.consultoria-card {
+    display: flex;
+    align-items: center;
+    border-radius: 24px;
+    padding: 40px;
+    gap: 50px;
+    max-width: 1000px;
+    width: 100%;
+}
+
+.consultoria-image {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 16px;
+    opacity: 0;
+    animation: fadeSlideLeft 0.4s ease-out forwards;
+    animation-delay: 0.1s;
+}
+
+.consultoria-text {
+    opacity: 0;
+    animation: fadeSlideLeft 0.4s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+.consultoria-text h2 {
+    font-size: 28px;
+    color: #583E8E;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.consultoria-buttons {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.agendar-btn,
+.funciona-btn {
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+    opacity: 0;
+    animation: fadeSlideLeft 0.4s ease-out forwards;
+}
+
+.agendar-btn {
+    background-color: #826FAF;
+    color: #fff;
+    border: none;
+    animation-delay: 0.5s;
+}
+
+.agendar-btn:hover {
+    background-color: #452e72;
+}
+
+.funciona-btn {
+    background-color: #fff;
+    color: black;
+    border: 3px solid #CDC8CD;
+    animation-delay: 0.7s;
+}
+
+.funciona-btn:hover {
+    background-color: #583E8E;
+    color: #fff;
+    border: 3px solid #583E8E;
+}
+
+/*Resposinvo*/
+
+/*tablet*/
+@media (max-width: 768px) {
+    .consultoria-card {
+        flex-direction: column;
+        gap: 30px;
+        padding: 30px 20px;
+    }
+
+    .consultoria-image {
+        width: 300px;
+        height: 300px;
+    }
+
+    .consultoria-text h2 {
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .agendar-btn,
+    .funciona-btn {
+        font-size: 16px;
+        padding: 12px 25px;
+    }
+}
+
+/*ceular */
+@media (max-width: 480px) {
+    .consultoria-card {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px 15px;
+    }
+
+    .consultoria-image {
+        width: 220px;
+        height: 220px;
+    }
+
+    .consultoria-text h2 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .agendar-btn,
+    .funciona-btn {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+}
+

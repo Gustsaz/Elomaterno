@@ -1,0 +1,154 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: "Nunito", sans-serif;
+    color: #583E8E;
+    background-color: #f7f5ff;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    font-family: "Nunito", sans-serif;
+    box-sizing: border-box;
+}
+
+#question-number {
+    color: #999;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+h2 {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    color: #4a2f78;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.option-btn {
+    width: 100%;
+    display: inline-block;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #583E8E;
+    background: rgba(255, 255, 255, 0.9);
+    color: #583E8E;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    white-space: normal;
+}
+
+.option-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+}
+
+.option-btn.selected {
+    background: #583E8E;
+    color: #fff;
+    border-color: transparent;
+}
+
+.navigation {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.navigation button {
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: #583E8E;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: "Nunito", sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.navigation:has(:only-child) button {
+    flex: 1 1 100%;
+}
+
+.navigation button {
+    flex: 1;
+}
+
+.navigation button:hover {
+    background-color: #6e50b4;
+}
+
+
+@media (max-width: 640px) {
+    .form-container {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .option-btn {
+        font-size: 14px;
+        padding: 11px;
+    }
+
+    .navigation {
+        gap: 10px;
+    }
+
+    .navigation button {
+        width: 100%;
+        flex-basis: 100%;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 880px) {
+    .options-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+}
