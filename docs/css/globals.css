@@ -67,22 +67,6 @@ a {
   opacity: 1;
 }
 
-.logo-area {
-  animation: fadeSlideDown 0.6s ease-out forwards;
-}
-
-.search-box {
-  animation: fadeSlideDown 0.6s ease-out forwards;
-  animation-delay: 0.2s;
-  opacity: 0;
-}
-
-.user-avatar {
-  animation: fadeSlideDown 0.6s ease-out forwards;
-  animation-delay: 0.2s;
-  opacity: 0;
-}
-
 .divisor {
   animation: fadeSlideLeft 0.6s ease-out forwards;
   animation-delay: 0.2s;
@@ -186,10 +170,6 @@ a {
   opacity: 0;
 }
 
-.section-header {
-  animation: fadeSlideLeft 0.2s ease-out forwards;
-  opacity: 0;
-}
 
 .articles-grid {
   animation: fadeSlideLeft 0.4s ease-out forwards;
@@ -328,5 +308,21 @@ a {
     grid-column: 1 / 3;
     grid-row: 2;
     width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .botoes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;       
+    margin: 0 auto;   
+    width: 100%;
+  }
+
+  .botoes .botao-link {
+    flex: 1;        
+    text-align: center;
   }
 }

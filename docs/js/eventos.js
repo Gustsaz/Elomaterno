@@ -1,37 +1,52 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'eventosInscritos';
-  const load = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  const save = (list) => localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+import { db, auth } from './firebase.js';
+import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-  const inscritos = new Set(load());
+document.addEventListener("DOMContentLoaded", () => {
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return; // não logado
 
-  document.querySelectorAll('.evento-card').forEach(card => {
-    const id = card.getAttribute('data-evento-id');
-    const btn = card.querySelector('.btn-inscrever');
-    if (!btn) return;
+    const userRef = doc(db, "usuarios", user.uid);
+    const snap = await getDoc(userRef);
+    let dadosUser = snap.exists() ? snap.data() : {};
+    let inscritos = dadosUser.eventosInscritos || [];
 
-    const refresh = () => {
-      if (inscritos.has(id)) {
-        btn.textContent = 'Inscrito';
-        btn.classList.add('inscrito');
-      } else {
-        btn.textContent = 'Inscrever-se';
-        btn.classList.remove('inscrito');
-      }
-    };
+    document.querySelectorAll(".evento-card").forEach((card) => {
+      const id = card.dataset.eventoId;
+      const titulo = card.querySelector("h3")?.textContent || "";
+      const descricao = card.querySelector("p")?.textContent || "";
+      const date = card.dataset.date; 
+      const btn = card.querySelector(".btn-inscrever");
 
-    refresh();
+      const estaInscrito = () => inscritos.some(e => e.id === id);
 
-    btn.addEventListener('click', () => {
-      if (inscritos.has(id)) {
-        inscritos.delete(id);
-      } else {
-        inscritos.add(id);
-      }
-      save(Array.from(inscritos));
+      const refresh = () => {
+        if (estaInscrito()) {
+          btn.textContent = "Inscrito";
+          btn.classList.add("inscrito");
+        } else {
+          btn.textContent = "Inscrever-se";
+          btn.classList.remove("inscrito");
+        }
+      };
+
       refresh();
+
+      btn.addEventListener("click", async () => {
+        const snapAtual = await getDoc(userRef);
+        inscritos = snapAtual.exists() ? (snapAtual.data().eventosInscritos || []) : [];
+
+        let novos;
+        if (estaInscrito()) {
+          novos = inscritos.filter(e => e.id !== id);
+        } else {
+          novos = [...inscritos, { id, titulo, descricao, date }];
+        }
+
+        await updateDoc(userRef, { eventosInscritos: novos });
+        inscritos = novos;
+        refresh();
+      });
     });
   });
 });
-
-

@@ -20,11 +20,12 @@ select {
 
 .calendar-container {
     background-color: white;
-    padding: 25px;
     border-radius: 15px;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;   
+    max-width: 600px;   /* era 400px */
+    padding: 35px;      /* mais espaço interno */
+    font-size: 18px;    /* textos maiores */  
     box-sizing: border-box;
 }
 
@@ -37,11 +38,18 @@ select {
 }
 
 .calendar-header button {
-    background: none;
-    border: none;
+    background: #f6ecff;
+    border: 1px solid #7b56d6;
     color: #583E8E;
-    font-size: 20px;
+    font-size: 18px;
+    padding: 6px 12px;
+    border-radius: 50%;
     cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.calendar-header button:hover {
+    background: #e8defc;
 }
 
 .month-year-select {
@@ -72,19 +80,67 @@ select {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .calendar-dates .date {
-    padding: 10px 0;
-    border-radius: 50%;
+    aspect-ratio: 1;
+        font-size: 16px;
+              /* quadrado perfeito */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;           /* círculo */
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.25s ease;
+    position: relative;
 }
 
-.calendar-dates .date:hover { background-color: #e0d4fa; }
-.calendar-dates .today { background-color: #583E8E; color: white; }
-.calendar-dates .empty { visibility: hidden; }
+.calendar-dates .date:hover {
+    background-color: #e8defc;
+    transform: scale(1.05);
+}
+
+/* Hoje */
+.calendar-dates .date.today {
+    background-color: #583E8E;
+    color: white;
+    font-weight: bold;
+}
+
+/* Dia com evento */
+.calendar-dates .date.has-event {
+    background-color: #f6ecff;
+    border: 2px solid #7b56d6;
+    font-weight: 600;
+    color: #583E8E;
+}
+
+/* Tooltip customizado */
+.calendar-dates .date[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #583E8E;
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.calendar-dates .empty {
+    visibility: hidden;
+}
 
 .events-container {
     width: 300px;
@@ -162,7 +218,7 @@ select {
 @media (max-width: 480px) {
     .calendar-container { padding: 12px; }
     .calendar-dates { gap: 4px; }
-    .calendar-dates .date { padding: 6px 0; font-size: 12px; }
+    .calendar-dates .date { font-size: 12px; }
     .month-year-select select { font-size: 11px; padding: 3px 5px; }
 
     .events-container { padding: 0 6px; }

@@ -92,19 +92,8 @@
                 <h3>Do fórum</h3>
                 <a class="ver-mais" href="forum.html">Ver mais</a>
             </div>
-            <div class="cards-grid">
-                <a href="coment.html" class="mini-card com-brilho">
-                    <div class="mini-header">
-                        <img src="./img/account_icon.png" alt="Avatar" class="mini-avatar">
-                        <div>
-                            <strong>Emily Rodrigues</strong>
-                            <span class="mini-date">02 set 2025</span>
-                        </div>
-                    </div>
-                    <h4 class="mini-title">Meu filho está tendo dificuldades na alimentação</h4>
-                    <p class="mini-text">Ele se recusa a ingerir vegetais e só pensa em doces...</p>
-                </a>
-            </div>
+            <div class="cards-grid" id="forum-preview"></div>
+
         </section>
 
         <section class="section">
@@ -131,28 +120,7 @@
                 <h3>Eventos</h3>
                 <a class="ver-mais" href="eventos.html">Ver eventos</a>
             </div>
-            <div class="cards-grid">
-                <div class="mini-card event-mini com-brilho">
-                    <div class="event-body">
-                        <img src="./img/palestra1_img.jpeg" alt="Evento" class="mini-cover">
-                        <div>
-                            <h4 class="mini-title">Palestra Mãe informada</h4>
-                            <span class="mini-date">24 Jun • 19:00</span>
-                        </div>
-                    </div>
-                    <a href="eventos.html" class="botao-acao pequeno">Inscrever-se</a>
-                </div>
-                <div class="mini-card event-mini com-brilho">
-                    <div class="event-body">
-                        <img src="./img/palestra2_img.jpg" alt="Evento" class="mini-cover">
-                        <div>
-                            <h4 class="mini-title">Palestra Amamentação: Direito e Ação</h4>
-                            <span class="mini-date">5 Jul • 09:30</span>
-                        </div>
-                    </div>
-                    <a href="eventos.html" class="botao-acao pequeno">Inscrever-se</a>
-                </div>
-            </div>
+            <div class="cards-grid eventos-home"></div>
         </section>
 
         <section class="section">
@@ -173,6 +141,8 @@
     </main>
 
     <script src="./js/globals.js"></script>
+    <script type="module" src="./js/home-forum.js"></script>
+    <script type="module" src="./js/home-eventos.js"></script>
 
 </body>
 
