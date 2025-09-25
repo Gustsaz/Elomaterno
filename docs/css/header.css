@@ -163,7 +163,7 @@ body {
   height: 40px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .top-header {
     flex-wrap: nowrap;
     padding: 10px;
@@ -393,10 +393,9 @@ body {
 
 }
 
-/* Menu de filtros */
 .filter-menu {
   position: absolute;
-  top: 100%; /* logo abaixo do botão de filtro */
+  top: 100%; 
   right: 0;
   background: #fff;
   border: 1px solid #ccc;
@@ -412,10 +411,9 @@ body {
   display: none;
 }
 
-/* Resultados */
 .search-results {
   position: absolute;
-  top: 100%; /* logo abaixo do input */
+  top: 100%; 
   left: 0;
   width: 100%;
   background: #fff;

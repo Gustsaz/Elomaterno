@@ -9,12 +9,7 @@ async function carregarEventos() {
   const snap = await getDocs(collection(db, "eventos"));
   const eventos = [];
   snap.forEach(docSnap => {
-    const data = docSnap.data();
-    eventos.push({ 
-      id: docSnap.id, 
-      ...data, 
-      data: data.data?.toDate ? data.data.toDate() : data.data // 🔥 converte Timestamp para Date
-    });
+    eventos.push({ id: docSnap.id, ...docSnap.data() });
   });
   renderEventos(eventos);
 }
@@ -22,7 +17,7 @@ async function carregarEventos() {
 function renderEventos(eventos) {
   grid.innerHTML = "";
   eventos.forEach(ev => {
-    const d = ev.data; // já é Date
+    const d = new Date(ev.data);
     const dataFormatada = d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
     const hora = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 

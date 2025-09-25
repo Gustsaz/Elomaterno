@@ -7,6 +7,7 @@ body {
   background-color: #f6f2fc;
   font-family: Nunito, sans-serif;
   color: #333;
+  overflow-x: none;
 }
 
 .forum-container {
@@ -24,7 +25,7 @@ body {
   background: #fff;
   border-radius: 20px;
   padding: 6px 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .comment-icon:hover {
@@ -70,27 +71,37 @@ body {
   border-radius: 50%;
 }
 
-.add-post-btn:hover::before { top: -50%; }
-.add-post-btn:hover { background-color: #3e2f69; color: #fff; }
+.add-post-btn:hover::before {
+  top: -50%;
+}
+
+.add-post-btn:hover {
+  background-color: #3e2f69;
+  color: #fff;
+}
 
 #posts-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* separa os posts */
+  gap: 1rem;
+  /* separa os posts */
   margin-top: 1rem;
 }
+
 .post-card {
   position: relative;
   background: #fff;
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: background-color 0.2s ease; /* transição suave */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+  /* transição suave */
   cursor: pointer;
 }
 
 .post-card:hover {
-  background-color: #f2f2f2; /* cinza clarinho no hover */
+  background-color: #f2f2f2;
+  /* cinza clarinho no hover */
 }
 
 .post-title {
@@ -173,8 +184,8 @@ body {
 
 .botao-nova {
   position: fixed;
-  bottom: 24px;   
-  right: 24px;    
+  bottom: 24px;
+  right: 24px;
   padding: 14px 24px;
   font-size: 16px;
   background-color: var(--rox);
@@ -202,15 +213,24 @@ body {
   border-radius: 50%;
 }
 
-.botao-nova:hover::before { top: -50%; }
-.botao-nova:hover { background-color: #3e2f69; color: #fff; }
+.botao-nova:hover::before {
+  top: -50%;
+}
+
+.botao-nova:hover {
+  background-color: #3e2f69;
+  color: #fff;
+}
+
 /* Modal Fórum */
 .modal {
   display: none;
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
   z-index: 2000;
@@ -222,7 +242,7 @@ body {
   border-radius: 12px;
   width: 350px;
   max-width: 90%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content h3 {
@@ -268,6 +288,7 @@ body {
   background: #583E8E;
   color: white;
 }
+
 /* Botões de ação em cada post */
 .post-actions {
   display: flex;
@@ -303,6 +324,7 @@ body {
 .delete-btn:hover {
   background-color: #f5c2c7;
 }
+
 /* Modal de confirmação */
 #modal-confirm .modal-actions button[type="button"] {
   background: #ddd;
@@ -316,4 +338,8 @@ body {
 
 #modal-confirm #confirmar-excluir:hover {
   background: #a1323b;
+}
+
+@media (max-width: 768px) {
+  .botao-nova{display: none;}
 }

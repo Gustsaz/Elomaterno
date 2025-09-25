@@ -420,13 +420,18 @@ a {
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 10px 15px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   transform-origin: top;
   animation: dropdown 0.25s ease;
   z-index: 1000;
+  align-items: center;
+
+  max-width: 90vw;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .filter-menu.hidden {
@@ -434,18 +439,20 @@ a {
 }
 
 .filter-menu label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 14px;
   cursor: pointer;
+  text-align: left;
+  line-height: 1.4;
+  padding: 2px 4px;
 }
 
 .filter-menu input[type="checkbox"] {
-  align-items: left;
-
   margin: 0;
   accent-color: #644c9a;
+  right: 2px;
 }
 
 .filter-menu input {
@@ -456,6 +463,7 @@ a {
 .filter-menu label:hover {
   color: #644c9a;
 }
+
 
 @keyframes dropdown {
   from {
@@ -480,7 +488,7 @@ a {
   width: 10px;
   height: 10px;
   margin: 0 4px;
-  background-color: #644c9a; 
+  background-color: #644c9a;
   border-radius: 50%;
   animation: bounce 0.6s infinite alternate;
 }
@@ -488,6 +496,7 @@ a {
 .loader .dot:nth-child(2) {
   animation-delay: 0.2s;
 }
+
 .loader .dot:nth-child(3) {
   animation-delay: 0.4s;
 }
@@ -497,6 +506,7 @@ a {
     transform: translateY(0);
     opacity: 0.5;
   }
+
   to {
     transform: translateY(-10px);
     opacity: 1;

@@ -1,5 +1,5 @@
 :root {
-  --rox: #644c9a; /* roxo escuro usado nos botões */
+  --rox: #644c9a;
 }
 
 .coment-container {
@@ -10,8 +10,6 @@
     gap: 20px;
 }
 
-/* Post principal */
-/* Post card base */
 .post-card {
     background: #fff;
     border-radius: 12px;
@@ -19,31 +17,23 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid #cdc8cd;
     transition: background-color 0.2s ease;
-
-    /* garante que o footer fique no final */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     min-height: 220px;
-    /* altura mínima para manter o espaço */
     position: relative;
-    /* para posicionar menu-btn no .com-brilho */
 }
 
-/* post principal maior */
 .post-card.com-brilho {
     padding: 32px;
     font-size: 1.2rem;
-    min-height: 380px; /* altura mínima só no principal */
-    position: relative; /* para o menu-btn */
+    min-height: 380px;
+    position: relative; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-
-
-/* menu no canto superior direito do post principal */
 .post-card.com-brilho .menu-btn {
     position: absolute;
     top: 16px;
@@ -54,14 +44,12 @@
     font-size: 28px;
 }
 
-/* conteúdo do post principal com largura limitada */
 .post-card.com-brilho .post-content {
     font-size: 18px;
     line-height: 1.6;
-    max-width: 700px;   /* limite de largura */
+    max-width: 700px;   
     margin-bottom: 16px;
 }
-
 
 .post-card.com-brilho .post-info h4 {
     font-size: 18px;
@@ -75,7 +63,6 @@
     background-color: #f2f2f2;
 }
 
-/* Cabeçalho do post */
 .post-header {
     display: flex;
     align-items: center;
@@ -113,7 +100,6 @@
     cursor: pointer;
 }
 
-/* Conteúdo */
 .post-title {
     font-size: 18px;
     font-weight: 700;
@@ -121,23 +107,19 @@
     color: #583E8E;
 }
 
-/* vale para todos os conteúdos de post */
 .post-content {
-  max-width: 700px;      /* seu limite */
-  white-space: normal;   /* garante que pode quebrar linha */
-  overflow-wrap: anywhere; /* moderno: quebra em qualquer ponto se precisar */
-  word-break: break-word;  /* fallback */
-  /* opcional para compatibilidade antiga: */
+  max-width: 700px;      
+  white-space: normal;   
+  overflow-wrap: anywhere; 
+  word-break: break-word; 
   word-wrap: break-word;
 }
 
-
-/* Rodapé */
 .post-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 8px; /* espaço menor que o principal */
+    margin-top: 8px; 
 }
 
 .like-wrap {
@@ -163,34 +145,30 @@
     color: #583E8E;
 }
 
-/* quantidade de comentários */
 .comment-count {
     font-size: 14px;
     font-weight: 500;
     color: #777;
 }
 
-/* Respostas */
 .respostas {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* Respostas NÃO herdam flex nem min-height */
 .resposta-card {
     padding: 12px 16px;
     font-size: 14px;
-    display: block;        /* remove o flex */
-    min-height: unset;     /* garante que não herda altura */
+    display: block;       
+    min-height: unset;   
     height: auto !important;
 }
 
 resposta-card .post-footer {
-    margin-top: 6px;       /* espaço pequeno abaixo do texto */
+    margin-top: 6px;       
 }
 
-/* botão voltar (imagem) */
 .back-btn {
     display: inline-block;
     margin-bottom: 12px;
@@ -256,7 +234,6 @@ resposta-card .post-footer {
   border-radius: 12px;
   padding: 12px 16px;
   margin-top: 20px;
-
   width: 100%;         
   box-sizing: border-box;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -288,7 +265,7 @@ resposta-card .post-footer {
 .send-btn:hover {
   transform: scale(1.1);
 }
-/* Ações do comentário */
+
 .coment-actions {
   margin-top: 0.5rem;
   display: flex;
@@ -322,7 +299,6 @@ resposta-card .post-footer {
   background: #f5c2c7;
 }
 
-/* Modais reaproveitando estilo */
 .modal {
   display: none;
   position: fixed;
@@ -355,4 +331,8 @@ resposta-card .post-footer {
   padding: 6px 12px;
   cursor: pointer;
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .botao-nova{display: none;}
 }

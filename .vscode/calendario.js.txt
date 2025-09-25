@@ -49,7 +49,7 @@ function renderCalendar(month, year, eventos = []) {
       month === today.getMonth() &&
       year === today.getFullYear();
     const eventosDoDia = eventos.filter(ev => {
-      const d = ev.data;
+      const d = new Date(ev.date);
       return d.getDate() === i && d.getMonth() === month && d.getFullYear() === year;
     });
     const hasEvent = eventosDoDia.length > 0;
@@ -86,19 +86,16 @@ function onYearChange() {
 populateMonthYearSelects();
 renderCalendar(currentMonth, currentYear);
 
+
 async function carregarEventos() {
   const snap = await getDocs(collection(db, "eventos"));
   const eventos = [];
   snap.forEach(docSnap => {
-    const data = docSnap.data();
-    eventos.push({
-      id: docSnap.id,
-      ...data,
-      data: data.data?.toDate ? data.data.toDate() : data.data
-    });
+    eventos.push({ id: docSnap.id, ...docSnap.data() });
   });
   return eventos;
 }
+
 
 async function carregarEventosDoUsuario() {
   const list = document.querySelector('.event-list');
@@ -119,8 +116,8 @@ async function carregarEventosDoUsuario() {
     hoje.setHours(0, 0, 0, 0);
 
     const proximosEventos = eventos
-      .filter(ev => ev.data >= hoje)
-      .sort((a, b) => a.data - b.data);
+      .filter(ev => new Date(ev.data) >= hoje)
+      .sort((a, b) => new Date(a.data) - new Date(b.data));
 
     if (list) {
       list.innerHTML = ''; // remove loader

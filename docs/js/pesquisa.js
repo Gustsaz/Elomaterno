@@ -17,9 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
     filterBtn?.addEventListener("click", () => {
         filterMenu.classList.toggle("hidden");
         const rect = filterBtn.getBoundingClientRect();
+        const menuWidth = 180;
+        let left = rect.left;
+        if (left + menuWidth > window.innerWidth - 10) {
+            left = window.innerWidth - menuWidth - 10; // mantém dentro da tela
+        }
         filterMenu.style.top = `${rect.bottom + window.scrollY + 5}px`;
-        filterMenu.style.left = `${rect.left}px`;
-        filterMenu.style.width = `180px`;
+        filterMenu.style.left = `${left}px`;
+        filterMenu.style.width = `${menuWidth}px`;
     });
 
     // === Setup filtros ===
