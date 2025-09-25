@@ -1,16 +1,16 @@
 import { db, auth } from './firebase.js';
-import { doc, getDoc }
-    from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { doc, getDoc, getDocs, collection } 
+  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { onAuthStateChanged } 
+  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 const container = document.querySelector(".cards-grid.eventos-home");
 
 function renderEventos(eventos) {
-    container.innerHTML = "";
+  container.innerHTML = "";
 
-    if (eventos.length === 0) {
-        container.innerHTML = `
+  if (eventos.length === 0) {
+    container.innerHTML = `
       <div class="mini-card event-mini com-brilho">
         <div class="event-body">
           <div>
@@ -19,55 +19,77 @@ function renderEventos(eventos) {
           </div>
         </div>
       </div>`;
-        return;
-    }
+    return;
+  }
 
-    eventos.forEach(ev => {
-        const d = new Date(ev.date);
-        const dataFormatada = d.toLocaleDateString("pt-BR", {
-            day: "2-digit",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
+  eventos.forEach(ev => {
+    const d = ev.data?.toDate ? ev.data.toDate() : new Date(ev.data);
+    const dataFormatada = d.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
 
-        const card = document.createElement("div");
-        card.className = "mini-card event-mini com-brilho";
-        card.innerHTML = `
+    const card = document.createElement("div");
+    card.className = "mini-card event-mini com-brilho";
+    card.innerHTML = `
       <div class="event-body">
-        <img src="${ev.img || './img/default-event.png'}" alt="Evento" class="mini-cover">
+        <img src="${ev.capa || './img/default-event.png'}" 
+             alt="Capa do evento" class="mini-cover">
         <div>
           <h4 class="mini-title">${ev.titulo}</h4>
-          <span class="mini-date">${dataFormatada}</span>
+          <span class="mini-date">${dataFormatada} • ${ev.local || "Online"}</span>
         </div>
       </div>
-      <a href="eventos.html" class="botao-acao pequeno inscrito">Inscrito</a>
+      <a href="eventos.html" class="botao-acao pequeno inscrito">
+        ${ev.estaInscrito ? "Inscrito" : "Ver evento"}
+      </a>
     `;
-        container.appendChild(card);
+    container.appendChild(card);
+  });
+}
+
+async function carregarEventosInscritos(user) {
+  const userRef = doc(db, "usuarios", user.uid);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) {
+    renderEventos([]);
+    return;
+  }
+
+  const inscritos = snap.data().eventosInscritos || [];
+  if (inscritos.length === 0) {
+    renderEventos([]);
+    return;
+  }
+
+  // pega todos os eventos do Firestore
+  const eventosSnap = await getDocs(collection(db, "eventos"));
+  const eventosCompletos = [];
+  eventosSnap.forEach(docSnap => {
+    const data = docSnap.data();
+    eventosCompletos.push({
+      id: docSnap.id,
+      ...data,
+      data: data.data?.toDate ? data.data.toDate() : data.data
     });
+  });
+
+  // filtra só os que o usuário está inscrito
+  const eventosInscritos = eventosCompletos
+    .filter(ev => inscritos.some(e => e.id === ev.id))
+    .sort((a, b) => a.data - b.data)
+    .slice(0, 2)
+    .map(ev => ({ ...ev, estaInscrito: true }));
+
+  renderEventos(eventosInscritos);
 }
 
 onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        renderEventos([]);
-        return;
-    }
-
-    const userRef = doc(db, "usuarios", user.uid);
-    const snap = await getDoc(userRef);
-    if (!snap.exists()) {
-        renderEventos([]);
-        return;
-    }
-
-    const eventos = snap.data().eventosInscritos || [];
-
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    const proximos = eventos
-        .filter(ev => new Date(ev.date) >= hoje)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .slice(0, 2);
-
-    renderEventos(proximos);
+  if (!user) {
+    renderEventos([]);
+    return;
+  }
+  await carregarEventosInscritos(user);
 });

@@ -331,6 +331,15 @@ body {
   opacity: 0.9;
 }
 
+#menu-avatar {
+  width: 120px;      
+  height: 120px;      
+  object-fit: cover;  
+  border-radius: 50%; 
+  display: block;    
+  margin: 0 auto;     
+}
+
 .botao-item i {
   font-size: 22px;
   margin-right: 0;
@@ -436,3 +445,16 @@ body {
 .search-results div:hover {
   background: #f0f0f0;
 }
+
+/* Hover elegante para o avatar do header */
+.user-avatar img {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.user-avatar img:hover {
+  transform: scale(1.15); /* leve zoom */
+  box-shadow: 0 8px 20px rgba(88, 62, 142, 0.5), 0 0 15px rgba(88, 62, 142, 0.3);
+}
+

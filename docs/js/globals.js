@@ -23,7 +23,6 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// ===== Efeito de brilho nos cards =====
 document.querySelectorAll(".com-brilho").forEach((card) => {
   card.addEventListener("mousemove", (e) => {
     const rect = card.getBoundingClientRect();
@@ -35,18 +34,16 @@ document.querySelectorAll(".com-brilho").forEach((card) => {
   });
 });
 
-// ===== Menu responsivo =====
 const menuToggle = document.getElementById("menuToggle");
 const botoesMenu = document.querySelector(".botoes");
 
 if (menuToggle && botoesMenu) {
   menuToggle.addEventListener("click", (e) => {
-    e.stopPropagation(); // impede o clique do botão de acionar o fechamento no document
+    e.stopPropagation(); 
     botoesMenu.classList.toggle("aberto");
   });
 }
 
-// Fecha o menu ao clicar fora
 document.addEventListener("click", (event) => {
   const menu = document.querySelector(".botoes");
   const toggle = document.querySelector("#menuToggle");

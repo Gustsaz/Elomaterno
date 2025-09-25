@@ -201,8 +201,8 @@ select {
 
     .calendar-container,
     .events-container {
-        width: 100%;          
-        max-width: 420px;     
+        width: 95%;          /* ocupa quase toda a tela */
+        max-width: 600px;    /* ↑ mais largo no tablet/celular */
     }
 
     .event-list {
@@ -224,4 +224,68 @@ select {
     .events-container { padding: 0 6px; }
     .event strong { font-size: 14px; }
     .event p { font-size: 12px; }
+}
+
+/* -------------------------
+   animação de troca de mês
+   ------------------------- */
+.calendar-dates {
+  transition: transform 250ms ease, opacity 250ms ease;
+}
+
+/* exit: próximo (saindo para esquerda) */
+.calendar-dates.anim-exit-left {
+  transform: translateX(-20%);
+  opacity: 0;
+}
+
+/* exit: anterior (saindo para direita) */
+.calendar-dates.anim-exit-right {
+  transform: translateX(20%);
+  opacity: 0;
+}
+
+/* entry animations (vem da direita para o centro / da esquerda para o centro) */
+.calendar-dates.anim-enter-left {
+  animation: enterFromLeft 300ms forwards;
+}
+.calendar-dates.anim-enter-right {
+  animation: enterFromRight 300ms forwards;
+}
+
+@keyframes enterFromLeft {
+  from { transform: translateX(-20%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes enterFromRight {
+  from { transform: translateX(20%); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
+}
+
+/* fade rápido para selects */
+.calendar-dates.anim-exit-fade { opacity: 0; }
+.calendar-dates.anim-enter-fade { animation: fadeIn 200ms forwards; }
+
+/* estilo diferenciado para dias que já passaram */
+.calendar-dates .date.past { opacity: 0.75; }
+.calendar-dates .date.past.has-event {
+  background-color: #f3f3f3;
+  border-color: #cfcfcf;
+  color: #666;
+}
+
+@media (max-width: 480px) {
+    .calendar-container { 
+        padding: 20px; 
+    }
+
+    .calendar-dates { 
+        gap: 6px; 
+    }
+
+    .calendar-dates .date { 
+        font-size: 14px; 
+        min-width: 40px;
+        min-height: 40px;
+    }
 }

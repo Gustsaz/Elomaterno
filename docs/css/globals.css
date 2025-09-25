@@ -90,6 +90,7 @@ a {
     opacity: 1;
     animation: none;
   }
+  
 }
 
 .container {
@@ -501,6 +502,35 @@ a {
   animation-delay: 0.4s;
 }
 
+.avatar-loader-container {
+  position: relative;
+  width: 40px; 
+  height: 40px;
+}
+
+.avatar-loader-container img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+}
+
+.avatar-loader-container .loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  z-index: 2;
+}
+
+.avatar-loader-container img.loaded + .loader {
+  display: none;
+}
+
 @keyframes bounce {
   from {
     transform: translateY(0);
@@ -510,5 +540,16 @@ a {
   to {
     transform: translateY(-10px);
     opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .avatar-loader-container {
+    width: 80px;          /* ajusta o container */
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
   }
 }

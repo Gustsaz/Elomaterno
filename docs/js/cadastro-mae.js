@@ -16,26 +16,24 @@ form.addEventListener('submit', async (e) => {
   const senha = form.querySelector('[name="senha"]').value;
   const senha2 = form.querySelector('[name="senha2"]').value;
 
-  // Confirmação de senha
   if (senha !== senha2) {
     showPopup("As senhas não coincidem. Digite novamente.");
     return;
   }
 
   try {
-    // Cria conta no Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    // Salva dados no Firestore
+    // Agora já salva avatar como null
     await setDoc(doc(db, "usuarios", user.uid), {
       nome: nome,
       email: email,
       telefone: telefone,
-      tipo: "mae"
+      tipo: "mae",
+      avatar: null
     });
 
-    // Envia verificação de e-mail
     await sendEmailVerification(user, {
       url: "http://localhost:5500/home.html",
       handleCodeInApp: false
@@ -49,11 +47,10 @@ form.addEventListener('submit', async (e) => {
   } catch (error) {
     console.error("Erro no cadastro:", error.code, error.message);
 
-    let mensagemAmigavel = "Erro ao realizar o cadastro. Tente novamente.";
-
+    let mensagemAmigavel;
     switch (error.code) {
       case "auth/email-already-in-use":
-        mensagemAmigavel = "Este e-mail já está em uso. Tente outro ou recupere sua senha.";
+        mensagemAmigavel = "Este e-mail já está em uso.";
         break;
       case "auth/invalid-email":
         mensagemAmigavel = "O e-mail informado não é válido.";
@@ -61,13 +58,9 @@ form.addEventListener('submit', async (e) => {
       case "auth/weak-password":
         mensagemAmigavel = "A senha deve ter pelo menos 6 caracteres.";
         break;
-      case "auth/missing-password":
-        mensagemAmigavel = "Digite sua senha para continuar.";
-        break;
       default:
         mensagemAmigavel = "Erro ao realizar o cadastro. Por favor, tente novamente.";
     }
-
     showPopup(mensagemAmigavel);
   }
 });

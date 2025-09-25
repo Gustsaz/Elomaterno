@@ -18,8 +18,8 @@
   <header class="top-header">
     <div class="left-section">
       <div class="logo-area">
-        <a href="../home.html" class="botao-link">
-          <img src="../img/logo_icon.png" alt="Ícone Empresa" class="icon">
+        <a href="home.html" class="botao-link">
+          <img src="./img/logo_icon.png" alt="Ícone Empresa" class="icon">
         </a>
         <span class="company-name">elomaterno</span>
       </div>
@@ -39,10 +39,22 @@
 
         <div id="search-results" class="search-results hidden"></div>
       </div>
+
     </div>
+
     <div class="user-avatar">
-      <a href="../perfil.html"><img src="../img/account_icon.png" alt="Avatar Usuário"></a>
+      <a href="perfil.html">
+        <div class="avatar-loader-container">
+          <img id="perfil-avatar">
+          <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </a>
     </div>
+
   </header>
 
   <button id="menuToggle" class="menu-toggle">☰</button>
@@ -50,7 +62,14 @@
   <div class="botoes">
     <div class="menu-user">
       <a href="perfil.html">
-        <img id="menu-avatar" src="/docs/img/avatar_usuario.png" alt="Avatar do usuário">
+        <div class="avatar-loader-container">
+          <img id="menu-avatar" src="./img/avatar_usuario.png" alt="Avatar do usuário">
+          <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
       </a>
       <h3 id="menu-nome">
         <div class="loader">
@@ -133,6 +152,7 @@
   <script src="./artigo_ind.js"></script>
   <script type="module" src="/docs/js/globals.js"></script>
   <script type="module" src="/docs/js/pesquisa.js"></script>
+  <script type="module" src="./js/carregar-avatar.js"></script>
 
 </body>
 

@@ -1,14 +1,7 @@
 import { auth, db } from "./firebase.js";
 import { signInWithEmailAndPassword, sendEmailVerification } 
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import {
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { showPopup } from "./popup.js";
 
 const form = document.querySelector('.login-form');
@@ -24,65 +17,43 @@ form.addEventListener('submit', async (e) => {
     const user = userCredential.user;
     console.log("[login] sucesso -> uid:", user.uid, "email:", user.email);
 
-    // Se não verificado, reenviar e deslogar (mesmo comportamento anterior)
     if (!user.emailVerified) {
       await sendEmailVerification(user);
       await auth.signOut();
-      showPopup("Sua conta ainda não foi ativada. Verifique a caixa de entrada do seu e-mail (ou a pasta de spam) para confirmar o cadastro.");
+      showPopup("Sua conta ainda não foi ativada. Verifique seu e-mail.");
       return;
     }
 
-    // 1) tenta buscar documento por UID
-    let nome = null;
-    try {
-      const ref = doc(db, "usuarios", user.uid);
-      const snap = await getDoc(ref);
-      console.log("[login] userDoc.exists():", snap.exists());
-      if (snap.exists()) {
-        const data = snap.data();
-        console.log("[login] userDoc.data():", data);
-        if (data && data.nome) nome = String(data.nome).trim();
+    const ref = doc(db, "usuarios", user.uid);
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) {
+      const data = snap.data();
+      console.log("[login] dados:", data);
+
+      if (!data.avatar) {
+        // se ainda não tem avatar, manda para avatar.html
+        window.location.href = "avatar.html";
+        return;
       }
-    } catch (err) {
-      console.error("[login] erro ao buscar doc por uid:", err);
+
+      const nome = data.nome || user.email;
+      showPopup(`Bem-vinda de volta, ${nome}!`);
+      setTimeout(() => {
+        window.location.href = "home.html";
+      }, 1600);
+    } else {
+      showPopup("Erro: conta não encontrada.");
     }
-
-    // 2) fallback: busca por email no campo 'email' da coleção usuarios
-    if (!nome) {
-      try {
-        const q = query(collection(db, "usuarios"), where("email", "==", user.email));
-        const qs = await getDocs(q);
-        console.log("[login] query por email - tamanho:", qs.size);
-        if (!qs.empty) {
-          qs.forEach(docSnap => {
-            const d = docSnap.data();
-            console.log("[login] doc achado por email:", docSnap.id, d);
-            if (!nome && d && d.nome) nome = String(d.nome).trim();
-          });
-        }
-      } catch (err) {
-        console.error("[login] erro ao buscar por email:", err);
-      }
-    }
-
-    // 3) outros fallbacks
-    if (!nome && user.displayName) nome = user.displayName;
-    if (!nome) nome = user.email; // último recurso
-
-    showPopup(`Bem-vinda de volta, ${nome}!`);
-    setTimeout(() => {
-      window.location.href = "home.html";
-    }, 1600);
 
   } catch (error) {
     console.error("Erro no login:", error.code, error.message);
-
-    let mensagemAmigavel = "Ocorreu um erro. Tente novamente.";
+    let mensagemAmigavel = "Erro ao fazer login. Tente novamente.";
 
     switch (error.code) {
       case "auth/invalid-credential":
       case "auth/wrong-password":
-        mensagemAmigavel = "Senha incorreta. Verifique e tente novamente.";
+        mensagemAmigavel = "Senha incorreta.";
         break;
       case "auth/user-not-found":
         mensagemAmigavel = "Não encontramos uma conta com este e-mail.";
@@ -93,10 +64,7 @@ form.addEventListener('submit', async (e) => {
       case "auth/missing-password":
         mensagemAmigavel = "Digite sua senha para continuar.";
         break;
-      default:
-        mensagemAmigavel = "Erro ao fazer login. Por favor, tente novamente.";
     }
-
     showPopup(mensagemAmigavel);
   }
 });

@@ -45,7 +45,16 @@
         </div>
 
         <div class="user-avatar">
-            <img src="./img/avatar_usuario.png" alt="Avatar" class="perfil-avatar" id="perfil-foto" />
+            <a href="perfil.html">
+                <div class="avatar-loader-container">
+                    <img id="perfil-avatar">
+                    <div class="loader">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </a>
         </div>
     </header>
 
@@ -56,10 +65,29 @@
         <div class="botoes">
             <div class="menu-user">
                 <a href="perfil.html">
-                    <img id="menu-avatar" src="./img/avatar_usuario.png" alt="Avatar do usuário">
+                    <div class="avatar-loader-container">
+                        <img id="menu-avatar" src="./img/avatar_usuario.png" alt="Avatar do usuário">
+                        <div class="loader">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
                 </a>
-                <h3 id="menu-nome">Nome Usuário</h3>
-                <span id="menu-email">email@dominio.com</span>
+                <h3 id="menu-nome">
+                    <div class="loader">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </h3>
+                <span id="menu-email">
+                    <div class="loader">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </span>
             </div>
 
             <a href="consultoria.html" class="botao-link">
@@ -125,6 +153,7 @@
     <script type="module" src="./js/globals.js"></script>
     <script type="module" src="./js/eventos.js"></script>
     <script type="module" src="./js/pesquisa.js"></script>
+    <script type="module" src="./js/carregar-avatar.js"></script>
 
 </body>
 
