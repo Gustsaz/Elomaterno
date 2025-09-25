@@ -8,7 +8,7 @@ const tagEl = document.querySelector(".perfil-tag");
 const emailEl = document.querySelector(".card p:nth-of-type(1)");
 const cidadeEl = document.querySelector(".card p:nth-of-type(2)");
 const filhosEl = document.querySelector(".card p:nth-of-type(3)");
-const fotoEl = document.getElementById("perfil-foto");
+const fotoEl = document.querySelector(".perfil-top .perfil-avatar");
 const btnEditar = document.querySelector(".btn-editar");
 
 // Modal
@@ -42,7 +42,12 @@ onAuthStateChanged(auth, async (user) => {
 
         if (dados.fotoURL) {
           fotoEl.src = dados.fotoURL;
+        } else if (dados.avatar) {
+          fotoEl.src = dados.avatar;
+        } else {
+          fotoEl.src = "./img/avatar_usuario.png";
         }
+
       }
     } catch (err) {
       console.error("Erro ao carregar perfil:", err);

@@ -174,251 +174,282 @@
   </div>
 
   <script type="module">
-    import { auth, db } from "./js/firebase.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import {
-      doc, getDoc, collection, addDoc, serverTimestamp,
-      query, orderBy, onSnapshot,
-      setDoc, deleteDoc, updateDoc, increment
-    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+  import { auth, db } from "./js/firebase.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import {
+    doc, getDoc, collection, addDoc, serverTimestamp,
+    query, orderBy, onSnapshot,
+    setDoc, deleteDoc, updateDoc, increment
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    const params = new URLSearchParams(window.location.search);
-    const postId = params.get("postId");
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("postId");
 
-    const postContainer = document.getElementById("post-container");
-    const respostasContainer = document.querySelector(".respostas");
-    const campoComentario = document.querySelector(".comment-field");
-    const btnEnviar = document.querySelector(".send-btn");
+  const postContainer = document.getElementById("post-container");
+  const respostasContainer = document.querySelector(".respostas");
+  const campoComentario = document.querySelector(".comment-field");
+  const btnEnviar = document.querySelector(".send-btn");
 
-    let usuarioLogado = null;
-    let comentarioParaEditar = null;
-    let comentarioParaExcluir = null;
+  let usuarioLogado = null;
+  let comentarioParaEditar = null;
+  let comentarioParaExcluir = null;
 
-    onAuthStateChanged(auth, (user) => {
-      usuarioLogado = user;
-      ajustarLikesVisuais();
-    });
+  onAuthStateChanged(auth, (user) => {
+    usuarioLogado = user;
+    ajustarLikesVisuais();
+  });
 
-    async function carregarPost() {
-      if (!postId) return;
-      const snap = await getDoc(doc(db, "posts", postId));
-      if (!snap.exists()) {
-        postContainer.innerHTML = "<p>Post não encontrado.</p>";
-        return;
-      }
-
-      const p = snap.data();
-      const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
-
-      const linkPerfil = usuarioLogado && usuarioLogado.uid === p.autorId
-        ? "perfil.html"
-        : `perfilPessoa.html?uid=${p.autorId}`;
-
-      postContainer.innerHTML = `
-        <a href="forum.html" class="back-btn">
-          <img src="./img/back_icon.png" alt="Voltar ao fórum">
-        </a>
-        <div class="post-header">
-          <img src="${p.autorFoto}" alt="Avatar" class="post-avatar">
-          <div class="post-info">
-            <h4><a href="${linkPerfil}">${p.autorNome}</a></h4>
-            <span class="post-date">${dataFormatada}</span>
-          </div>
-        </div>
-        <h2 class="post-title">${p.titulo}</h2>
-        <p class="post-content">${p.conteudo}</p>
-
-        <div class="like-wrap" data-type="post" data-id="${postId}">
-          <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
-          <span class="like-count">${p.likes || 0}</span>
-        </div>
-      `;
-      ajustarLikesVisuais();
+  async function carregarPost() {
+    if (!postId) return;
+    const snap = await getDoc(doc(db, "posts", postId));
+    if (!snap.exists()) {
+      postContainer.innerHTML = "<p>Post não encontrado.</p>";
+      return;
     }
 
-    function carregarComentarios() {
-      const q = query(collection(db, "posts", postId, "comentarios"), orderBy("data", "asc"));
+    const p = snap.data();
+    const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
 
-      onSnapshot(q, (snapshot) => {
-        respostasContainer.innerHTML = "";
-        snapshot.forEach((docSnap) => {
-          const c = docSnap.data();
-          const dataFormatada = c.data?.toDate().toLocaleString("pt-BR") || "Agora";
+    const linkPerfil = usuarioLogado && usuarioLogado.uid === p.autorId
+      ? "perfil.html"
+      : `perfilPessoa.html?uid=${p.autorId}`;
 
-          const linkPerfil = usuarioLogado && usuarioLogado.uid === c.autorId
-            ? "perfil.html"
-            : `perfilPessoa.html?uid=${c.autorId}`;
+    // buscar avatar atualizado do autor do post
+    let autorFoto = p.autorFoto || "./img/account_icon.png";
+    try {
+      const autorSnap = await getDoc(doc(db, "usuarios", p.autorId));
+      if (autorSnap.exists()) {
+        const dadosAutor = autorSnap.data();
+        if (dadosAutor.fotoURL) autorFoto = dadosAutor.fotoURL;
+        else if (dadosAutor.avatar) autorFoto = dadosAutor.avatar;
+      }
+    } catch (err) {
+      console.error("Erro ao buscar avatar do autor do post:", err);
+    }
 
-          respostasContainer.innerHTML += `
-            <div class="post-card resposta-card" data-id="${docSnap.id}">
-              <div class="post-header">
-                <img src="${c.autorFoto}" alt="Avatar" class="post-avatar">
-                <div class="post-info">
-                  <h4><a href="${linkPerfil}">${c.autorNome}</a></h4>
-                  <span class="post-date">${dataFormatada}</span>
-                </div>
+    postContainer.innerHTML = `
+      <a href="forum.html" class="back-btn">
+        <img src="./img/back_icon.png" alt="Voltar ao fórum">
+      </a>
+      <div class="post-header">
+        <img src="${autorFoto}" alt="Avatar" class="post-avatar">
+        <div class="post-info">
+          <h4><a href="${linkPerfil}">${p.autorNome}</a></h4>
+          <span class="post-date">${dataFormatada}</span>
+        </div>
+      </div>
+      <h2 class="post-title">${p.titulo}</h2>
+      <p class="post-content">${p.conteudo}</p>
+
+      <div class="like-wrap" data-type="post" data-id="${postId}">
+        <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+        <span class="like-count">${p.likes || 0}</span>
+      </div>
+    `;
+    ajustarLikesVisuais();
+  }
+
+  function carregarComentarios() {
+    const q = query(collection(db, "posts", postId, "comentarios"), orderBy("data", "asc"));
+
+    onSnapshot(q, (snapshot) => {
+      respostasContainer.innerHTML = "";
+      snapshot.forEach(async (docSnap) => {
+        const c = docSnap.data();
+        const dataFormatada = c.data?.toDate().toLocaleString("pt-BR") || "Agora";
+
+        const linkPerfil = usuarioLogado && usuarioLogado.uid === c.autorId
+          ? "perfil.html"
+          : `perfilPessoa.html?uid=${c.autorId}`;
+
+        // buscar avatar atualizado do autor do comentário
+        let autorFoto = c.autorFoto || "./img/account_icon.png";
+        try {
+          const autorSnap = await getDoc(doc(db, "usuarios", c.autorId));
+          if (autorSnap.exists()) {
+            const dadosAutor = autorSnap.data();
+            if (dadosAutor.fotoURL) autorFoto = dadosAutor.fotoURL;
+            else if (dadosAutor.avatar) autorFoto = dadosAutor.avatar;
+          }
+        } catch (err) {
+          console.error("Erro ao buscar avatar do comentário:", err);
+        }
+
+        respostasContainer.innerHTML += `
+          <div class="post-card resposta-card" data-id="${docSnap.id}">
+            <div class="post-header">
+              <img src="${autorFoto}" alt="Avatar" class="post-avatar">
+              <div class="post-info">
+                <h4><a href="${linkPerfil}">${c.autorNome}</a></h4>
+                <span class="post-date">${dataFormatada}</span>
               </div>
-              <p class="post-content">${c.conteudo}</p>
-
-              <div class="like-wrap" data-type="comentario" data-id="${docSnap.id}">
-                <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
-                <span class="like-count">${c.likes || 0}</span>
-              </div>
-
-              ${usuarioLogado && usuarioLogado.uid === c.autorId ? `
-                <div class="coment-actions">
-                  <button class="edit-coment-btn">Editar</button>
-                  <button class="del-coment-btn">Excluir</button>
-                </div>
-              ` : ""}
             </div>
-          `;
-        });
-        ajustarLikesVisuais();
+            <p class="post-content">${c.conteudo}</p>
+
+            <div class="like-wrap" data-type="comentario" data-id="${docSnap.id}">
+              <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+              <span class="like-count">${c.likes || 0}</span>
+            </div>
+
+            ${usuarioLogado && usuarioLogado.uid === c.autorId ? `
+              <div class="coment-actions">
+                <button class="edit-coment-btn">Editar</button>
+                <button class="del-coment-btn">Excluir</button>
+              </div>
+            ` : ""}
+          </div>
+        `;
       });
+      ajustarLikesVisuais();
+    });
+  }
+
+  btnEnviar.addEventListener("click", async () => {
+    const conteudo = campoComentario.value.trim();
+    if (!conteudo) return;
+    if (!usuarioLogado) {
+      alert("Você precisa estar logado para comentar.");
+      return;
     }
 
-    btnEnviar.addEventListener("click", async () => {
-      const conteudo = campoComentario.value.trim();
-      if (!conteudo) return;
-      if (!usuarioLogado) {
-        alert("Você precisa estar logado para comentar.");
-        return;
-      }
+    const usuarioSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
+    const dadosUsuario = usuarioSnap.exists() ? usuarioSnap.data() : {};
 
-      const usuarioSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
-      const dadosUsuario = usuarioSnap.exists() ? usuarioSnap.data() : {};
+    let autorFoto = "./img/account_icon.png";
+    if (dadosUsuario.fotoURL) autorFoto = dadosUsuario.fotoURL;
+    else if (dadosUsuario.avatar) autorFoto = dadosUsuario.avatar;
 
-      await addDoc(collection(db, "posts", postId, "comentarios"), {
-        autorId: usuarioLogado.uid,
-        autorNome: dadosUsuario.nome || "Usuário",
-        autorFoto: dadosUsuario.fotoURL || "./img/account_icon.png",
-        conteudo,
-        likes: 0,
-        data: serverTimestamp()
-      });
-      campoComentario.value = "";
+    await addDoc(collection(db, "posts", postId, "comentarios"), {
+      autorId: usuarioLogado.uid,
+      autorNome: dadosUsuario.nome || "Usuário",
+      autorFoto,
+      conteudo,
+      likes: 0,
+      data: serverTimestamp()
     });
+    campoComentario.value = "";
+  });
 
-    document.body.addEventListener("click", async (e) => {
-      const likeBtn = e.target.closest(".like-icon");
-      if (!likeBtn) return;
-      if (!usuarioLogado) { alert("Você precisa estar logado para curtir."); return; }
+  document.body.addEventListener("click", async (e) => {
+    const likeBtn = e.target.closest(".like-icon");
+    if (!likeBtn) return;
+    if (!usuarioLogado) { alert("Você precisa estar logado para curtir."); return; }
 
-      const wrap = likeBtn.closest(".like-wrap");
-      const tipo = wrap.getAttribute("data-type");
-      const id = wrap.getAttribute("data-id");
-      const countEl = wrap.querySelector(".like-count");
-      const current = parseInt(countEl.textContent, 10) || 0;
+    const wrap = likeBtn.closest(".like-wrap");
+    const tipo = wrap.getAttribute("data-type");
+    const id = wrap.getAttribute("data-id");
+    const countEl = wrap.querySelector(".like-count");
+    const current = parseInt(countEl.textContent, 10) || 0;
 
-      try {
-        if (tipo === "post") {
-          const likeRef = doc(db, "posts", postId, "likes", usuarioLogado.uid);
-          const likeSnap = await getDoc(likeRef);
-          if (likeSnap.exists()) {
-            await deleteDoc(likeRef);
-            await updateDoc(doc(db, "posts", postId), { likes: increment(-1) });
-            countEl.textContent = Math.max(0, current - 1);
-            likeBtn.src = "./img/like_icon.png";
-          } else {
-            await setDoc(likeRef, { curtido: true });
-            await updateDoc(doc(db, "posts", postId), { likes: increment(1) });
-            countEl.textContent = current + 1;
-            likeBtn.src = "./img/like_curtido.png";
-          }
-        } else if (tipo === "comentario") {
-          const likeRef = doc(db, "posts", postId, "comentarios", id, "likes", usuarioLogado.uid);
-          const likeSnap = await getDoc(likeRef);
-          if (likeSnap.exists()) {
-            await deleteDoc(likeRef);
-            await updateDoc(doc(db, "posts", postId, "comentarios", id), { likes: increment(-1) });
-            countEl.textContent = Math.max(0, current - 1);
-            likeBtn.src = "./img/like_icon.png";
-          } else {
-            await setDoc(likeRef, { curtido: true });
-            await updateDoc(doc(db, "posts", postId, "comentarios", id), { likes: increment(1) });
-            countEl.textContent = current + 1;
-            likeBtn.src = "./img/like_curtido.png";
-          }
-        }
-      } catch (err) { console.error("Erro ao curtir:", err); }
-    });
-
-    respostasContainer.addEventListener("click", async (e) => {
-      const card = e.target.closest(".resposta-card");
-      if (!card) return;
-      const comentId = card.dataset.id;
-
-      if (e.target.classList.contains("edit-coment-btn")) {
-        comentarioParaEditar = comentId;
-        const snap = await getDoc(doc(db, "posts", postId, "comentarios", comentId));
-        if (snap.exists()) {
-          document.getElementById("edit-coment-text").value = snap.data().conteudo;
-          document.getElementById("modal-edit-coment").style.display = "flex";
-        }
-      }
-
-      if (e.target.classList.contains("del-coment-btn")) {
-        comentarioParaExcluir = comentId;
-        document.getElementById("modal-del-coment").style.display = "flex";
-      }
-    });
-
-    document.getElementById("form-edit-coment").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!comentarioParaEditar) return;
-      const novoTexto = document.getElementById("edit-coment-text").value.trim();
-      if (!novoTexto) return;
-
-      await updateDoc(doc(db, "posts", postId, "comentarios", comentarioParaEditar), {
-        conteudo: novoTexto
-      });
-
-      comentarioParaEditar = null;
-      document.getElementById("modal-edit-coment").style.display = "none";
-    });
-
-    document.getElementById("cancelar-edit-coment").addEventListener("click", () => {
-      comentarioParaEditar = null;
-      document.getElementById("modal-edit-coment").style.display = "none";
-    });
-
-    document.getElementById("confirmar-del-coment").addEventListener("click", async () => {
-      if (comentarioParaExcluir) {
-        await deleteDoc(doc(db, "posts", postId, "comentarios", comentarioParaExcluir));
-        comentarioParaExcluir = null;
-      }
-      document.getElementById("modal-del-coment").style.display = "none";
-    });
-
-    document.getElementById("cancelar-del-coment").addEventListener("click", () => {
-      comentarioParaExcluir = null;
-      document.getElementById("modal-del-coment").style.display = "none";
-    });
-
-    async function ajustarLikesVisuais() {
-      if (!usuarioLogado) return;
-
-      const postLikeImg = document.querySelector('#post-container .like-icon');
-      if (postLikeImg) {
+    try {
+      if (tipo === "post") {
         const likeRef = doc(db, "posts", postId, "likes", usuarioLogado.uid);
-        const s = await getDoc(likeRef);
-        postLikeImg.src = s.exists() ? "./img/like_curtido.png" : "./img/like_icon.png";
+        const likeSnap = await getDoc(likeRef);
+        if (likeSnap.exists()) {
+          await deleteDoc(likeRef);
+          await updateDoc(doc(db, "posts", postId), { likes: increment(-1) });
+          countEl.textContent = Math.max(0, current - 1);
+          likeBtn.src = "./img/like_icon.png";
+        } else {
+          await setDoc(likeRef, { curtido: true });
+          await updateDoc(doc(db, "posts", postId), { likes: increment(1) });
+          countEl.textContent = current + 1;
+          likeBtn.src = "./img/like_curtido.png";
+        }
+      } else if (tipo === "comentario") {
+        const likeRef = doc(db, "posts", postId, "comentarios", id, "likes", usuarioLogado.uid);
+        const likeSnap = await getDoc(likeRef);
+        if (likeSnap.exists()) {
+          await deleteDoc(likeRef);
+          await updateDoc(doc(db, "posts", postId, "comentarios", id), { likes: increment(-1) });
+          countEl.textContent = Math.max(0, current - 1);
+          likeBtn.src = "./img/like_icon.png";
+        } else {
+          await setDoc(likeRef, { curtido: true });
+          await updateDoc(doc(db, "posts", postId, "comentarios", id), { likes: increment(1) });
+          countEl.textContent = current + 1;
+          likeBtn.src = "./img/like_curtido.png";
+        }
       }
+    } catch (err) { console.error("Erro ao curtir:", err); }
+  });
 
-      const commentLikeImgs = document.querySelectorAll('.respostas .like-wrap');
-      for (const wrap of commentLikeImgs) {
-        const img = wrap.querySelector(".like-icon");
-        const comentId = wrap.getAttribute('data-id');
-        const likeRef = doc(db, "posts", postId, "comentarios", comentId, "likes", usuarioLogado.uid);
-        const s = await getDoc(likeRef);
-        img.src = s.exists() ? "./img/like_curtido.png" : "./img/like_icon.png";
+  respostasContainer.addEventListener("click", async (e) => {
+    const card = e.target.closest(".resposta-card");
+    if (!card) return;
+    const comentId = card.dataset.id;
+
+    if (e.target.classList.contains("edit-coment-btn")) {
+      comentarioParaEditar = comentId;
+      const snap = await getDoc(doc(db, "posts", postId, "comentarios", comentId));
+      if (snap.exists()) {
+        document.getElementById("edit-coment-text").value = snap.data().conteudo;
+        document.getElementById("modal-edit-coment").style.display = "flex";
       }
     }
 
-    carregarPost();
-    carregarComentarios();
-  </script>
+    if (e.target.classList.contains("del-coment-btn")) {
+      comentarioParaExcluir = comentId;
+      document.getElementById("modal-del-coment").style.display = "flex";
+    }
+  });
+
+  document.getElementById("form-edit-coment").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!comentarioParaEditar) return;
+    const novoTexto = document.getElementById("edit-coment-text").value.trim();
+    if (!novoTexto) return;
+
+    await updateDoc(doc(db, "posts", postId, "comentarios", comentarioParaEditar), {
+      conteudo: novoTexto
+    });
+
+    comentarioParaEditar = null;
+    document.getElementById("modal-edit-coment").style.display = "none";
+  });
+
+  document.getElementById("cancelar-edit-coment").addEventListener("click", () => {
+    comentarioParaEditar = null;
+    document.getElementById("modal-edit-coment").style.display = "none";
+  });
+
+  document.getElementById("confirmar-del-coment").addEventListener("click", async () => {
+    if (comentarioParaExcluir) {
+      await deleteDoc(doc(db, "posts", postId, "comentarios", comentarioParaExcluir));
+      comentarioParaExcluir = null;
+    }
+    document.getElementById("modal-del-coment").style.display = "none";
+  });
+
+  document.getElementById("cancelar-del-coment").addEventListener("click", () => {
+    comentarioParaExcluir = null;
+    document.getElementById("modal-del-coment").style.display = "none";
+  });
+
+  async function ajustarLikesVisuais() {
+    if (!usuarioLogado) return;
+
+    const postLikeImg = document.querySelector('#post-container .like-icon');
+    if (postLikeImg) {
+      const likeRef = doc(db, "posts", postId, "likes", usuarioLogado.uid);
+      const s = await getDoc(likeRef);
+      postLikeImg.src = s.exists() ? "./img/like_curtido.png" : "./img/like_icon.png";
+    }
+
+    const commentLikeImgs = document.querySelectorAll('.respostas .like-wrap');
+    for (const wrap of commentLikeImgs) {
+      const img = wrap.querySelector(".like-icon");
+      const comentId = wrap.getAttribute('data-id');
+      const likeRef = doc(db, "posts", postId, "comentarios", comentId, "likes", usuarioLogado.uid);
+      const s = await getDoc(likeRef);
+      img.src = s.exists() ? "./img/like_curtido.png" : "./img/like_icon.png";
+    }
+  }
+
+  carregarPost();
+  carregarComentarios();
+</script>
+
 
   <script type="module" src="./js/globals.js"></script>
   <script type="module" src="./js/pesquisa.js"></script>
