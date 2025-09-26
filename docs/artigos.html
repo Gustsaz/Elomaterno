@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EloMaterno - Artigos</title>
+    <link rel="stylesheet" href="./css/header.css" />
+    <link rel="stylesheet" href="./css/artigos.css" />
+    <link rel="stylesheet" href="./css/globals.css">
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+    <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+
+    <header class="top-header">
+        <div class="left-section">
+            <div class="logo-area">
+                <a href="home.html" class="botao-link">
+                    <img src="./img/logo_icon.png" alt="Ícone Empresa" class="icon">
+                </a>
+                <span class="company-name">elomaterno</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="global-search" placeholder="Pesquisar...">
+                <button class="btn-search"><i class="fa fa-search"></i></button>
+                <button class="btn-filter"><i class="fa fa-sliders"></i></button>
+
+                <div id="filter-menu" class="filter-menu hidden">
+                    <label><input type="checkbox" value="todos" checked> Todos</label>
+                    <label><input type="checkbox" value="posts"> Posts</label>
+                    <label><input type="checkbox" value="artigos"> Artigos</label>
+                    <label><input type="checkbox" value="eventos"> Eventos</label>
+                    <label><input type="checkbox" value="perfis"> Perfis</label>
+                </div>
+
+                <div id="search-results" class="search-results hidden"></div>
+            </div>
+
+        </div>
+
+        <div class="user-avatar">
+            <a href="perfil.html">
+                <div class="avatar-loader-container">
+                    <img id="perfil-avatar">
+                    <div class="loader">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </header>
+
+    <button id="menuToggle" class="menu-toggle">☰</button>
+
+    <div class="botoes">
+        <div class="menu-user">
+            <a href="perfil.html">
+                <div class="avatar-loader-container">
+                    <img id="menu-avatar" src="./img/avatar_usuario.png" alt="Avatar do usuário">
+                    <div class="loader">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </a>
+            <h3 id="menu-nome">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </h3>
+            <span id="menu-email">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </span>
+        </div>
+
+        <a href="consultoria.html" class="botao-link">
+            <div class="botao-item">
+                <i class="fa fa-comments"></i>
+                <span>Consultorias</span>
+            </div>
+        </a>
+
+        <a href="forum.html" class="botao-link">
+            <div class="botao-item">
+                <i class="fa fa-users"></i>
+                <span>Fórum</span>
+            </div>
+        </a>
+
+        <a href="home.html" class="botao-link home-btn">
+            <div class="botao-item ativo">
+                <i class="fa fa-home"></i>
+                <span>Home</span>
+            </div>
+        </a>
+
+        <a href="artigos.html" class="botao-link">
+            <div class="botao-item">
+                <i class="fa fa-book"></i>
+                <span>Artigos</span>
+            </div>
+        </a>
+
+        <a href="calendario.html" class="botao-link">
+            <div class="botao-item">
+                <i class="fa fa-calendar"></i>
+                <span>Calendário</span>
+            </div>
+        </a>
+
+        <a href="eventos.html" class="botao-link">
+            <div class="botao-item">
+                <i class="fa fa-bell"></i>
+                <span>Eventos</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="categorias">
+        <button class="categoria ativa" data-categoria="legislativos">Legislativos</button>
+        <button class="categoria" data-categoria="educacionais">Educacionais</button>
+        <button class="categoria" data-categoria="dicas">Dicas</button>
+        <button class="categoria" data-categoria="posts">Posts</button>
+    </div>
+
+    <div class="cards-container">
+        <div class="card">
+            <img src="./img/ftmae_icon.png" alt="Imagem 1" class="card-img">
+            <div class="card-text">
+                <h3>O que eu posso fazer se eu não receber a pensão do meu filho?</h3>
+                <a href="artigos/pensao-nao-recebi.html">Saiba mais…</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="./img/direitotrabalho_icon.png" alt="Imagem 2" class="card-img">
+            <div class="card-text">
+                <h3>Direitos das mães no trabalho</h3>
+                <p>Aqui você mãe fica por dentro de seus direitos trabalhistas.</p>
+                <a href="artigos/direitos-mae-trabalho.html">Saiba mais…</a>
+            </div>
+        </div>
+    </div>
+    <div class="articles-wrapper">
+        <!-- loader inicial -->
+        <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+    
+    <!-- 
+    <div class="articles-grid" data-categoria="legislativos">
+        <div class="article-card">
+            <img src="./img/art1_img.png" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>Pensão alimentícia</h3>
+                <p>Artigo sobre as informações jurídicas de Pensão.</p>
+                <a href="artigos/pensao-alimenticia.html">Saiba mais…</a>
+            </div>
+        </div>
+
+        <div class="article-card">
+            <img src="./img/art3_img.webp" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>O que a mãe solo precisa saber.</h3>
+                <p>Aborda direitos como licença-maternidade de 120 dias e estabilidade no emprego por até 5 meses após o
+                    parto.</p>
+                <a href="artigos/mae-solo-saber.html">Saiba mais…</a>
+            </div>
+        </div>
+        <div class="article-card">
+            <img src="./img/art4_img.png" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>Posso registrar meu filho sozinha sendo mãe solteira?</h3>
+                <p>Orientações sobre o registro civil da criança feito apenas pela mãe, incluindo prazos legais. </p>
+                <a href="artigos/registrar-filho-sozinha.html">Saiba mais…</a>
+            </div>
+        </div>
+        <div class="article-card">
+            <img src="./img/art5_img.jpg" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>Senado aprova projeto de lei com benefícios para mães solo</h3>
+                <p>Informa sobre um PL voltado para mães solo com renda baixa e dependentes registrados no CadÚnico.</p>
+                <a href="artigos/pl-beneficios-maes-solo.html">Saiba mais…</a>
+            </div>
+        </div>
+        <div class="article-card">
+            <img src="./img/art6_img.jpg" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>Mãe desempregada tem direito ao Salário-Maternidade?</h3>
+                <p>Esclarece que até mães desempregadas têm direito ao benefício — importante para seguradas do INSS.
+                </p>
+                <a href="artigos/salario-maternidade-desempregada.html">Saiba mais…</a>
+            </div>
+        </div>
+
+        <div class="article-card">
+            <img src="./img/art9_img.jpeg" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>Guarda compartilhada</h3>
+                <p>Como funciona e quais os benefícios para os filhos.</p>
+                <a href="artigos/guarda-compartilhada.html">Saiba mais…</a>
+            </div>
+        </div>
+    </div>
+
+   
+    <div class="articles-grid hidden" data-categoria="educacionais">
+        <div class="article-card">
+            <img src="./img/art7_img.jpeg" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>O direito à vaga em creche pública para mães de bebês e crianças.</h3>
+                <p>Aborda o dever legal do Estado em garantir vagas em creches públicas, especialmente em casos de mães
+                    solo que precisam trabalhar ou estudar.</p>
+                <a href="artigos/vaga-creche-publica.html">Saiba mais…</a>
+            </div>
+        </div>
+
+        <div class="article-card">
+            <img src="./img/art8_img.jpg" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>Maternidade Solo</h3>
+                <p>Analisa o papel do Estado no provimento de creches e pré-escolas como forma de apoio essencial à
+                    maternidade solo, com base na Constituição Federal e na LDB.</p>
+                <a href="artigos/maternidade-solo.html">Saiba mais…</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="articles-grid hidden" data-categoria="dicas">
+        <div class="article-card">
+            <img src="./img/art10_img.webp" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>Dica de rotina</h3>
+                <p>Como organizar o dia a dia com recém-nascidos.</p>
+            </div>
+        </div>
+
+        <div class="article-card">
+            <img src="./img/art11_img.jpg" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>História inspiradora</h3>
+                <p>Um relato emocionante de superação materna.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="articles-grid hidden" data-categoria="posts">
+        <div class="article-card">
+            <img src="./img/art2_img.webp" alt="Imagem artigo" class="article-img">
+            <div class="article-body">
+                <h3>Paternidade ativa</h3>
+                <p>Palestra voltada para pais presentes na criação.</p>
+            </div>
+        </div>
+
+    </div> 
+
+-->
+
+    <script type="module" src="./js/artigos.js"></script>
+    <script type="module" src="./js/globals.js"></script>
+    <script type="module" src="./js/pesquisa.js"></script>
+    <script type="module" src="./js/carregar-avatar.js"></script>
+
+</body>
+
+</html>
