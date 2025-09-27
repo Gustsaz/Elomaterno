@@ -1,18 +1,12 @@
 body {
   font-family: 'Nunito', sans-serif;
   margin: 0;
-  background-color: #f7f2fc;
+  background-color: var(--bg-color);
 }
 a {
-  color: #583E8E !important;
+  color: var(--accent-color) !important;
   font-size: 14px;
   text-decoration: none;
-}
-
-.divisor {
-  height: 2px;
-  background-color: #ddd;
-  margin: 10px 0;
 }
 
 .categorias {
@@ -24,25 +18,25 @@ a {
 }
 
 .categoria {
-  background: white;
-  border: 2px solid #ccc;
+  background: var(--card-bg);
+  border: 2px solid var(--accent-color);
   border-radius: 25px;
   padding: 10px 20px;
   font-size: 14px;
   cursor: pointer;
-  color: #333;
+  color: var(--text-color);
   transition: all 0.3s;
   font-family: 'Nunito', sans-serif;
 }
 
 .categoria:hover {
-  background-color: #e0d6f6;
+  background-color: var(--hover-bg);
 }
 
 .categoria.ativa {
-  background-color: #583E8E;
+  background-color: var(--accent-color);
   color: white;
-  border-color: #583E8E;
+  border-color: var(--accent-color);
 }
 
 .hidden {
@@ -59,7 +53,7 @@ a {
 }
 
 .card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -95,16 +89,15 @@ a {
 
 .card-text h3 {
   font-size: 20px;
-  color: #583E8E;
+  color: var(--accent-color);
   margin: 0;
 }
 
 .card-text p {
   font-size: 15px;
-  color: #444;
+  color: var(--text-color);
   margin: 8px 0;
 }
-
 
 .articles-grid {
   display: grid;
@@ -118,7 +111,7 @@ a {
 }
 
 .article-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -144,13 +137,13 @@ a {
 
 .article-body h3 {
   font-size: 16px;
-  color: #583E8E;
+  color: var(--accent-color);
   margin-bottom: 6px;
 }
 
 .article-body p {
   font-size: 14px;
-  color: #555;
+  color: var(--text-color2);
 }
 
 .article-meta {

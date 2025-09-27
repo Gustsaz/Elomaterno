@@ -183,7 +183,7 @@ body {
 }
 
 .borda-roxa {
-    border: 2px solid #6C4BBF;
+    border: 2px solid var(--secondary-color);
 }
 
 .grad-roxo {

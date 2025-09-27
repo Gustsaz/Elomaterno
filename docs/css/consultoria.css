@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: #f7f5ff;
+    background-color: var(--bg-color);
 }
 
 /* animação moderna e sutil */
@@ -63,7 +63,7 @@ body {
 
 .consultoria-text h2 {
     font-size: 28px;
-    color: #583E8E;
+    color: var(--accent-color);
     line-height: 1.4;
     font-weight: 600;
 }
@@ -88,7 +88,7 @@ body {
 }
 
 .agendar-btn {
-    background-color: #826FAF;
+    background-color: var(--botaoconsultoria);
     color: #fff;
     border: none;
     animation-delay: 0.48s;

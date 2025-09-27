@@ -1,12 +1,7 @@
-﻿:root {
-  --rox: #583E8E;
-  --bg: #F9F7FC;
-}
-
-body {
-  background-color: #f6f2fc;
+﻿body {
+  background-color: var(--bg-color);
   font-family: Nunito, sans-serif;
-  color: #333;
+  color: var(--text-color);
   overflow-x: none;
 }
 
@@ -22,7 +17,7 @@ body {
 .forum-search {
   display: flex;
   align-items: center;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 20px;
   padding: 6px 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -32,7 +27,6 @@ body {
   transform: scale(1.15);
   transition: transform 0.2s ease;
 }
-
 
 .forum-search input {
   flex: 1;
@@ -90,7 +84,7 @@ body {
 
 .post-card {
   position: relative;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 1rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -100,12 +94,12 @@ body {
 }
 
 .post-card:hover {
-  background-color: #f2f2f2;
+  background-color: var(--postbackground);
   /* cinza clarinho no hover */
 }
 
 .post-title {
-  color: #583E8E;
+  color: var(--accent-color);
   margin-bottom: 10px;
   font-size: 18px;
 }
@@ -128,12 +122,12 @@ body {
   display: block;
   font-weight: bold;
   font-size: 14px;
-  color: #583E8E;
+  color: var(--accent-color);
 }
 
 .post-date {
   font-size: 12px;
-  color: #666;
+  color: var(--datapost);
 }
 
 .post-content {
@@ -173,7 +167,7 @@ body {
 .like-count {
   font-size: 13px;
   font-weight: 700;
-  color: #583E8E;
+  color: var(--accent-color);
 }
 
 .comment-icon {
@@ -188,7 +182,7 @@ body {
   right: 24px;
   padding: 14px 24px;
   font-size: 16px;
-  background-color: var(--rox);
+  background-color: var(--accent-color);
   color: #fff;
   font-weight: 700;
   border: none;
@@ -237,7 +231,7 @@ body {
 }
 
 .modal-content {
-  background: white;
+  background: var(--bg-color);
   padding: 2rem;
   border-radius: 12px;
   width: 350px;
@@ -247,7 +241,7 @@ body {
 
 .modal-content h3 {
   margin-top: 0;
-  color: #583E8E;
+  color: var(--accent-color);
 }
 
 .modal-content label {
@@ -260,7 +254,7 @@ body {
 .modal-content textarea {
   width: 100%;
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--card-bg);
   border-radius: 6px;
   margin-bottom: 1rem;
   resize: vertical;
@@ -281,11 +275,11 @@ body {
 }
 
 .modal-actions button[type="button"] {
-  background: #ddd;
+  background: white;
 }
 
 .modal-actions button[type="submit"] {
-  background: #583E8E;
+  background: var(--accent-color);
   color: white;
 }
 
@@ -309,7 +303,7 @@ body {
 
 .edit-btn {
   background-color: #f3eefc;
-  color: #583E8E;
+  color: var(--accent-color);
 }
 
 .edit-btn:hover {
@@ -355,7 +349,7 @@ body {
   cursor: pointer;
   font-weight: normal;
   font-size: 14px;
-  color: #333;
+  color: var(--text-color);
   user-select: none;
 }
 
@@ -367,15 +361,15 @@ body {
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  border: 2px solid var(--rox);
+  border: 2px solid var(--accent-color);
   border-radius: 6px;
   background: #fff;
   transition: all 0.2s ease;
 }
 
 #anonimo-checkbox:checked + span::before {
-  background: var(--rox);
-  border-color: var(--rox);
+  background: var(--accent-color);
+  border-color: var(--accent-color);
 }
 
 #anonimo-checkbox:checked + span::after {
