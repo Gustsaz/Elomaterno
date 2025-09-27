@@ -1,54 +1,3 @@
-:root {
-  /* === CORES PRINCIPAIS === */
-  --primary-color: #7c69a9;
-  --primary-color-dark: #4B2C82;
-  /* títulos, destaques */
-  --primary-color-darker: #3E2A72;
-  /* títulos secundários */
-  --secondary-color: #6C4BBF;
-  /* links, bordas roxas */
-  --accent-color: #583E8E;
-  /* botões de ação */
-  --muted-accent: #7B6AAE;
-  /* datas, textos suaves */
-  /* === TEXTO E FUNDO === */
-  --text-color: #333333;
-  --text-color-light: #443A66;
-  --bg-color: #F9F7FF;
-  --card-bg: #ffffff;
-  --muted-bg: #F3ECFF;
-  /* fundos suaves como like-wrap, gradientes */
-  /* === EXTRAS === */
-  --depoimento-bg: #E7DBFB;
-  --border-color: rgba(108, 75, 191, 0.18);
-  --shadow-accent-strong: rgba(88, 62, 142, 0.5);
-  --shadow-accent-soft: rgba(88, 62, 142, 0.3);
-  --border-light: #d6d1e9;
-  --border-neutral: #cccccc;
-  --hover-bg: #f0f0f0;
-  --shadow-accent-strong: rgba(88, 62, 142, 0.5);
-  --shadow-accent-soft: rgba(88, 62, 142, 0.3);
-}
-
-[data-theme="dark"] {
-  /* === CORES PRINCIPAIS ESCURO === */
-  --primary-color: #a9a1c6;
-  --primary-color-dark: #b39ddb;
-  --primary-color-darker: #d1c4e9;
-  --secondary-color: #b39ddb;
-  --accent-color: #9c88d9;
-  --muted-accent: #9c8fcf;
-  /* === TEXTO E FUNDO ESCURO === */
-  --text-color: #f5f5f5;
-  --text-color-light: #cccccc;
-  --bg-color: #121212;
-  --card-bg: #1f1f1f;
-  --muted-bg: #2a1f3d;
-  /* === EXTRAS === */
-  --depoimento-bg: #2d2140;
-  --border-color: rgba(180, 160, 230, 0.25);
-}
-
 @font-face {
   font-family: "Nunito";
   src: url("/docs/Nunito.ttf") format("truetype");
@@ -141,7 +90,7 @@ a {
     opacity: 1;
     animation: none;
   }
-
+  
 }
 
 .container {
@@ -561,7 +510,7 @@ a {
 
 .avatar-loader-container {
   position: relative;
-  width: 40px;
+  width: 40px; 
   height: 40px;
 }
 
@@ -584,7 +533,7 @@ a {
   z-index: 2;
 }
 
-.avatar-loader-container img.loaded+.loader {
+.avatar-loader-container img.loaded + .loader {
   display: none;
 }
 
@@ -602,8 +551,7 @@ a {
 
 @media (max-width: 768px) {
   .avatar-loader-container {
-    width: 80px;
-    /* ajusta o container */
+    width: 80px;          /* ajusta o container */
     height: 80px;
     display: flex;
     align-items: center;

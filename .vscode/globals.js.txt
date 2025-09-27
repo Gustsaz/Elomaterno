@@ -67,30 +67,3 @@ if (logoutBtn) {
     }
   });
 }
-
-// --- LÓGICA DO TEMA (CLARO/ESCURO) ---
-const themeToggleIcon = document.getElementById("theme-toggle-icon");
-const body = document.body;
-
-if (themeToggleIcon) {
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
-    body.setAttribute("data-theme", "dark");
-    themeToggleIcon.classList.remove("fa-moon");
-    themeToggleIcon.classList.add("fa-sun");
-  }
-
-  themeToggleIcon.addEventListener("click", function () {
-    if (body.hasAttribute("data-theme")) {
-      body.removeAttribute("data-theme");
-      localStorage.setItem("theme", "light");
-      themeToggleIcon.classList.remove("fa-sun");
-      themeToggleIcon.classList.add("fa-moon");
-    } else {
-      body.setAttribute("data-theme", "dark");
-      localStorage.setItem("theme", "dark");
-      themeToggleIcon.classList.remove("fa-moon");
-      themeToggleIcon.classList.add("fa-sun");
-    }
-  });
-}

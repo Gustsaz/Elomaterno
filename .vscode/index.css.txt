@@ -867,24 +867,4 @@ input:focus-visible {
     }
 }
 
-
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  margin-left: 15px;
-}
-
-.theme-toggle i {
-  color: var(--primary-color);
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: transform 0.3s, color 0.3s;
-}
-
-.theme-toggle i:hover {
-  transform: scale(1.1);
-}
-
-[data-theme="dark"] .theme-toggle i {
-  color: #e0e0e0;
-}
+    
