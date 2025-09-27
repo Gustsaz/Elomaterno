@@ -23,7 +23,6 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// === EFEITO BRILHO NOS CARDS ===
 document.querySelectorAll(".com-brilho").forEach((card) => {
   card.addEventListener("mousemove", (e) => {
     const rect = card.getBoundingClientRect();
@@ -35,13 +34,12 @@ document.querySelectorAll(".com-brilho").forEach((card) => {
   });
 });
 
-// === MENU MOBILE ===
 const menuToggle = document.getElementById("menuToggle");
 const botoesMenu = document.querySelector(".botoes");
 
 if (menuToggle && botoesMenu) {
   menuToggle.addEventListener("click", (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); 
     botoesMenu.classList.toggle("aberto");
   });
 }
@@ -57,55 +55,42 @@ document.addEventListener("click", (event) => {
   }
 });
 
-// === LOGOUT (DESKTOP + MOBILE) ===
+// === LOGOUT ===
 const logoutBtn = document.getElementById("logoutBtn");
-const menuLogoutBtn = document.getElementById("menuLogoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "formPerfil.html"; 
+    } catch (error) {
+      console.error("Erro ao sair:", error);
+    }
+  });
+}
 
-[logoutBtn, menuLogoutBtn].forEach((btn) => {
-  if (btn) {
-    btn.addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-        window.location.href = "formPerfil.html";
-      } catch (error) {
-        console.error("Erro ao sair:", error);
-      }
-    });
-  }
-});
-
-// === THEME TOGGLE (DESKTOP + MOBILE) ===
+// --- LÓGICA DO TEMA (CLARO/ESCURO) ---
 const themeToggleIcon = document.getElementById("theme-toggle-icon");
-const menuThemeToggleIcon = document.getElementById("menu-theme-toggle-icon");
 const body = document.body;
 
-function updateThemeIcon(iconEl, isDark) {
-  if (!iconEl) return;
-  iconEl.classList.remove("fa-sun", "fa-moon");
-  iconEl.classList.add(isDark ? "fa-sun" : "fa-moon");
-}
-
-function applyTheme(isDark) {
-  if (isDark) {
+if (themeToggleIcon) {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
     body.setAttribute("data-theme", "dark");
-    localStorage.setItem("theme", "dark");
-  } else {
-    body.removeAttribute("data-theme");
-    localStorage.setItem("theme", "light");
+    themeToggleIcon.classList.remove("fa-moon");
+    themeToggleIcon.classList.add("fa-sun");
   }
-  updateThemeIcon(themeToggleIcon, isDark);
-  updateThemeIcon(menuThemeToggleIcon, isDark);
+
+  themeToggleIcon.addEventListener("click", function () {
+    if (body.hasAttribute("data-theme")) {
+      body.removeAttribute("data-theme");
+      localStorage.setItem("theme", "light");
+      themeToggleIcon.classList.remove("fa-sun");
+      themeToggleIcon.classList.add("fa-moon");
+    } else {
+      body.setAttribute("data-theme", "dark");
+      localStorage.setItem("theme", "dark");
+      themeToggleIcon.classList.remove("fa-moon");
+      themeToggleIcon.classList.add("fa-sun");
+    }
+  });
 }
-
-// Inicializa com o tema salvo
-applyTheme(localStorage.getItem("theme") === "dark");
-
-// Eventos de clique (desktop e mobile)
-[themeToggleIcon, menuThemeToggleIcon].forEach((el) => {
-  if (el) {
-    el.addEventListener("click", () => {
-      const isDark = !body.hasAttribute("data-theme");
-      applyTheme(isDark);
-    });
-  }
-});

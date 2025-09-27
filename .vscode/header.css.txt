@@ -67,7 +67,7 @@ body {
   display: flex;
   align-items: center;
   background: var(--card-bg);
-  border: 1.5px solid var(--muted-accent);
+  border: 1.5px solid var(--border-light);
   border-radius: 50px;
   overflow: hidden;
   flex: 1;
@@ -343,13 +343,10 @@ body {
   margin: 0 auto;
 }
 
-i {
-  color: var(--accent-color);
-}
-
 .botao-item i {
   font-size: 22px;
   margin-right: 0;
+  color: #583E8E;
 }
 
 .botao-item {
@@ -358,12 +355,7 @@ i {
 
 .botao-item span {
   margin-top: 6px;
-  color: var(--text-color);
-}
-
-.nome {
-  color: var(--text-color);
-
+  color: #333;
 }
 
 @media (max-width: 768px) {
@@ -507,7 +499,7 @@ i {
   border-radius: 50%;
   cursor: pointer;
   background: var(--card-bg);
-  color: var(--accent-color);
+  color: var(--primary-color-dark);
   font-size: 20px;
   box-shadow: 0 4px 10px var(--shadow-accent-soft);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
@@ -522,63 +514,11 @@ i {
 }
 
 .theme-toggle i {
+  color: var(--primary-color);
   font-size: 1.3rem;
   cursor: pointer;
 }
 
 [data-theme="dark"] .theme-toggle i {
   color: #e0e0e0;
-}
-
-/* Esconde no menu lateral por padrão */
-.menu-actions {
-  display: none;
-}
-
-/* Estilo dos botões dentro do menu mobile */
-@media (max-width: 768px) {
-
-  .theme-toggle,
-  .logout-btn {
-    display: none !important;
-    /* some do header */
-  }
-
-  .menu-actions {
-    display: flex;
-    justify-content: space-around;
-    margin-top: auto;
-    /* joga pro rodapé */
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .menu-actions .theme-toggle,
-  .menu-actions .logout-btn {
-    display: flex !important;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    justify-content: center;
-    align-items: center;
-    background: var(--card-bg);
-    color: var(--accent-color);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-    font-size: 20px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
-
-  .menu-actions .theme-toggle:hover,
-  .menu-actions .logout-btn:hover {
-    transform: scale(1.15);
-  }
-
-  .menu-actions i {
-    color: var(--accent-color);
-  }
-
-  [data-theme="dark"] .menu-actions i {
-    color: #e0e0e0;
-  }
 }

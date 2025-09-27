@@ -10,8 +10,6 @@
   --bg-color: #F9F7FF;
   --card-bg: #ffffff;
   --muted-bg: #F3ECFF;
-  --outro: #ECE4FF;
-  --graves: #E9E0FF;
   --depoimento-bg: #E7DBFB;
   --border-color: rgba(108, 75, 191, 0.18);
   --shadow-accent-strong: rgba(88, 62, 142, 0.5);

@@ -35,7 +35,7 @@ async function carregarUltimosPosts() {
           <div class="mini-header">
             <img src="${autorFoto}" alt="Avatar do ${autorNome}" class="mini-avatar">
             <div>
-              <strong>${autorNome}</strong>
+              <strong class="nome">${autorNome}</strong>
               <span class="mini-date">${dataFormatada}</span>
             </div>
           </div>
