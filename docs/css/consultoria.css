@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -8,14 +9,15 @@ body {
     background-color: #f7f5ff;
 }
 
-@keyframes fadeSlideLeft {
+/* animação moderna e sutil */
+@keyframes fadeZoom {
     0% {
         opacity: 0;
-        transform: translateX(15px);
+        transform: scale(0.985) translateY(6px);
     }
     100% {
         opacity: 1;
-        transform: translateX(0);
+        transform: scale(1) translateY(0);
     }
 }
 
@@ -23,6 +25,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 40px 20px;
 }
 
 .consultoria-card {
@@ -33,22 +36,29 @@ body {
     gap: 50px;
     max-width: 1000px;
     width: 100%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: 0 10px 40px rgba(88,62,142,0.06);
 }
 
+/* container do modelo: borda roxa + efeito glass */
 .consultoria-image {
-    width: 400px;
-    height: 400px;
-    object-fit: cover;
+    width: 500px;
+    height: 500px;
     border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    backdrop-filter: blur(6px) saturate(120%);
+    box-shadow: 0 8px 28px rgba(123,106,174,0.06);
     opacity: 0;
-    animation: fadeSlideLeft 0.4s ease-out forwards;
-    animation-delay: 0.1s;
+    animation: fadeZoom 0.55s cubic-bezier(.2,.9,.2,1) forwards;
+    animation-delay: 0.08s;
 }
 
+/* texto e botões com mesma animação sutil, com delays */
 .consultoria-text {
     opacity: 0;
-    animation: fadeSlideLeft 0.4s ease-out forwards;
-    animation-delay: 0.3s;
+    animation: fadeZoom 0.55s cubic-bezier(.2,.9,.2,1) forwards;
+    animation-delay: 0.28s;
 }
 
 .consultoria-text h2 {
@@ -72,19 +82,20 @@ body {
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease, transform 0.12s ease;
     opacity: 0;
-    animation: fadeSlideLeft 0.4s ease-out forwards;
+    animation: fadeZoom 0.55s cubic-bezier(.2,.9,.2,1) forwards;
 }
 
 .agendar-btn {
     background-color: #826FAF;
     color: #fff;
     border: none;
-    animation-delay: 0.5s;
+    animation-delay: 0.48s;
 }
 
 .agendar-btn:hover {
+    transform: translateY(-3px);
     background-color: #452e72;
 }
 
@@ -92,18 +103,18 @@ body {
     background-color: #fff;
     color: black;
     border: 3px solid #CDC8CD;
-    animation-delay: 0.7s;
+    animation-delay: 0.68s;
 }
 
 .funciona-btn:hover {
+    transform: translateY(-3px);
     background-color: #583E8E;
     color: #fff;
     border: 3px solid #583E8E;
 }
 
-/*Resposinvo*/
-
-/*tablet*/
+/* Responsivo */
+/* tablet */
 @media (max-width: 768px) {
     .consultoria-card {
         flex-direction: column;
@@ -112,8 +123,8 @@ body {
     }
 
     .consultoria-image {
-        width: 300px;
-        height: 300px;
+        width: 320px;
+        height: 320px;
     }
 
     .consultoria-text h2 {
@@ -128,7 +139,7 @@ body {
     }
 }
 
-/*ceular */
+/* celular */
 @media (max-width: 480px) {
     .consultoria-card {
         flex-direction: column;
@@ -139,6 +150,7 @@ body {
     .consultoria-image {
         width: 220px;
         height: 220px;
+        border-width: 1.5px;
     }
 
     .consultoria-text h2 {
@@ -152,4 +164,3 @@ body {
         padding: 10px 20px;
     }
 }
-

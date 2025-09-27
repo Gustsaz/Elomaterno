@@ -44,7 +44,7 @@ body {
     background: var(--card-bg);
     border-radius: 14px;
     padding: 14px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(108, 75, 191, 0.15);
     display: block;
 }
 
@@ -179,16 +179,15 @@ body {
 }
 
 .com-brilho {
-    box-shadow: 0 0 0 1px rgba(88, 62, 142, 0.10),
-                0 6px 18px rgba(88, 62, 142, 0.18);
+    box-shadow: 0 0 0 1px rgba(88, 62, 142, 0.10), 0 6px 18px rgba(88, 62, 142, 0.18);
 }
 
 .borda-roxa {
-    border: 2px solid var(--secondary-color);
+    border: 2px solid #6C4BBF;
 }
 
 .grad-roxo {
-    background: linear-gradient(135deg, var(--muted-bg) 0%, #ECE4FF 50%, #E9E0FF 100%);
+    background: linear-gradient(135deg, #F3ECFF 0%, #ECE4FF 50%, #E9E0FF 100%);
 }
 
 .card-destaque {
@@ -226,11 +225,14 @@ body {
     margin-bottom: 7%;
 }
 
+.borda-roxa {
+    border: 2px solid var(--secondary-color);
+}
+
 .card-oportunidade {
     display: flex;
     border-radius: 20px;
-    box-shadow: 0 0 0 1px rgba(108, 75, 191, 0.10),
-                0 8px 22px rgba(88, 62, 142, 0.16);
+    box-shadow: 0 0 0 1px rgba(108, 75, 191, 0.10), 0 8px 22px rgba(88, 62, 142, 0.16);
     overflow: hidden;
     width: 300px;
     height: 200px;
