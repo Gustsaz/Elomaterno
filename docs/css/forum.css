@@ -343,3 +343,63 @@ body {
 @media (max-width: 768px) {
   .botao-nova{display: none;}
 }
+
+/* Estilo customizado do checkbox do modal */
+#anonimo-checkbox {
+  display: none; /* Esconde o checkbox padrão */
+}
+
+#anonimo-checkbox + span {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  font-weight: normal;
+  font-size: 14px;
+  color: #333;
+  user-select: none;
+}
+
+#anonimo-checkbox + span::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--rox);
+  border-radius: 6px;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+#anonimo-checkbox:checked + span::before {
+  background: var(--rox);
+  border-color: var(--rox);
+}
+
+#anonimo-checkbox:checked + span::after {
+  content: "✔";
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #fff;
+
+}
+
+/* Hover */
+#anonimo-checkbox + span:hover::before {
+  box-shadow: 0 0 0 3px rgba(88, 62, 142, 0.2);
+}
+
+label[for="anonimo-checkbox"] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.5rem;
+  font-weight: normal;
+  cursor: pointer;
+}
+

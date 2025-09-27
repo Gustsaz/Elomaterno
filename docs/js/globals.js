@@ -1,5 +1,5 @@
 import { auth, db } from "./firebase.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const avatarEl = document.getElementById("menu-avatar");
@@ -54,3 +54,16 @@ document.addEventListener("click", (event) => {
     }
   }
 });
+
+// === LOGOUT ===
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "formPerfil.html"; 
+    } catch (error) {
+      console.error("Erro ao sair:", error);
+    }
+  });
+}

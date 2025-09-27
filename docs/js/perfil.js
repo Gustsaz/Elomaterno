@@ -159,3 +159,46 @@ window.addEventListener("click", (e) => {
     confirmarAvatarBtn.disabled = true
   }
 })
+
+const anonimoCheckbox = document.getElementById("anonimo-checkbox");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!usuarioLogado) {
+    alert("Você precisa estar logado para postar.");
+    return;
+  }
+
+  const titulo = document.getElementById("titulo").value.trim();
+  const conteudo = document.getElementById("conteudo").value.trim();
+  const anonimo = anonimoCheckbox.checked;
+
+  if (!titulo || !conteudo) return;
+
+  let autorNome = "Anônimo";
+  let autorFoto = "./img/account_icon.png";
+  let autorId = "anonimo";
+
+  if (!anonimo) {
+    // dados reais do usuário
+    const userSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
+    const dadosUsuario = userSnap.exists() ? userSnap.data() : {};
+    autorNome = dadosUsuario.nome || usuarioLogado.displayName || "Usuário";
+    autorFoto = dadosUsuario.fotoURL || dadosUsuario.avatar || "./img/account_icon.png";
+    autorId = usuarioLogado.uid;
+  }
+
+  await addDoc(collection(db, "posts"), {
+    titulo,
+    conteudo,
+    autorId,
+    autorNome,
+    autorFoto,
+    data: serverTimestamp(),
+    likes: 0
+  });
+
+  modal.style.display = "none";
+  form.reset();
+});

@@ -212,15 +212,11 @@
       }
 
       const p = snap.data();
-      document.title = `EloMaterno - ${p.titulo}`;
       const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
 
-      let linkPerfil = "";
-      if (p.autorId !== "anonimo") {
-        linkPerfil = usuarioLogado && usuarioLogado.uid === p.autorId
-          ? "perfil.html"
-          : `perfilPessoa.html?uid=${p.autorId}`;
-      }
+      const linkPerfil = usuarioLogado && usuarioLogado.uid === p.autorId
+        ? "perfil.html"
+        : `perfilPessoa.html?uid=${p.autorId}`;
 
       // buscar avatar atualizado do autor do post
       let autorFoto = p.autorFoto || "./img/account_icon.png";
@@ -242,11 +238,7 @@
       <div class="post-header">
         <img src="${autorFoto}" alt="Avatar" class="post-avatar">
         <div class="post-info">
-          <h4>
-          ${p.autorId === "anonimo"
-          ? "Anônimo"
-          : `<a href="${linkPerfil}">${p.autorNome}</a>`}
-          </h4>
+          <h4><a href="${linkPerfil}">${p.autorNome}</a></h4>
           <span class="post-date">${dataFormatada}</span>
         </div>
       </div>

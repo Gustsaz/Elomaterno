@@ -446,7 +446,6 @@ body {
   background: #f0f0f0;
 }
 
-/* Hover elegante para o avatar do header */
 .user-avatar img {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 50%;
@@ -454,7 +453,32 @@ body {
 }
 
 .user-avatar img:hover {
-  transform: scale(1.15); /* leve zoom */
+  transform: scale(1.15); 
   box-shadow: 0 8px 20px rgba(88, 62, 142, 0.5), 0 0 15px rgba(88, 62, 142, 0.3);
 }
 
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #fff;
+  color: #644c9a;
+  font-size: 20px;
+  box-shadow: 0 4px 10px rgba(100, 76, 154, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.logout-btn:hover {
+transform: scale(1.15); 
+  box-shadow: 0 8px 20px rgba(88, 62, 142, 0.5), 0 0 15px rgba(88, 62, 142, 0.3);
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
