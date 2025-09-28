@@ -24,6 +24,39 @@
 
 <body>
 
+    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">
+        <defs>
+            <filter id="protanopia">
+                <feColorMatrix type="matrix" values="
+            0.567 0.433 0 0 0
+            0.558 0.442 0 0 0
+            0     0.242 0.758 0 0
+            0     0     0     1 0" />
+            </filter>
+            <filter id="deuteranopia">
+                <feColorMatrix type="matrix" values="
+            0.625 0.375 0 0 0
+            0.700 0.300 0 0 0
+            0     0.300 0.700 0 0
+            0     0     0     1 0" />
+            </filter>
+            <filter id="tritanopia">
+                <feColorMatrix type="matrix" values="
+            0.950 0.050 0     0 0
+            0     0.433 0.567 0 0
+            0     0.475 0.525 0 0
+            0     0     0     1 0" />
+            </filter>
+            <filter id="Acromatopsia">
+                <feColorMatrix type="matrix" values="
+            0.299 0.587 0.114 0 0
+            0.299 0.587 0.114 0 0
+            0.299 0.587 0.114 0 0
+            0     0     0     1 0" />
+            </filter>
+        </defs>
+    </svg>
+
     <header class="top-header">
         <div class="left-section">
             <div class="logo-area">
@@ -52,6 +85,48 @@
         </div>
 
         <div class="right-section">
+
+            <div class="accessibility-selector">
+                <button id="accessibility-toggle" aria-label="Opções de acessibilidade">
+                    <i class="fa fa-universal-access" aria-hidden="true"></i>
+                </button>
+                <ul id="accessibility-menu" class="hidden">
+                    <li id="increase-font">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Aumentar Fonte
+                    </li>
+                    <li id="decrease-font">
+                        <i class="fa fa-minus-circle" aria-hidden="true"></i> Diminuir Fonte
+                    </li>
+                    <li id="colorblind-filter">
+                        <i class="fa fa-low-vision" aria-hidden="true"></i> Filtros Daltonismo
+                    </li>
+                    <li id="screen-reader">
+                        <i class="fa fa-assistive-listening-systems" aria-hidden="true"></i> Leitura em Voz
+                    </li>
+                    <li id="reading-mask">
+                        <i class="fa fa-highlighter" aria-hidden="true"></i> Máscara de leitura
+                    </li>
+                    <li id="bold-text">
+                        <i class="fa fa-bold" aria-hidden="true"></i> Letras destacadas
+                    </li>
+                    <li id="high-contrast">
+                        <i class="fa fa-adjust" aria-hidden="true"></i> Alto contraste
+                    </li>
+                    <li id="increase-line">
+                        <i class="fa fa-arrows-alt-v" aria-hidden="true"></i> Aumentar Espaçamento Linhas
+                    </li>
+                    <li id="decrease-line">
+                        <i class="fa fa-compress-arrows-alt" aria-hidden="true"></i> Diminuir Espaçamento Linhas
+                    </li>
+                    <li id="reset-accessibility">
+                        <i class="fa fa-undo" aria-hidden="true"></i> Redefinir
+                    </li>
+                </ul>
+            </div>
+
+            <div id="reading-mask-overlay">
+                <div class="highlight-window"></div>
+            </div>
 
             <div class="theme-toggle">
                 <i class="fas fa-moon" id="theme-toggle-icon" aria-label="Alternar tema claro e escuro"></i>
@@ -155,13 +230,34 @@
             <div class="logout-btn mobile-logout" id="menuLogoutBtn" title="Sair da conta">
                 <i class="fa fa-sign-out"></i>
             </div>
+
+            <div class="accessibility-selector">
+                <button id="accessibility-toggle-mobile" aria-label="Opções de acessibilidade">
+                    <i class="fa fa-universal-access" aria-hidden="true"></i>
+                </button>
+                <ul id="accessibility-menu-mobile" class="hidden">
+                    <li data-action="increase-font"><i class="fa fa-plus-circle"></i> Aumentar Fonte</li>
+                    <li data-action="decrease-font"><i class="fa fa-minus-circle"></i> Diminuir Fonte</li>
+                    <li data-action="colorblind-filter"><i class="fa fa-low-vision"></i> Filtros Daltonismo</li>
+                    <li data-action="screen-reader"><i class="fa fa-assistive-listening-systems"></i> Leitura em Voz
+                    </li>
+                    <li data-action="reading-mask"><i class="fa fa-highlighter"></i> Máscara de leitura</li>
+                    <li data-action="bold-text"><i class="fa fa-bold"></i> Letras destacadas</li>
+                    <li data-action="high-contrast"><i class="fa fa-adjust"></i> Alto contraste</li>
+                    <li data-action="increase-line"><i class="fa fa-arrows-alt-v"></i> Aumentar Espaçamento Linhas</li>
+                    <li data-action="decrease-line"><i class="fa fa-compress-arrows-alt"></i> Diminuir Espaçamento
+                        Linhas</li>
+                    <li data-action="reset-accessibility"><i class="fa fa-undo"></i> Redefinir</li>
+                </ul>
+
+            </div>
         </div>
 
     </div>
 
     <main class="consultoria-section">
         <div class="consultoria-card">
-            <div class="consultoria-image"></div> <!-- era <img ...> -->
+            <div class="consultoria-image"></div> 
             <div class="consultoria-text">
                 <h2>Sessões rápidas de escuta com<br>psicólogas voluntárias</h2>
                 <div class="consultoria-buttons">
@@ -170,7 +266,6 @@
                 </div>
             </div>
         </div>
-
     </main>
 
     <script type="module" src="./js/globals.js"></script>

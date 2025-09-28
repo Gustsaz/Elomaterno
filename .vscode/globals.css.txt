@@ -6,10 +6,13 @@
   --accent-color: #583E8E;
   --muted-accent: #7B6AAE;
   --text-color: #333333;
+  --text-color2: #555555;
   --text-color-light: #443A66;
   --bg-color: #F9F7FF;
   --card-bg: #ffffff;
   --muted-bg: #F3ECFF;
+  --outro: #ECE4FF;
+  --graves: #E9E0FF;
   --depoimento-bg: #E7DBFB;
   --border-color: rgba(108, 75, 191, 0.18);
   --shadow-accent-strong: rgba(88, 62, 142, 0.5);
@@ -20,6 +23,13 @@
   --shadow-accent-strong: rgba(88, 62, 142, 0.5);
   --shadow-accent-soft: rgba(88, 62, 142, 0.3);
   --textplaceholder: rgb(0, 0, 0);
+  --botaoconsultoria: #826FAF;
+  --postbackground: #f2f2f2;
+  --datapost: #666;
+  --hover-bg: #e0d6f6;
+  --artigometa: #7861a7;
+  --botaocalendar: #f6ecff;
+  --hovercalendariobotao: #e8defc;
 }
 
 [data-theme="dark"] {
@@ -30,6 +40,7 @@
   --accent-color: #9c88d9;
   --muted-accent: #9c8fcf;
   --text-color: #f5f5f5;
+  --text-color2: #e0e0e0;
   --text-color-light: #cccccc;
   --bg-color: #121212;
   --card-bg: #1f1f1f;
@@ -37,6 +48,13 @@
   --depoimento-bg: #2d2140;
   --border-color: rgba(180, 160, 230, 0.25);
   --textplaceholder: rgb(255, 255, 255);
+  --postbackground: #222222;
+  --datapost: #ccc8c8;
+  --hover-bg: rgb(77, 76, 76);
+  --artigometa: #7861a7;
+  --botaocalendar: #f6ecff;
+  --hovercalendariobotao: #48454e;
+  --selectcalendario: #383838;
 }
 
 @font-face {

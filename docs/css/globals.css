@@ -28,6 +28,8 @@
   --datapost: #666;
   --hover-bg: #e0d6f6;
   --artigometa: #7861a7;
+  --botaocalendar: #f6ecff;
+  --hovercalendariobotao: #e8defc;
 }
 
 [data-theme="dark"] {
@@ -50,6 +52,9 @@
   --datapost: #ccc8c8;
   --hover-bg: rgb(77, 76, 76);
   --artigometa: #7861a7;
+  --botaocalendar: #f6ecff;
+  --hovercalendariobotao: #48454e;
+  --selectcalendario: #383838;
 }
 
 @font-face {

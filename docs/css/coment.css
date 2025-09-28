@@ -3,186 +3,187 @@
 }
 
 .coment-container {
-    max-width: 800px;
-    margin: 40px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .post-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #cdc8cd;
-    transition: background-color 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 220px;
-    position: relative;
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--muted-accent);
+  transition: background-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+  position: relative;
 }
 
 .post-card.com-brilho {
-    padding: 32px;
-    font-size: 1.2rem;
-    min-height: 380px;
-    position: relative; 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  padding: 32px;
+  font-size: 1.2rem;
+  min-height: 380px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .post-card.com-brilho .menu-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 
 .post-card.com-brilho .post-title {
-    font-size: 28px;
+  font-size: 28px;
 }
 
 .post-card.com-brilho .post-content {
-    font-size: 18px;
-    line-height: 1.6;
-    max-width: 700px;   
-    margin-bottom: 16px;
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 700px;
+  margin-bottom: 16px;
 }
 
 .post-card.com-brilho .post-info h4 {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .post-card.com-brilho .post-info .post-date {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 .post-card:hover {
-    background-color: #f2f2f2;
+  background-color: var(--hover-bg);
 }
 
 .post-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .post-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .post-info {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .post-info h4 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #583E8E;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-color);
 }
 
 .post-info .post-date {
-    font-size: 12px;
-    color: #777;
+  font-size: 12px;
+  color: var(--datapost);
 }
 
 .menu-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: #644c9a;
-    cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #644c9a;
+  cursor: pointer;
 }
 
 .post-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin: 10px 0;
-    color: #583E8E;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 10px 0;
+  color: var(--accent-color);
 }
 
 .post-content {
-  max-width: 700px;      
-  white-space: normal;   
-  overflow-wrap: anywhere; 
-  word-break: break-word; 
+  max-width: 700px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   word-wrap: break-word;
+  color: var(--text-color);
 }
 
 .post-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 8px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
 }
 
 .like-wrap {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .like-icon {
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 .like-icon:hover {
-    transform: scale(1.15);
+  transform: scale(1.15);
 }
 
 .like-count {
-    font-size: 14px;
-    font-weight: 600;
-    color: #583E8E;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-color);
 }
 
 .comment-count {
-    font-size: 14px;
-    font-weight: 500;
-    color: #777;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--datapost);
 }
 
 .respostas {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .resposta-card {
-    padding: 12px 16px;
-    font-size: 14px;
-    display: block;       
-    min-height: unset;   
-    height: auto !important;
+  padding: 12px 16px;
+  font-size: 14px;
+  display: block;
+  min-height: unset;
+  height: auto !important;
 }
 
 resposta-card .post-footer {
-    margin-top: 6px;       
+  margin-top: 6px;
 }
 
 .back-btn {
-    display: inline-block;
-    margin-bottom: 12px;
+  display: inline-block;
+  margin-bottom: 12px;
 }
 
 .back-btn img {
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 .back-btn img:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .botao-nova {
@@ -229,14 +230,14 @@ resposta-card .post-footer {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fff;
-  border: 1px solid #cdc8cd;
+  background: var(--card-bg);
+  border: 1px solid var(--muted-accent);
   border-radius: 12px;
   padding: 12px 16px;
   margin-top: 20px;
-  width: 100%;         
+  width: 100%;
   box-sizing: border-box;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .comment-field {
@@ -244,7 +245,7 @@ resposta-card .post-footer {
   border: none;
   outline: none;
   font-size: 15px;
-  color: #333;
+  color: var(--text-color);
   background: transparent;
 }
 
@@ -282,8 +283,8 @@ resposta-card .post-footer {
 }
 
 .edit-coment-btn {
-  background: #f3eefc;
-  color: #583E8E;
+  background: var(--card-bg);
+  color: var(--accent-color);
 }
 
 .edit-coment-btn:hover {
@@ -302,9 +303,11 @@ resposta-card .post-footer {
 .modal {
   display: none;
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
   z-index: 2000;
@@ -334,5 +337,7 @@ resposta-card .post-footer {
 }
 
 @media (max-width: 768px) {
-  .botao-nova{display: none;}
+  .botao-nova {
+    display: none;
+  }
 }
