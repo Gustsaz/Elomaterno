@@ -368,7 +368,5 @@ select {
 
     .calendar-dates .date {
         font-size: 14px;
-        min-width: 40px;
-        min-height: 40px;
     }
 }
