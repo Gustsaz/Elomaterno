@@ -77,7 +77,6 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-// === LOGIN COM GOOGLE ===
 const googleBtn = document.getElementById("googleLogin");
 if (googleBtn) {
   googleBtn.addEventListener("click", async () => {
@@ -95,13 +94,17 @@ if (googleBtn) {
           email: user.email,
           telefone: "",
           tipo: "mae",
-          avatar: user.photoURL || null
+          avatar: null
         });
       }
 
       showPopup(`Bem-vinda, ${user.displayName || user.email}!`);
       setTimeout(() => {
-        window.location.href = "home.html";
+        if (!snap.exists() || !snap.data().avatar) {
+          window.location.href = "avatar.html";
+        } else {
+          window.location.href = "home.html";
+        }
       }, 1500);
 
     } catch (error) {

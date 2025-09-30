@@ -41,10 +41,10 @@ form.addEventListener('submit', async (e) => {
       handleCodeInApp: false
     });
 
-    showPopup("Cadastro realizado com sucesso! Verifique sua caixa de e-mail (ou spam) para ativar sua conta.");
+    showPopup("Cadastro realizado com sucesso! Vamos escolher seu avatar!");
     setTimeout(() => {
-      window.location.href = "logMae.html";
-    }, 2500);
+      window.location.href = "avatar.html"; 
+    }, 2000);
 
   } catch (error) {
     console.error("Erro no cadastro:", error.code, error.message);
@@ -67,7 +67,6 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-// === CADASTRO/LOGIN COM GOOGLE ===
 const googleBtn = document.getElementById("googleSignUp");
 if (googleBtn) {
   googleBtn.addEventListener("click", async () => {
@@ -85,13 +84,17 @@ if (googleBtn) {
           email: user.email,
           telefone: "",
           tipo: "mae",
-          avatar: user.photoURL || null
+          avatar: null
         });
       }
 
-      showPopup(`Cadastro/login realizado com Google!`);
+      showPopup(`Bem-vinda, ${user.displayName || user.email}!`);
       setTimeout(() => {
-        window.location.href = "home.html";
+        if (!snap.exists() || !snap.data().avatar) {
+          window.location.href = "avatar.html";
+        } else {
+          window.location.href = "home.html";
+        }
       }, 1500);
 
     } catch (error) {

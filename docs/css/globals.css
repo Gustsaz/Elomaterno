@@ -627,15 +627,20 @@ a {
 }
 
 .google-link a {
-  color: #583E8E; /* mesma cor roxa usada */
+  color: #583E8E;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .google-link a:hover {
-  color: #4B2C82; /* roxo escuro no hover */
+  color: #4B2C82; 
 }
 
 .google-link i {
   font-size: 22px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.google-link i:hover {
+  transform: scale(1.15);
 }
