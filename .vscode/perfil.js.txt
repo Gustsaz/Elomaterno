@@ -30,7 +30,6 @@ const storage = getStorage()
 let usuarioRef
 let avatarSelecionado = null
 
-// === Carregar dados do usuário ===
 onAuthStateChanged(auth, async (user) => {
   if (!user) return window.location.href = "logMae.html"
   usuarioRef = doc(db, "usuarios", user.uid)
@@ -54,7 +53,6 @@ onAuthStateChanged(auth, async (user) => {
   carregarInteracoes(user.uid)
 })
 
-// === Carregar interações ===
 function carregarInteracoes(uid) {
   const interacoesCard = document.querySelector(".perfil-cards .card:nth-of-type(3)")
   const q = query(collection(db, "posts"), where("autorId", "==", uid), orderBy("data", "desc"))
@@ -73,7 +71,6 @@ function carregarInteracoes(uid) {
   })
 }
 
-// === Modal Editar Perfil ===
 btnEditar.addEventListener("click", () => {
   inputNome.value = nomeEl.textContent
   inputCidade.value = cidadeEl.textContent.replace("Cidade: ", "")
@@ -117,7 +114,6 @@ formEditar.addEventListener("submit", async (e) => {
   }
 })
 
-// === Modal Avatar ===
 const btnFecharModal = modalAvatar.querySelector(".btn-fechar-modal")
 
 btnEditAvatar.addEventListener("click", () => {
@@ -163,3 +159,46 @@ window.addEventListener("click", (e) => {
     confirmarAvatarBtn.disabled = true
   }
 })
+
+const anonimoCheckbox = document.getElementById("anonimo-checkbox");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!usuarioLogado) {
+    alert("Você precisa estar logado para postar.");
+    return;
+  }
+
+  const titulo = document.getElementById("titulo").value.trim();
+  const conteudo = document.getElementById("conteudo").value.trim();
+  const anonimo = anonimoCheckbox.checked;
+
+  if (!titulo || !conteudo) return;
+
+  let autorNome = "Anônimo";
+  let autorFoto = "./img/account_icon.png";
+  let autorId = "anonimo";
+
+  if (!anonimo) {
+    // dados reais do usuário
+    const userSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
+    const dadosUsuario = userSnap.exists() ? userSnap.data() : {};
+    autorNome = dadosUsuario.nome || usuarioLogado.displayName || "Usuário";
+    autorFoto = dadosUsuario.fotoURL || dadosUsuario.avatar || "./img/account_icon.png";
+    autorId = usuarioLogado.uid;
+  }
+
+  await addDoc(collection(db, "posts"), {
+    titulo,
+    conteudo,
+    autorId,
+    autorNome,
+    autorFoto,
+    data: serverTimestamp(),
+    likes: 0
+  });
+
+  modal.style.display = "none";
+  form.reset();
+});

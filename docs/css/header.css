@@ -15,6 +15,21 @@ body {
 .botao-link {
   text-decoration: none;
   color: inherit;
+  transition: all 0.3s ease;
+
+}
+
+.btn-filter,
+.btn-search {
+  transition: all 0.3s ease;
+
+}
+
+.botao-link:hover,
+.btn-filter:hover,
+.btn-search:hover {
+  transform: translateY(-2px);
+
 }
 
 .top-header {
@@ -669,15 +684,37 @@ i {
   height: 20px;
 }
 
-.colorblind-protanopia { filter: url(#protanopia); }
-.colorblind-deuteranopia { filter: url(#deuteranopia); }
-.colorblind-tritanopia { filter: url(#tritanopia); }
-.colorblind-Acromatopsia { filter: url(#Acromatopsia); }
+.colorblind-protanopia {
+  filter: url(#protanopia);
+}
 
-.colorblind-protanopia.fallback { filter: grayscale(0%) sepia(40%) saturate(80%) hue-rotate(10deg); }
-.colorblind-deuteranopia.fallback { filter: grayscale(0%) sepia(30%) saturate(80%) hue-rotate(-10deg); }
-.colorblind-tritanopia.fallback { filter: grayscale(0%) sepia(20%) saturate(90%) hue-rotate(160deg); }
-.colorblind-Acromatopsia.fallback { filter: grayscale(100%); }
+.colorblind-deuteranopia {
+  filter: url(#deuteranopia);
+}
+
+.colorblind-tritanopia {
+  filter: url(#tritanopia);
+}
+
+.colorblind-Acromatopsia {
+  filter: url(#Acromatopsia);
+}
+
+.colorblind-protanopia.fallback {
+  filter: grayscale(0%) sepia(40%) saturate(80%) hue-rotate(10deg);
+}
+
+.colorblind-deuteranopia.fallback {
+  filter: grayscale(0%) sepia(30%) saturate(80%) hue-rotate(-10deg);
+}
+
+.colorblind-tritanopia.fallback {
+  filter: grayscale(0%) sepia(20%) saturate(90%) hue-rotate(160deg);
+}
+
+.colorblind-Acromatopsia.fallback {
+  filter: grayscale(100%);
+}
 
 #reading-mask-overlay {
   display: none;
@@ -756,6 +793,7 @@ body.bold-text-active :not(#accessibility-menu):not(.accessibility-selector):not
 }
 
 @media (max-width: 768px) {
+
   /* Esconde o botão do header só no mobile */
   .top-header .accessibility-selector {
     display: none;
@@ -802,6 +840,7 @@ body.bold-text-active :not(#accessibility-menu):not(.accessibility-selector):not
     z-index: 3000;
   }
 }
+
 /* ======== MENU MOBILE DE ACESSIBILIDADE ======== */
 #accessibility-menu-mobile {
   position: fixed;
@@ -811,7 +850,8 @@ body.bold-text-active :not(#accessibility-menu):not(.accessibility-selector):not
   background: var(--card-bg);
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  list-style: none; /* remove os bullets */
+  list-style: none;
+  /* remove os bullets */
   margin: 0;
   padding: 8px 0;
   z-index: 3000;

@@ -430,21 +430,28 @@
     import { auth, db } from "./firebase.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
+    // Pegue o elemento <img> do HTML
     const avatarElemento = document.getElementById('perfil-avatar');
 
+    // Escute o estado de autenticação para saber quando um usuário está logado
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {
+          // Obtenha a referência do documento do usuário
           const userDocRef = doc(db, "usuarios", user.uid);
 
+          // Busque o documento no Firestore
           const userDoc = await getDoc(userDocRef);
 
           if (userDoc.exists()) {
             const userData = userDoc.data();
 
+            // Verifique se o campo 'avatar' existe e tem um valor
             if (userData.avatar) {
+              // Atualize a URL da imagem com o caminho salvo
               avatarElemento.src = userData.avatar;
             } else {
+              // Se não tiver avatar, pode carregar um avatar padrão ou mostrar uma mensagem
               console.log("Usuário não tem um avatar salvo. Exibindo o padrão.");
             }
           } else {
@@ -454,6 +461,7 @@
           console.error("Erro ao buscar dados do usuário:", error);
         }
       } else {
+        // Se não houver usuário logado, redirecione para a página de login
         window.location.href = "login-mae.html";
       }
     });
