@@ -1,0 +1,372 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+button,
+select {
+    font-family: 'Nunito', sans-serif;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.calendar-container {
+    background-color:var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    /* era 400px */
+    padding: 35px;
+    /* mais espaço interno */
+    font-size: 18px;
+    /* textos maiores */
+    box-sizing: border-box;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+}
+
+.calendar-header button {
+    background: var(--card-bg);
+    border: 1px solid #7b56d6;
+    color: var(--accent-color);
+    font-size: 18px;
+    padding: 6px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.calendar-header button:hover {
+    background: var(--hovercalendariobotao);
+}
+
+.month-year-select {
+    display: flex;
+    gap: 10px;
+}
+
+.month-year-select select {
+    background: var(--selectcalendario);
+    border: 1px solid #7b56d6;
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: var(--text-color);
+    font-size: 14px;
+    outline: none;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: var(--datapost);
+}
+
+.calendar-dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    gap: 8px;
+}
+
+.calendar-dates .date {
+    aspect-ratio: 1;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+.calendar-dates .date:hover {
+    background-color: var(--hovercalendariobotao);
+    transform: scale(1.05);
+}
+
+/* Hoje */
+.calendar-dates .date.today {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: bold;
+}
+
+/* Dia com evento */
+.calendar-dates .date.has-event {
+    background-color: var(--botaocalendar);
+    border: 2px solid #7b56d6;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+/* Tooltip customizado */
+.calendar-dates .date[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-color);
+    color: var(--card-bg);
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.calendar-dates .empty {
+    visibility: hidden;
+}
+
+.events-container {
+    width: 300px;
+    box-sizing: border-box;
+}
+
+.events-container h3 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+.event-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-right: 10px;
+}
+
+.event-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.event-list::-webkit-scrollbar-thumb {
+    background-color: var(--border-neutral);
+    border-radius: 4px;
+}
+
+.event {
+    background-color: var(--card-bg);
+    border-left: 5px solid var(--accent-color);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.event strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.event p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-color2);
+}
+
+.container>* {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.container>*:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.container>*:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.container>*:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.container>*:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        gap: 25px;
+    }
+
+    .calendar-container,
+    .events-container {
+        width: 95%;
+        max-width: 600px;
+    }
+
+    .event-list {
+        max-height: calc(2 * 90px);
+        overflow-y: auto;
+    }
+
+    .events-container h3 {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-container {
+        padding: 12px;
+    }
+
+    .calendar-dates {
+        gap: 4px;
+    }
+
+    .calendar-dates .date {
+        font-size: 12px;
+    }
+
+    .month-year-select select {
+        font-size: 11px;
+        padding: 3px 5px;
+    }
+
+    .events-container {
+        padding: 0 6px;
+    }
+
+    .event strong {
+        font-size: 14px;
+    }
+
+    .event p {
+        font-size: 12px;
+    }
+}
+
+/* -------------------------
+   animação de troca de mês
+   ------------------------- */
+.calendar-dates {
+    transition: transform 250ms ease, opacity 250ms ease;
+}
+
+/* exit: próximo (saindo para esquerda) */
+.calendar-dates.anim-exit-left {
+    transform: translateX(-20%);
+    opacity: 0;
+}
+
+/* exit: anterior (saindo para direita) */
+.calendar-dates.anim-exit-right {
+    transform: translateX(20%);
+    opacity: 0;
+}
+
+/* entry animations (vem da direita para o centro / da esquerda para o centro) */
+.calendar-dates.anim-enter-left {
+    animation: enterFromLeft 300ms forwards;
+}
+
+.calendar-dates.anim-enter-right {
+    animation: enterFromRight 300ms forwards;
+}
+
+@keyframes enterFromLeft {
+    from {
+        transform: translateX(-20%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes enterFromRight {
+    from {
+        transform: translateX(20%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* fade rápido para selects */
+.calendar-dates.anim-exit-fade {
+    opacity: 0;
+}
+
+.calendar-dates.anim-enter-fade {
+    animation: fadeIn 200ms forwards;
+}
+
+/* estilo diferenciado para dias que já passaram */
+.calendar-dates .date.past {
+    opacity: 0.75;
+}
+
+.calendar-dates .date.past.has-event {
+    background-color: #f3f3f3;
+    border-color: #cfcfcf;
+    color: #666;
+}
+
+@media (max-width: 480px) {
+    .calendar-container {
+        padding: 20px;
+    }
+
+    .calendar-dates {
+        gap: 6px;
+    }
+
+    .calendar-dates .date {
+        font-size: 14px;
+    }
+}
