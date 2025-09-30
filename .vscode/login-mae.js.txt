@@ -1,11 +1,7 @@
 import { auth, db } from "./firebase.js";
-import { 
-  signInWithEmailAndPassword, 
-  sendEmailVerification, 
-  GoogleAuthProvider, 
-  signInWithPopup 
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { signInWithEmailAndPassword, sendEmailVerification }
+  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { showPopup } from "./popup.js";
 
 const form = document.querySelector('.login-form');
@@ -41,6 +37,7 @@ form.addEventListener('submit', async (e) => {
       }
 
       if (!data.avatar) {
+        // se ainda não tem avatar, manda para avatar.html
         window.location.href = "avatar.html";
         return;
       }
@@ -76,37 +73,3 @@ form.addEventListener('submit', async (e) => {
     showPopup(mensagemAmigavel);
   }
 });
-
-// === LOGIN COM GOOGLE ===
-const googleBtn = document.getElementById("googleLogin");
-if (googleBtn) {
-  googleBtn.addEventListener("click", async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      const ref = doc(db, "usuarios", user.uid);
-      const snap = await getDoc(ref);
-
-      if (!snap.exists()) {
-        await setDoc(ref, {
-          nome: user.displayName,
-          email: user.email,
-          telefone: "",
-          tipo: "mae",
-          avatar: user.photoURL || null
-        });
-      }
-
-      showPopup(`Bem-vinda, ${user.displayName || user.email}!`);
-      setTimeout(() => {
-        window.location.href = "home.html";
-      }, 1500);
-
-    } catch (error) {
-      console.error("Erro no login com Google:", error);
-      showPopup("Não foi possível entrar com o Google.");
-    }
-  });
-}

@@ -56,10 +56,6 @@
 
 
       <br>
-      <p class="google-link">
-        <a href="#" id="googleSignUp"><i class="fa-brands fa-google"></i></a>
-      </p>
-
       <p class="login-link">Já possui conta? <a href="logMae.html">Entrar</a></p>
 
     </div>
@@ -73,9 +69,8 @@
   </div>
 
   <script src="./js/popup.js"></script>
-  <script type="module" src="./js/firebase.js"></script>
   <script type="module" src="./js/cadastro-mae.js"></script>
-
+  <script type="module" src="./js/firebase.js"></script>
 
 </body>
 

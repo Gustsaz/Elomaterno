@@ -619,3 +619,23 @@ a {
     padding: 20px;
   }
 }
+
+.google-link {
+  margin-top: 10px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.google-link a {
+  color: #583E8E; /* mesma cor roxa usada */
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.google-link a:hover {
+  color: #4B2C82; /* roxo escuro no hover */
+}
+
+.google-link i {
+  font-size: 22px;
+}

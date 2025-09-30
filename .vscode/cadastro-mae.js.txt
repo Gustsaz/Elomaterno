@@ -1,11 +1,8 @@
 import { auth, db } from "./firebase.js";
-import { 
-  createUserWithEmailAndPassword, 
-  sendEmailVerification, 
-  GoogleAuthProvider, 
-  signInWithPopup 
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { createUserWithEmailAndPassword, sendEmailVerification } 
+  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { doc, setDoc } 
+  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { showPopup } from "./popup.js"; 
 
 const form = document.querySelector('.cadastro-form');
@@ -28,6 +25,7 @@ form.addEventListener('submit', async (e) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
+    // Agora já salva avatar como null
     await setDoc(doc(db, "usuarios", user.uid), {
       nome: nome,
       email: email,
@@ -66,37 +64,3 @@ form.addEventListener('submit', async (e) => {
     showPopup(mensagemAmigavel);
   }
 });
-
-// === CADASTRO/LOGIN COM GOOGLE ===
-const googleBtn = document.getElementById("googleSignUp");
-if (googleBtn) {
-  googleBtn.addEventListener("click", async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      const ref = doc(db, "usuarios", user.uid);
-      const snap = await getDoc(ref);
-
-      if (!snap.exists()) {
-        await setDoc(ref, {
-          nome: user.displayName,
-          email: user.email,
-          telefone: "",
-          tipo: "mae",
-          avatar: user.photoURL || null
-        });
-      }
-
-      showPopup(`Cadastro/login realizado com Google!`);
-      setTimeout(() => {
-        window.location.href = "home.html";
-      }, 1500);
-
-    } catch (error) {
-      console.error("Erro no cadastro com Google:", error);
-      showPopup("Não foi possível continuar com o Google.");
-    }
-  });
-}
