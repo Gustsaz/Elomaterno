@@ -1,0 +1,367 @@
+/* Transição suave em todos os elementos */
+*:not(.botoes):not(header):not(header *):not(body):not(menu-actions){
+  transition: all 0.3s ease;
+}
+
+*:not(html):not(.botoes):not(header):not(header *):not(body):not(menu-actions):not(perfil-container):hover {
+  transform: translateY(-2px);
+}
+
+
+body {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--bg-color);
+}
+
+.perfil-container {
+  padding: 2rem;
+}
+
+.perfil-top {
+  background-color: var(--accent-color);
+  color: var(--bg-color);
+  border-radius: 20px 20px 0 0;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+}
+
+/* Wrapper para manter o botão sobre o avatar */
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.perfil-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--card-bg);
+  padding: 4px;
+}
+
+.perfil-info h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.perfil-tag {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.btn-editar {
+  right: 1.5rem;
+  top: 1.5rem;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.perfil-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem 0;
+}
+
+.card {
+  background-color: var(--postbackground);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: var(--text-color);
+}
+
+.card p {
+  margin: 0.5rem 0;
+  color: var(--text-color);
+}
+
+.card a {
+  font-size: 0.9rem;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.modals {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+background-color: color-mix(in srgb, var(--textplaceholder) 40%, transparent);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+
+.modals-content {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 300px;
+  max-width: 90%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modals-content h3 {
+  margin-top: 0;
+  color: var(--accent-color);
+}
+
+.modals-content label {
+  display: block;
+  margin: 0.5rem 0 0.2rem;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.modals-content input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  background-color: var(--postbackground);
+  color: var(--text-color);
+}
+
+.modals-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.modals-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modals-actions button[type="button"] {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.modals-actions button[type="submit"] {
+  background: var(--accent-color);
+  color: white;
+}
+
+.modals.show {
+  display: flex;
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#modal-avatar .avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+#modal-avatar .avatar-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+#modal-avatar .avatar-btn img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  transition: box-shadow 0.3s, border 0.3s;
+  will-change: transform, box-shadow;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+}
+
+#modal-avatar .avatar-btn img:hover {
+  box-shadow: 0 0 10px rgba(100, 76, 154, 0.6);
+}
+
+#modal-avatar .avatar-btn.selecionado img {
+  border: 4px solid #6c63ff;
+  box-shadow: 0 0 12px rgba(100, 76, 154, 0.6);
+  transform: scale(1.1);
+}
+
+#modal-avatar .modal-content {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+#modal-avatar .modal-content::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+#modal-avatar .modal-content {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+#modal-avatar .btn-fechar-modal {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e4e4e4;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.perfil-avatar#perfil-foto {
+  width: 120px;
+  height: 120px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confirmar-btn,
+#modal-editar .modal-actions button {
+  padding: 10px 18px;
+  margin: 10px 5px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.confirmar-btn,
+#modal-editar .modal-actions button[type="submit"] {
+  background: #6c63ff;
+  color: #fff;
+}
+
+.confirmar-btn:hover,
+#modal-editar .modal-actions button[type="submit"]:hover {
+  background: #5a52d1;
+}
+
+#modal-editar .modal-actions button#cancelar {
+  background: #e4e4e4;
+  color: #333;
+}
+
+#modal-editar .modal-actions button#cancelar:hover {
+  background: #ccc;
+}
+
+.confirmar-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.btn-edit-avatar {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-edit-avatar:hover {
+  background: #E7DBFB;
+}
