@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Evento</title>
+    <link rel="stylesheet" href="./css/globals.css">
+    <link rel="stylesheet" href="./css/header.css" />
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+    <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script type="module">
+        import { db, auth } from '/docs/js/firebase.js';
+        import { collection, addDoc, Timestamp }
+            from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+        import { onAuthStateChanged }
+            from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+        let usuarioLogado = null;
+
+        onAuthStateChanged(auth, (user) => {
+            usuarioLogado = user;
+            const status = document.getElementById("status");
+            if (user) {
+                status.textContent = `Logado como: ${user.email}`;
+                status.style.color = "green";
+            } else {
+                status.textContent = "Você não está logado. Alguns projetos exigem login para gravar no Firestore!";
+                status.style.color = "red";
+            }
+        });
+
+        async function criarEvento(e) {
+            e.preventDefault();
+
+            const titulo = document.getElementById('titulo').value.trim();
+            const descricao = document.getElementById('descricao').value.trim();
+            const data = document.getElementById('data').value;
+            const hora = document.getElementById('hora').value;
+            const local = document.getElementById('local').value.trim();
+            const capa = document.getElementById('capa').value.trim();
+
+            if (!titulo || !descricao || !data || !hora) {
+                alert("⚠️ Preencha todos os campos obrigatórios!");
+                return;
+            }
+
+            const dataHora = new Date(`${data}T${hora}`);
+            if (isNaN(dataHora.getTime())) {
+                alert("⚠️ Data ou hora inválidas!");
+                return;
+            }
+
+            const evento = {
+                titulo,
+                descricao,
+                local: local || "Online",
+                capa: capa || "https://picsum.photos/seed/evento/600/300",
+                data: Timestamp.fromDate(dataHora)
+            };
+
+            console.log("📤 Enviando para Firestore:", evento);
+
+            try {
+                const docRef = await addDoc(collection(db, "eventos"), evento);
+                console.log("Evento criado com ID:", docRef.id);
+                alert("🎉 Evento criado com sucesso!");
+                document.getElementById('formEvento').reset();
+            } catch (error) {
+                console.error("Erro ao criar evento:", error);
+                alert("Erro ao criar evento! Veja o console (F12).");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("formEvento").addEventListener("submit", criarEvento);
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f7f2fc;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        form {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input,
+        textarea {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        button {
+            background: #583E8E;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #452f70;
+        }
+
+        #status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Criar Novo Evento</h1>
+    <div id="status">Carregando status de autenticação...</div>
+    <form id="formEvento">
+        <label>Título* <input type="text" id="titulo" required></label>
+        <label>Descrição* <textarea id="descricao" required></textarea></label>
+        <label>Data* <input type="date" id="data" required></label>
+        <label>Hora* <input type="time" id="hora" required></label>
+        <label>Local <input type="text" id="local" placeholder="Ex: Online"></label>
+        <label>URL da Capa <input type="text" id="capa" placeholder="https://..."></label>
+        <button type="submit">Criar Evento</button>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg-color);
+}
+
+.artigo-wrapper {
+  max-width: 1040px;
+  margin: 24px auto 100px auto;
+  padding: 0 16px;
+}
+
+.breadcrumb {
+  margin: 8px 0 12px 0;
+}
+
+.breadcrumb a {
+  color: var(--secondary-color);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.artigo-card {
+  background: var(--card-bg);
+  border-radius: 18px;
+  padding: 28px;
+  border: 1px solid rgba(108, 75, 191, 0.18);
+}
+
+.artigo-card h1 {
+  margin: 0 0 14px 0;
+  color: var(--primary-color-darker);
+  font-size: 26px;
+}
+
+.artigo-card .resumo {
+  color: var(--text-color-light);
+  line-height: 1.75;
+  font-size: 16.5px;
+}
+
+.btn-externo {
+  display: inline-block;
+  margin-top: 16px;
+  background: var(--accent-color);
+  color: var(--card-bg);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.btn-externo:hover {
+  filter: brightness(0.95);
+}
+
+.artigo-img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .artigo-wrapper {
+    padding: 0 14px;
+  }
+
+  .artigo-card {
+    padding: 18px;
+  }
+
+  .artigo-card h1 {
+    font-size: 22px;
+  }
+
+  .artigo-img {
+    height: 240px;
+  }
+}
