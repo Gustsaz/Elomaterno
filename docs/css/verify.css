@@ -1,0 +1,43 @@
+.verify-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f7f7f7;
+}
+
+.verify-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.verify-box .logo {
+  width: 80px;
+  margin-bottom: 1rem;
+}
+
+.verify-box h2 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.verify-box p {
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.verify-box .btn {
+  padding: 0.7rem 1.2rem;
+  background: #4CAF50;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.verify-box .btn:hover {
+  background: #43a047;
+}
