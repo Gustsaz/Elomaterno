@@ -27,15 +27,13 @@ let currentChatId = null;
 let unsubscribeMessages = null;
 let unsubUserChats = null;
 
-// Cache para mapear chatId -> { liEl, otherUserId, unreadCount }
 const chatListState = new Map();
 
-// Áudio de notificação
 let notifyAudio = null;
 try {
   notifyAudio = new Audio("./sounds/not.mp3");
   notifyAudio.preload = "auto";
-} catch(_) {}
+} catch (_) { }
 
 function isMobile() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -47,7 +45,7 @@ async function ensureNotificationPermission() {
     if (Notification.permission === "default" && isMobile()) {
       await Notification.requestPermission();
     }
-  } catch (_) {}
+  } catch (_) { }
 }
 
 onAuthStateChanged(auth, async (user) => {
@@ -61,9 +59,8 @@ onAuthStateChanged(auth, async (user) => {
   loadUsers();
   listenUserChats();
   ensureNotificationPermission();
-  // Desbloqueio do áudio na primeira interação do usuário
   const unlock = () => {
-    try { if (notifyAudio) { notifyAudio.play().then(()=>{ notifyAudio.pause(); notifyAudio.currentTime = 0; }).catch(()=>{}); } } catch(_) {}
+    try { if (notifyAudio) { notifyAudio.play().then(() => { notifyAudio.pause(); notifyAudio.currentTime = 0; }).catch(() => { }); } } catch (_) { }
     window.removeEventListener("click", unlock, { capture: true });
     window.removeEventListener("touchstart", unlock, { capture: true });
   };
@@ -76,8 +73,7 @@ async function loadUsers() {
   const snapshot = await getDocs(q);
 
   userListEl.innerHTML = "";
-  // skeleton inicial enquanto monta lista
-  for (let i=0;i<4;i++) {
+  for (let i = 0; i < 4; i++) {
     const sk = document.createElement("div");
     sk.className = "user-skel";
     sk.innerHTML = '<div class="avatar skeleton"></div><div class="lines"><div class="line1 skeleton"></div><div class="line2 skeleton"></div></div>';
@@ -102,7 +98,6 @@ async function loadUsers() {
     li.addEventListener("click", () => openChatWith(docSnap.id, u));
     userListEl.appendChild(li);
 
-    // mantém referência para atualização do badge
     chatListState.set(docSnap.id, { liEl: li, otherUserId: docSnap.id, unreadCount: 0 });
   });
 }
@@ -136,7 +131,6 @@ async function openChatWith(otherUid, userData) {
     chatDoc = { id: newChatRef.id, participantes: [currentUser.uid, otherUid] };
   }
 
-  // Reset de estado do painel de mensagens ao trocar de chat
   if (unsubscribeMessages) unsubscribeMessages();
   if (unsubTyping) unsubTyping();
   messagesDiv.innerHTML = "";
@@ -155,9 +149,7 @@ async function openChatWith(otherUid, userData) {
   const msgsRef = collection(db, "chats", currentChatId, "mensagens");
   const qMsgs = query(msgsRef, orderBy("enviadoEm", "asc"));
   unsubscribeMessages = onSnapshot(qMsgs, (snap) => {
-    // Render incremental: só adiciona novas mensagens.
     if (!messagesDiv.dataset.initialized) {
-      // skeleton de carregamento rápido (apenas antes do primeiro snapshot)
       messagesDiv.innerHTML = "";
       messagesDiv.dataset.initialized = "1";
     }
@@ -177,7 +169,6 @@ async function openChatWith(otherUid, userData) {
       const div = document.createElement("div");
       div.classList.add("message", mine ? "sent" : "received");
 
-      // Animação suave somente para itens adicionados após o primeiro render
       if (messagesDiv.initialRenderDone) {
         div.classList.add(mine ? "sent-anim" : "received-anim");
       }
@@ -187,12 +178,30 @@ async function openChatWith(otherUid, userData) {
       const dataKey = time ? time.toLocaleDateString("pt-BR") : "";
       if (dataKey) div.setAttribute("data-date", dataKey);
       div.innerHTML = `<div class=\"msg-text\">${escapeHtml(msg.texto)}</div><div class=\"msg-time\">${hora}</div>`;
-      messagesDiv.appendChild(div);
+      let inserted = false;
+      const msgTime = time ? time.getTime() : 0;
+      const existingMessages = Array.from(messagesDiv.querySelectorAll(".message"));
+
+      for (let i = 0; i < existingMessages.length; i++) {
+        const elTimeStr = existingMessages[i].getAttribute("data-time");
+        const elTime = elTimeStr ? parseInt(elTimeStr, 10) : 0;
+        if (msgTime < elTime) {
+          messagesDiv.insertBefore(div, existingMessages[i]);
+          inserted = true;
+          break;
+        }
+      }
+
+      if (!inserted) {
+        messagesDiv.appendChild(div);
+      }
+
+      div.setAttribute("data-time", msgTime);
       messagesDiv.renderedIds.add(id);
 
-      // Se havia uma bolha otimista, remove quando o doc real chegar
+
       if (mine && messagesDiv.lastOptimisticEl) {
-        try { messagesDiv.lastOptimisticEl.remove(); } catch(_) {}
+        try { messagesDiv.lastOptimisticEl.remove(); } catch (_) { }
         messagesDiv.lastOptimisticEl = null;
       }
     });
@@ -200,7 +209,6 @@ async function openChatWith(otherUid, userData) {
     insertDateDividers();
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-    // Marca conclusão do primeiro render (após o primeiro lote de 'added')
     if (!messagesDiv.initialRenderDone) messagesDiv.initialRenderDone = true;
   });
 
@@ -217,21 +225,18 @@ async function openChatWith(otherUid, userData) {
   function insertDateDividers() {
     const children = Array.from(messagesDiv.querySelectorAll(".message"));
     let lastDate = "";
-    // Remove divisores antigos para recompor corretamente
     messagesDiv.querySelectorAll(".date-divider").forEach((el) => el.remove());
 
     for (const msgEl of children) {
       const iso = msgEl.getAttribute("data-date") || "";
       let label = iso;
       try {
-        // Reconstroi data
         const parts = iso.split("/");
-        // formato pt-BR: dd/mm/aaaa
         if (parts.length === 3) {
-          const d = new Date(parseInt(parts[2],10), parseInt(parts[1],10)-1, parseInt(parts[0],10));
+          const d = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
           label = formatDateHuman(d);
         }
-      } catch(_) {}
+      } catch (_) { }
 
       const date = label;
       if (!date) continue;
@@ -248,10 +253,9 @@ async function openChatWith(otherUid, userData) {
   function formatDateHuman(date) {
     const now = new Date();
     const diffMs = now - date;
-    const oneDay = 24*60*60*1000;
-    const sevenDays = 7*oneDay;
+    const oneDay = 24 * 60 * 60 * 1000;
+    const sevenDays = 7 * oneDay;
     if (diffMs >= 0 && diffMs < sevenDays) {
-      // Dentro de uma semana: mostrar dia da semana por extenso
       return date.toLocaleDateString("pt-BR", { weekday: "long" });
     }
     return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
@@ -264,7 +268,6 @@ async function openChatWith(otherUid, userData) {
   backBtn.classList.remove("hidden");
   if (menuToggle) menuToggle.style.display = "none";
 
-  // zera visualmente o badge imediatamente
   const state = chatListState.get(otherUid);
   if (state && state.liEl) {
     state.unreadCount = 0;
@@ -273,10 +276,8 @@ async function openChatWith(otherUid, userData) {
     state.liEl.classList.remove("has-unread");
   }
 
-  // marca mensagens do outro usuário como lidas ao abrir o chat (assíncrono)
   markMessagesAsRead(currentChatId, otherUid);
 
-  // observa typing do outro
   watchTyping(currentChatId, otherUid);
 }
 
@@ -286,7 +287,6 @@ messageForm.addEventListener("submit", async (e) => {
 
   const texto = messageInput.value.trim();
   if (!texto) return;
-  // Limpa imediatamente e renderiza otimistamente a mensagem
   messageInput.value = "";
   const optimistic = document.createElement("div");
   optimistic.classList.add("message", "sent", "sent-anim");
@@ -309,7 +309,6 @@ messageForm.addEventListener("submit", async (e) => {
     ultimaAtualizacao: serverTimestamp()
   }, { merge: true });
 
-  // A lista oficial virá do onSnapshot; a mensagem otimista permanece visualmente igual
 });
 
 backBtn.addEventListener("click", () => {
@@ -321,11 +320,10 @@ backBtn.addEventListener("click", () => {
   messageForm.classList.add("hidden");
   messagesDiv.innerHTML = "";
 
-  if (menuToggle) menuToggle.style.display = "block"; 
+  if (menuToggle) menuToggle.style.display = "block";
 
 });
 
-// Escuta os chats do usuário para ordenar por atividade e atualizar badges
 function listenUserChats() {
   if (unsubUserChats) unsubUserChats();
   const chatsRef = collection(db, "chats");
@@ -336,7 +334,6 @@ function listenUserChats() {
   );
 
   unsubUserChats = onSnapshot(qChats, async (snap) => {
-    // calcular não lidas para cada chat e reordenar lista de usuários
     const order = [];
     const promises = [];
 
@@ -345,7 +342,6 @@ function listenUserChats() {
       const otherId = data.participantes.find((p) => p !== currentUser.uid);
       if (!otherId) return;
 
-      // consulta mensagens não lidas deste chat enviadas pelo outro
       const msgsRef = collection(db, "chats", chatDoc.id, "mensagens");
       const qFromOther = query(
         msgsRef,
@@ -354,10 +350,9 @@ function listenUserChats() {
 
       const p = getDocs(qFromOther).then((snapMsgs) => {
         let count = 0;
-        snapMsgs.forEach((d)=>{ if (d.data().lido === false) count++; });
+        snapMsgs.forEach((d) => { if (d.data().lido === false) count++; });
         console.debug("[listenUserChats] chat=", chatDoc.id, "otherId=", otherId, "unread=", count);
 
-        // Se o chat aberto é com este usuário, não exibe/atualiza badge
         if (currentChatId === chatDoc.id) {
           count = 0;
         }
@@ -371,7 +366,6 @@ function listenUserChats() {
           }
           state.liEl.classList.toggle("has-unread", count > 0);
 
-          // Atualiza última mensagem na lista
           const lastMsgEl = state.liEl.querySelector(`[data-last-msg="${otherId}"]`);
           if (lastMsgEl) {
             lastMsgEl.textContent = data.ultimoMensagem || "";
@@ -385,7 +379,6 @@ function listenUserChats() {
 
     await Promise.all(promises);
 
-    // Ordena: quem tem não lidas primeiro; depois por ultimaAtualizacao desc
     order.sort((a, b) => {
       if (a.count > 0 && b.count === 0) return -1;
       if (b.count > 0 && a.count === 0) return 1;
@@ -394,7 +387,6 @@ function listenUserChats() {
       return String(a.otherId).localeCompare(String(b.otherId));
     });
 
-    // Reordena visualmente a userList conforme ordem calculada
     const fragment = document.createDocumentFragment();
     const used = new Set();
     order.forEach(({ otherId }) => {
@@ -475,7 +467,7 @@ const globalMsgUnsub = (() => {
           // Se o chat desse usuário está aberto, não toca e não notifica
           if (currentChatId === chatDoc.id) return;
 
-          try { if (notifyAudio) notifyAudio.play().catch(()=>{}); } catch(_) {}
+          try { if (notifyAudio) notifyAudio.play().catch(() => { }); } catch (_) { }
 
           if (typeof Notification !== "undefined" && Notification.permission === "granted") {
             getDoc(doc(db, "usuarios", otherId)).then((uSnap) => {
@@ -484,12 +476,12 @@ const globalMsgUnsub = (() => {
               n.onclick = () => {
                 window.focus();
               };
-            }).catch(()=>{});
+            }).catch(() => { });
           }
         });
         innerUnsubs.push(unsub);
       });
-    }).catch(()=>{});
+    }).catch(() => { });
   });
 })();
 
@@ -501,10 +493,10 @@ messageInput.addEventListener("input", async () => {
   if (!currentChatId) return;
   try {
     await setDoc(doc(db, "chats", currentChatId), { [`typing_${currentUser.uid}`]: true }, { merge: true });
-  } catch(_) {}
+  } catch (_) { }
   clearTimeout(typingTimeout);
   typingTimeout = setTimeout(async () => {
-    try { await setDoc(doc(db, "chats", currentChatId), { [`typing_${currentUser.uid}`]: false }, { merge: true }); } catch(_) {}
+    try { await setDoc(doc(db, "chats", currentChatId), { [`typing_${currentUser.uid}`]: false }, { merge: true }); } catch (_) { }
   }, TYPING_DEBOUNCE_MS);
 });
 
