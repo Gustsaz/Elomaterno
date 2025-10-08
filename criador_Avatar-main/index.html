@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Criador de Avatar</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <h1 class="title">Criador de Avatar</h1>
+
+    <div class="avatar-container">
+        <div class="avatar-preview" id="avatar-preview">
+            <div class="layer" id="cabelotras-layer">
+                <div class="colored-part" id="cabelotras-colored"></div>
+                <img id="cabelotras" src="img/cabelos/1_tras.png" alt="Cabelo Trás">
+            </div>
+
+            <div class="layer" id="base-layer">
+                <div class="colored-part" id="base-colored"></div>
+                <img id="base" src="img/bases/1.png" alt="Base">
+            </div>
+
+            <div class="layer" id="camisa-layer">
+                <div class="colored-part" id="camisa-colored"></div>
+                <img id="camisa" src="img/camisas/1.png" alt="Camisa">
+            </div>
+
+            <div class="layer" id="sobrancelha-layer">
+                <div class="colored-part" id="sobrancelha-colored"></div>
+                <img id="sobrancelha" src="img/sobrancelhas/1.png" alt="Sobrancelha">
+            </div>
+
+            <div class="layer" id="cabelo-layer">
+                <div class="colored-part" id="cabelo-colored"></div>
+                <img id="cabelo" src="img/cabelos/1.png" alt="Cabelo">
+            </div>
+
+            <div class="layer" id="boca-layer">
+                <img id="boca" src="img/bocas/1.png" alt="Boca">
+            </div>
+
+            <div class="layer" id="olhos-layer">
+                <img id="olhos" src="img/olhos/1.png" alt="Olhos">
+            </div>
+
+            <div class="layer" id="orelhas-layer">
+                <img id="orelha" src="img/bases/1_orelha.png" alt="Orelhas">
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <h3>Base</h3>
+            <button class="prev" data-part="base">←</button>
+            <button class="next" data-part="base">→</button>
+            <div class="color-palette" id="base-palette">
+                <div class="color-box" data-color="#f2d6cb"></div>
+                <div class="color-box" data-color="#d8a87d"></div>
+                <div class="color-box" data-color="#b97a57"></div>
+                <div class="color-box" data-color="#8b5e3c"></div>
+                <div class="color-box" data-color="#5b3923"></div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>Camisa</h3>
+            <button class="prev" data-part="camisa">←</button>
+            <button class="next" data-part="camisa">→</button>
+            <input type="color" class="color-picker" data-part="camisa">
+        </div>
+
+        <div class="control-group">
+            <h3>Sobrancelha</h3>
+            <button class="prev" data-part="sobrancelha">←</button>
+            <button class="next" data-part="sobrancelha">→</button>
+            <input type="color" class="color-picker" data-part="sobrancelha">
+        </div>
+
+        <div class="control-group">
+            <h3>Cabelo</h3>
+            <button class="prev" data-part="cabelo">←</button>
+            <button class="next" data-part="cabelo">→</button>
+            <input type="color" class="color-picker" data-part="cabelo">
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

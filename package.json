@@ -1,0 +1,23 @@
+{
+  "type": "module", 
+  "name": "elomaterno-main",
+  "version": "1.0.0",
+  "description": "O projeto consiste em um hub digital voltado para mães solo e pais em situação de vulnerabilidade, com o objetivo de oferecer suporte, visibilidade e conexão com recursos que possam facilitar sua vida cotidiana. A plataforma busca ser um espaço seguro, acessível e prático, permitindo que os usuários publiquem necessidades, compartilhem experiências, encontrem oportunidades de apoio e construam uma rede de solidariedade.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "node-fetch": "^3.3.2"
+  }
+}
+

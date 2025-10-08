@@ -1,6 +1,8 @@
 * {
     margin: 0;
     padding: 0;
+    overflow: hidden;
+
 }
 
 body {
@@ -16,7 +18,7 @@ body {
     overflow: hidden;
 }
 
-i{
+i {
     color: #583E8E;
 }
 
@@ -200,7 +202,7 @@ i{
 .input-group .icon {
     font-size: 16px;
     margin-right: 8px;
-    color: #583E8E; 
-    width: 20px;   
+    color: #583E8E;
+    width: 20px;
     text-align: center;
-  }
+}

@@ -10,13 +10,45 @@
     <link rel="stylesheet" href="./css/calendario.css">
     <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
     <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+    <script type="module" src="./js/home-parc.js"></script>
+    <style>
+        .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f7f5fc;
+  padding: 15px 25px;
+  border-bottom: 2px solid #e3dcf9;
+}
+
+#boasVindas {
+  color: #3d265a;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.logout-btn {
+  background-color: #5b3c91;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #472f75;
+}
+
+    </style>
 </head>
 
 <body>
     <header class="header">
-        <h1>Bem vindo(a) Parceira Ana</h1>
-        <img src="./img/account_psi_icon.png" alt="Foto de perfil" class="profile-img">
-    </header>
+    <h2 id="boasVindas">Olá, parceiro!</h2>
+    <button id="logoutBtn" class="logout-btn">Sair</button>
+  </header>
 
     <main class="main-container">
         <aside class="sidebar">
@@ -147,26 +179,6 @@
                 </div>
 
                 <a href="forum.html">
-                    <div class="post-card com-brilho">
-                        <h3 class="post-title">Meu filho está não comendo suas verduras...</h3>
-                        <div class="post-meta">
-                            <img src="./img/account_icon.png" alt="Avatar Autor" class="author-avatar">
-                            <div>
-                                <span class="author-name">Emily Rodrigues</span>
-                                <span class="post-date">02 de setembro, 2025 - 14:31</span>
-                            </div>
-                        </div>
-                        <p class="post-content">
-                            Ele só quer comer doces e se recusa a comer os seus vegetais, algum especialista tem como me ajudar?
-                        </p>
-                        <div class="like-wrap">
-                            <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
-                            <span class="like-count">5</span>
-                        </div>
-                        <div class="post-actions">
-                            <img src="./img/consult_icon.png" alt="Comentários" class="comment-icon">
-                        </div>
-                    </div>
                 </a>
 
                 <a href="forum.html">
