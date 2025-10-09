@@ -250,25 +250,37 @@
     <div class="container">
         <div class="calendar-container">
             <div class="calendar-header">
-                <button id="prevMonth">&lt;</button>
-                <div class="month-year-select">
-                    <select id="monthSelect"></select>
-                    <select id="yearSelect"></select>
-                </div>
-                <button id="nextMonth">&gt;</button>
+                <button onclick="prevMonth()"><</button>
+                        <div class="month-year-select">
+                            <select id="month-select" onchange="onMonthChange()"></select>
+                            <select id="year-select" onchange="onYearChange()"></select>
+                        </div>
+                        <button onclick="nextMonth()">></button>
             </div>
             <div class="calendar-days">
-                <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+                <div>D</div>
+                <div>S</div>
+                <div>T</div>
+                <div>Q</div>
+                <div>Q</div>
+                <div>S</div>
+                <div>S</div>
             </div>
             <div class="calendar-dates" id="calendarDates"></div>
         </div>
 
         <div class="events-container">
-            <h3>Meus Eventos</h3>
-            <div class="event-list" id="eventList"></div>
+            <h3>Próximos eventos</h3>
+
+            <div class="event-list">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
         </div>
     </div>
-
 
     <script type="module" src="./js/calendario.js"></script>
     <script type="module" src="./js/globals.js"></script>

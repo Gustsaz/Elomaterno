@@ -11,44 +11,103 @@
     <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
     <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
     <script type="module" src="./js/home-parc.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f7f5fc;
-  padding: 15px 25px;
-  border-bottom: 2px solid #e3dcf9;
-}
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f7f5fc;
+            padding: 15px 25px;
+            border-bottom: 2px solid #e3dcf9;
+        }
 
-#boasVindas {
-  color: #3d265a;
-  font-size: 1.2rem;
-  font-weight: 500;
-}
+        #boasVindas {
+            color: #3d265a;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
 
-.logout-btn {
-  background-color: #5b3c91;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
+        .logout-btn {
+            background-color: #5b3c91;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
 
-.logout-btn:hover {
-  background-color: #472f75;
-}
-
+        .logout-btn:hover {
+            background-color: #472f75;
+        }
     </style>
 </head>
 
 <body>
     <header class="header">
-    <h2 id="boasVindas">Olá, parceiro!</h2>
-    <button id="logoutBtn" class="logout-btn">Sair</button>
-  </header>
+        <h2 id="boasVindas">Olá, parceiro!</h2>
+        <button id="logoutBtn" class="logout-btn">Sair</button>
+    </header>
+
+    <div id="postModal" class="modal hidden">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <h2>Criar novo post</h2>
+
+            <form id="postForm">
+                <label>Título</label>
+                <input type="text" id="titulo" required>
+
+                <label>Descrição</label>
+                <input type="text" id="descricao" required>
+
+                <label>Resumo</label>
+                <textarea id="resumo" rows="3"></textarea>
+
+                <label>Imagem (URL)</label>
+                <input type="text" id="img" placeholder="img/post_img.png" required>
+
+                <label>Link</label>
+                <input type="url" id="link" placeholder="https://..." required>
+
+                <p><strong>Categoria:</strong> posts</p>
+
+                <button type="submit">Publicar</button>
+                <div id="postMsg"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="eventModal" class="modal hidden">
+        <div class="modal-content">
+            <span id="closeEventModal" class="close">&times;</span>
+            <h2>Criar novo evento</h2>
+
+            <form id="eventForm">
+                <label>Título</label>
+                <input type="text" id="tituloEvento" required>
+
+                <label>Descrição</label>
+                <textarea id="descricaoEvento" rows="3"></textarea>
+
+                <label>Data do evento</label>
+                <input type="datetime-local" id="dataEvento" required>
+
+                <label>Local</label>
+                <input type="text" id="localEvento" placeholder="Ex: Online, Auditório Central..." required>
+
+                <label>Imagem de capa (URL)</label>
+                <input type="text" id="capaEvento" placeholder="img/palestra_img.png" required>
+
+                <button type="submit">Publicar Evento</button>
+                <div id="eventMsg"></div>
+            </form>
+        </div>
+    </div>
+
 
     <main class="main-container">
         <aside class="sidebar">
@@ -104,8 +163,15 @@
                 </div>
             </div>
 
-            <h2>Eventos Divulgados</h2>
+            <div class="section-header">
+                <h2>Eventos Divulgados</h2>
+                <button class="add-event-btn" title="Adicionar evento">
+                    <img src="./img/add_icon.png" alt="Adicionar evento">
+                </button>
+            </div>
+
             <div class="event-list horizontal">
+
                 <div class="event">
                     <strong>13 Jun • Palestra Mulheres</strong>
                     <p>Palestra com dicas para mães de primeira viagem.</p>
@@ -192,7 +258,8 @@
                             </div>
                         </div>
                         <p class="post-content">
-                            Ele só quer comer doces e se recusa a comer os seus vegetais, algum especialista tem como me ajudar?
+                            Ele só quer comer doces e se recusa a comer os seus vegetais, algum especialista tem como me
+                            ajudar?
                         </p>
                         <div class="like-wrap">
                             <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
