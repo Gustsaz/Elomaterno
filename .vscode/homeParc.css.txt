@@ -854,24 +854,3 @@ header .profile-img {
   margin-top: 8px;
   transition: opacity 0.3s ease;
 }
-
-.post-card.parceiro {
-  border-left: 4px solid #7A5FE8;
-  background: linear-gradient(135deg, #faf7ff, #f3f0ff);
-}
-.post-card.parceiro .post-title {
-  color: #442e88;
-}
-
-/* === Posts de parceiros destacados === */
-.post-card.parceiro {
-  border-left: 5px solid #7A5FE8;
-  background: linear-gradient(135deg, #faf7ff, #f2efff);
-}
-.post-card.parceiro .post-title {
-  color: #442e88;
-}
-.post-card.parceiro .author-name {
-  color: #5a42b6;
-  font-weight: 700;
-}

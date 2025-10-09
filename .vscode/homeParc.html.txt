@@ -184,7 +184,7 @@
                 <div class="events-container">
                     <h3>Últimos eventos</h3>
                     <div class="event-list">
-
+                        
                     </div>
                     <button class="add-consult-btn">Adicionar evento</button>
                 </div>
@@ -194,47 +194,42 @@
         <section class="content hidden" id="forum">
             <div class="forum-container">
                 <div class="forum-search">
-                    <input type="text" id="forum-search-input" placeholder="Pesquisar no fórum">
-                    <button class="add-for-btn" id="nova-post-btn">+</button>
+                    <input type="text" placeholder="Pesquisar no fórum">
+                    <button class="add-for-btn">+</button>
                 </div>
 
-                <div id="posts-list">
-                    <div class="loader">
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                    </div>
-                </div>
-            </div>
+                <a href="forum.html">
+                </a>
 
-            <button class="botao-nova" id="nova-post-fixa">Nova Publicação</button>
-
-            <!-- Modal de criação de post -->
-            <div class="modal hidden" id="modal-post">
-                <div class="modal-content">
-                    <span class="close" id="close-post-modal">&times;</span>
-                    <h2>Nova Publicação</h2>
-
-                    <form id="form-post">
-                        <label for="titulo">Título</label>
-                        <input type="text" id="titulo" placeholder="Digite o título" required>
-
-                        <label for="conteudo">Conteúdo</label>
-                        <textarea id="conteudo" rows="4" placeholder="Escreva sua mensagem..." required></textarea>
-
-                        <label for="anonimo-checkbox" class="anonimo-check">
-                            <input type="checkbox" id="anonimo-checkbox">
-                            <span>Postar como anônimo</span>
-                        </label>
-
-                        <div class="modal-actions">
-                            <button type="button" id="cancelar-post">Cancelar</button>
-                            <button type="submit">Publicar</button>
+                <a href="forum.html">
+                    <div class="post-card com-brilho">
+                        <h3 class="post-title">Meu filho está não comendo suas verduras...</h3>
+                        <div class="post-meta">
+                            <img src="./img/account_icon.png" alt="Avatar Autor" class="author-avatar">
+                            <div>
+                                <span class="author-name">Emily Rodrigues</span>
+                                <span class="post-date">02 de setembro, 2025 - 14:31</span>
+                            </div>
                         </div>
-                    </form>
-                </div>
+                        <p class="post-content">
+                            Ele só quer comer doces e se recusa a comer os seus vegetais, algum especialista tem como me
+                            ajudar?
+                        </p>
+                        <div class="like-wrap">
+                            <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+                            <span class="like-count">5</span>
+                        </div>
+                        <div class="post-actions">
+                            <img src="./img/consult_icon.png" alt="Comentários" class="comment-icon">
+                        </div>
+                    </div>
+                </a>
+
             </div>
+
+            <button class="botao-nova">Nova Publicação</button>
         </section>
+
 
         <section class="content hidden" id="artigos">
             <p>Ainda em desenvolvimento...</p>
@@ -243,6 +238,7 @@
 
     <script src="./js/globals.js"></script>
     <script src="./js/calendario.js"></script>
+    <script src="./js/homeParc.js"></script>
 
 </body>
 
