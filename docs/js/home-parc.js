@@ -422,9 +422,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// ===============================
-// FÓRUM PARCEIRO - ELO MATERNO
+console.log("home-parc.js carregado");
+
 function initForumParceiro() {
+  console.log("initForumParceiro() iniciando...");
+
   const postsList = document.getElementById("posts-list");
   const novaBtn = document.getElementById("nova-post-btn");
   const novaBtnFixa = document.getElementById("nova-post-fixa");
@@ -432,106 +434,170 @@ function initForumParceiro() {
   const formPost = document.getElementById("form-post");
   const cancelarPost = document.getElementById("cancelar-post");
   const closePostModal = document.getElementById("close-post-modal");
-  const inputTitulo = document.getElementById("titulo");
-  const inputConteudo = document.getElementById("conteudo");
-  const anonimoCheck = document.getElementById("anonimo-checkbox");
+  const inputTitulo = modal ? modal.querySelector('#titulo') : null;
+  const inputConteudo = modal ? modal.querySelector('#conteudo') : null;
+  const anonimoCheck = modal ? modal.querySelector('#anonimo-checkbox') : null;
   const searchInput = document.getElementById("forum-search-input");
+
+  if (!postsList) {
+    console.error("❌ posts-list não encontrado no DOM (id='posts-list')");
+    return;
+  }
+  if (!modal || !formPost || !inputTitulo || !inputConteudo) {
+    console.error("❌ Elementos do modal do fórum não encontrados. modal, form-post, titulo ou conteudo ausentes");
+    return;
+  }
 
   let usuarioLogado = null;
   let dadosParceiro = null;
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
+    try {
+      if (!user) {
+        console.log("usuário não logado (fórum) — espera autenticação");
+        return;
+      }
+      usuarioLogado = user;
+      console.log("usuário logado (fórum):", usuarioLogado.uid);
 
-    usuarioLogado = user;
+      try {
+        const parceiroSnap = await getDoc(doc(db, "parceiros", user.uid));
+        if (parceiroSnap.exists()) {
+          dadosParceiro = parceiroSnap.data();
+          console.log("dadosParceiro encontrados:", dadosParceiro.nomeEmpresa);
+        } else {
+          dadosParceiro = null;
+        }
+      } catch (err) {
+        console.warn("⚠️ erro buscando parceiro:", err);
+        dadosParceiro = null;
+      }
 
-    // Tenta identificar se é parceiro
-    const parceiroSnap = await getDoc(doc(db, "parceiros", user.uid));
-    if (parceiroSnap.exists()) {
-      dadosParceiro = parceiroSnap.data();
-    }
+      try {
+        const q = query(collection(db, "posts"), orderBy("data", "desc"));
+        onSnapshot(q, async (snapshot) => {
+          try {
+            const cards = [];
+            for (const docSnap of snapshot.docs) {
+              const post = docSnap.data();
+              const id = docSnap.id;
 
-    const q = query(collection(db, "posts"), orderBy("data", "desc"));
-    onSnapshot(q, (snapshot) => {
-      const cards = [];
-      snapshot.forEach((docSnap) => {
-        const post = docSnap.data();
-        const id = docSnap.id;
+              const dataFormatada = post.data?.toDate
+                ? post.data.toDate().toLocaleString("pt-BR")
+                : "Agora";
 
-        const dataFormatada = post.data?.toDate
-          ? post.data.toDate().toLocaleString("pt-BR")
-          : "Agora";
+              const isParceiro = post.autorId && post.autorId.startsWith("parc_");
 
-        // verifica se é post de parceiro
-        const isParceiro = post.autorId && post.autorId.startsWith("parc_");
+              const card = document.createElement("div");
+              card.className = `post-card com-brilho ${isParceiro ? "parceiro" : ""}`;
+              card.dataset.id = id;
 
-        const card = document.createElement("div");
-        card.className = `post-card com-brilho ${isParceiro ? "parceiro" : ""}`;
-        card.dataset.id = id;
+              let comentariosCount = 0;
+              try {
+                const commentsSnap = await getDocs(collection(db, "posts", id, "comentarios"));
+                comentariosCount = commentsSnap.size;
+              } catch (err) {
+                console.warn("Erro ao carregar comentários:", err);
+              }
 
-        card.innerHTML = `
-          <h3 class="post-title">${sanitize(post.titulo)}</h3>
-          <div class="post-meta">
-            <img src="${sanitize(post.autorFoto || './img/account_icon.png')}" class="author-avatar" alt="avatar">
-            <div>
-              <span class="author-name">${sanitize(post.autorNome || "Usuário")}</span>
-              <span class="post-date">${dataFormatada}</span>
-            </div>
+              card.innerHTML = `
+        <h3 class="post-title">${sanitize(post.titulo)}</h3>
+        <div class="post-meta">
+          <img src="${sanitize(post.autorFoto || './img/account_icon.png')}" class="author-avatar" alt="avatar">
+          <div>
+            <span class="author-name">${sanitize(post.autorNome || "Usuário")}</span>
+            <span class="post-date">${dataFormatada}</span>
           </div>
-          <p class="post-content">${sanitize(post.conteudo)}</p>
-          <div class="like-wrap" data-id="${id}">
-            <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
-            <span class="like-count">${post.likes || 0}</span>
-          </div>
-          <div class="post-actions">
+        </div>
+        <p class="post-content">${sanitize(post.conteudo)}</p>
+        <div class="like-wrap" data-id="${id}">
+          <img src="./img/like_icon.png" alt="Curtir" class="like-icon">
+          <span class="like-count">${post.likes || 0}</span>
+        </div>
+        <div class="post-actions">
+          <div class="comments-info">
             <img src="./img/consult_icon.png" alt="Comentários" class="comment-icon">
-            ${usuarioLogado && usuarioLogado.uid === post.autorId ? `
-              <button class="delete-btn action-btn" data-id="${id}">Excluir</button>` : ""}
+            <span class="comment-count" data-id="${id}">${comentariosCount}</span>
           </div>
-        `;
-        cards.push(card);
-      });
-      postsList.innerHTML = "";
-      cards.forEach(c => postsList.appendChild(c));
-    });
+          ${usuarioLogado && usuarioLogado.uid === post.autorId
+                  ? `<button class="delete-btn action-btn" data-id="${id}">Excluir</button>`
+                  : ""}
+        </div>
+      `;
+              cards.push(card);
+            }
+
+            postsList.innerHTML = "";
+            cards.forEach(c => postsList.appendChild(c));
+            console.log("posts renderizados:", cards.length);
+
+          } catch (renderErr) {
+            console.error("Erro processando snapshot:", renderErr);
+          }
+        });
+
+        snapshot.forEach(async (docSnap) => {
+          const id = docSnap.id;
+          try {
+            const commentsSnap = await getDocs(collection(db, "posts", id, "comentarios"));
+            const count = commentsSnap.size;
+            const el = document.querySelector(`.comment-count[data-id="${id}"]`);
+            if (el) el.textContent = count;
+          } catch (e) {
+            console.warn("Erro ao contar comentários:", e);
+          }
+        });
+
+
+      } catch (qErr) {
+        console.error("Erro criando snapshot/query de posts:", qErr);
+      }
+    } catch (outerErr) {
+      console.error("Erro no onAuthStateChanged do fórum:", outerErr);
+    }
   });
 
-  // Criar novo post
   async function criarPost(titulo, conteudo) {
-    if (!usuarioLogado) {
-      alert("Você precisa estar logado para postar.");
-      return;
-    }
+    try {
+      if (!usuarioLogado) {
+        alert("Você precisa estar logado para postar.");
+        return;
+      }
 
-    let autorId, autorNome, autorFoto;
-    if (anonimoCheck.checked) {
-      autorId = "anonimo";
-      autorNome = "Anônimo";
-      autorFoto = "./img/account_icon.png";
-    } else if (dadosParceiro) {
-      autorId = "parc_" + usuarioLogado.uid;
-      autorNome = dadosParceiro.nomeEmpresa || "Parceiro";
-      autorFoto = "./img/logo_icon.png";
-    } else {
-      const usuarioSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
-      const dadosUsuario = usuarioSnap.exists() ? usuarioSnap.data() : {};
-      autorId = usuarioLogado.uid;
-      autorNome = dadosUsuario.nome || "Usuário";
-      autorFoto = dadosUsuario.avatar || "./img/account_icon.png";
-    }
+      let autorId, autorNome, autorFoto;
+      if (anonimoCheck && anonimoCheck.checked) {
+        autorId = "anonimo";
+        autorNome = "Anônimo";
+        autorFoto = "./img/account_icon.png";
+      } else if (dadosParceiro) {
+        autorId = "parc_" + usuarioLogado.uid;
+        autorNome = dadosParceiro.nomeEmpresa || "Parceiro";
+        autorFoto = "./img/logo_icon.png";
+      } else {
+        const usuarioSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
+        const dadosUsuario = usuarioSnap.exists() ? usuarioSnap.data() : {};
+        autorId = usuarioLogado.uid;
+        autorNome = dadosUsuario.nome || "Usuário";
+        autorFoto = dadosUsuario.avatar || "./img/account_icon.png";
+      }
 
-    await addDoc(collection(db, "posts"), {
-      autorId,
-      autorNome,
-      autorFoto,
-      titulo,
-      conteudo,
-      likes: 0,
-      data: serverTimestamp()
-    });
+      const novo = {
+        autorId,
+        autorNome,
+        autorFoto,
+        titulo,
+        conteudo,
+        likes: 0,
+        data: serverTimestamp()
+      };
+      const ref = await addDoc(collection(db, "posts"), novo);
+      console.log("Post criado com ID:", ref.id);
+    } catch (err) {
+      console.error("Erro ao criar post:", err);
+      alert("Erro ao criar post. Veja console para mais detalhes.");
+    }
   }
 
-  // Eventos de abrir/fechar modal
   [novaBtn, novaBtnFixa].forEach((btn) => btn?.addEventListener("click", () => {
     inputTitulo.value = "";
     inputConteudo.value = "";
@@ -540,74 +606,76 @@ function initForumParceiro() {
   cancelarPost.addEventListener("click", () => modal.classList.add("hidden"));
   closePostModal.addEventListener("click", () => modal.classList.add("hidden"));
 
-  // Submissão do post
   formPost.addEventListener("submit", async (e) => {
     e.preventDefault();
     const titulo = inputTitulo.value.trim();
     const conteudo = inputConteudo.value.trim();
-    if (!titulo || !conteudo) return;
+    if (!titulo || !conteudo) {
+      alert("Título e conteúdo são obrigatórios.");
+      return;
+    }
     await criarPost(titulo, conteudo);
     modal.classList.add("hidden");
   });
 
-  // Clique em curtidas e posts
   postsList.addEventListener("click", async (e) => {
-    const card = e.target.closest(".post-card");
-    if (!card) return;
-    const postId = card.dataset.id;
+    try {
+      const card = e.target.closest(".post-card");
+      if (!card) return;
+      const postId = card.dataset.id;
 
-    // Curtir
-    if (e.target.classList.contains("like-icon")) {
-      e.stopPropagation();
-      if (!usuarioLogado) return alert("É necessário estar logado para curtir.");
+      if (e.target.classList.contains("like-icon")) {
+        e.stopPropagation();
+        if (!usuarioLogado) return alert("É necessário estar logado para curtir.");
 
-      const likeWrap = e.target.closest(".like-wrap");
-      const countEl = likeWrap.querySelector(".like-count");
-      const current = parseInt(countEl.textContent) || 0;
-      const liked = e.target.src.includes("like_curtido.png");
+        const likeWrap = e.target.closest(".like-wrap");
+        const countEl = likeWrap.querySelector(".like-count");
+        const current = parseInt(countEl.textContent) || 0;
+        const liked = e.target.src.includes("like_curtido.png");
 
-      countEl.textContent = liked ? current - 1 : current + 1;
-      e.target.src = liked ? "./img/like_icon.png" : "./img/like_curtido.png";
+        countEl.textContent = liked ? current - 1 : current + 1;
+        e.target.src = liked ? "./img/like_icon.png" : "./img/like_curtido.png";
 
-      const likeRef = doc(db, "posts", postId, "likes", usuarioLogado.uid);
-      try {
-        const snap = await getDoc(likeRef);
-        if (snap.exists()) {
-          await deleteDoc(likeRef);
-          await updateDoc(doc(db, "posts", postId), { likes: increment(-1) });
-        } else {
-          await setDoc(likeRef, { curtido: true });
-          await updateDoc(doc(db, "posts", postId), { likes: increment(1) });
+        const likeRef = doc(db, "posts", postId, "likes", usuarioLogado.uid);
+        try {
+          const snap = await getDoc(likeRef);
+          if (snap.exists()) {
+            await deleteDoc(likeRef);
+            await updateDoc(doc(db, "posts", postId), { likes: increment(-1) });
+          } else {
+            await setDoc(likeRef, { curtido: true });
+            await updateDoc(doc(db, "posts", postId), { likes: increment(1) });
+          }
+        } catch (err) {
+          console.error("Erro ao curtir:", err);
         }
-      } catch (err) {
-        console.error("Erro ao curtir:", err);
+        return;
       }
-      return;
-    }
 
-    // Excluir post
-    if (e.target.closest(".delete-btn")) {
-      if (confirm("Deseja realmente excluir este post?")) {
-        await deleteDoc(doc(db, "posts", postId));
+      if (e.target.closest(".delete-btn")) {
+        if (confirm("Deseja realmente excluir este post?")) {
+          await deleteDoc(doc(db, "posts", postId));
+        }
+        return;
       }
-      return;
-    }
 
-    // Abrir comentários
-    window.location.href = `comentResp.html?postId=${postId}`;
+      window.location.href = `comentResp.html?postId=${postId}`;
+    } catch (err) {
+      console.error("Erro no event listener de postsList:", err);
+    }
   });
 
-  // Filtro de busca
-  searchInput.addEventListener("input", () => {
-    const termo = searchInput.value.toLowerCase();
-    document.querySelectorAll(".post-card").forEach(card => {
-      const titulo = card.querySelector(".post-title")?.textContent.toLowerCase() || "";
-      const autor = card.querySelector(".author-name")?.textContent.toLowerCase() || "";
-      card.style.display = (titulo.includes(termo) || autor.includes(termo)) ? "block" : "none";
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const termo = searchInput.value.toLowerCase();
+      document.querySelectorAll(".post-card").forEach(card => {
+        const titulo = card.querySelector(".post-title")?.textContent.toLowerCase() || "";
+        const autor = card.querySelector(".author-name")?.textContent.toLowerCase() || "";
+        card.style.display = (titulo.includes(termo) || autor.includes(termo)) ? "block" : "none";
+      });
     });
-  });
+  }
 
-  // Sanitização simples
   function sanitize(str) {
     return (str || "")
       .replaceAll("&", "&amp;")
@@ -616,7 +684,23 @@ function initForumParceiro() {
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#39;");
   }
+
+  console.log("initForumParceiro() pronto");
+
+  document.addEventListener("mousemove", (e) => {
+    document.querySelectorAll(".post-card.com-brilho").forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty("--mouse-x", `${x}px`);
+      card.style.setProperty("--mouse-y", `${y}px`);
+    });
+  });
+
 }
 
-// Inicializa o fórum após carregamento
-document.addEventListener("DOMContentLoaded", initForumParceiro);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initForumParceiro);
+} else {
+  initForumParceiro();
+}

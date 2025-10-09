@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="./css/calendario.css">
     <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
     <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
-    <script type="module" src="./js/home-parc.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -145,7 +144,13 @@
                 </button>
             </div>
 
-            <div class="articles-grid"></div>
+            <div class="articles-grid">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
 
             <div class="section-header">
                 <h2>Eventos Divulgados</h2>
@@ -154,7 +159,13 @@
                 </button>
             </div>
 
-            <div class="event-list horizontal"></div>
+            <div class="event-list horizontal">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
         </section>
 
         <section class="content hidden" id="calendario">
@@ -207,34 +218,32 @@
                 </div>
             </div>
 
-            <button class="botao-nova" id="nova-post-fixa">Nova Publicação</button>
-
-            <!-- Modal de criação de post -->
-            <div class="modal hidden" id="modal-post">
-                <div class="modal-content">
-                    <span class="close" id="close-post-modal">&times;</span>
-                    <h2>Nova Publicação</h2>
-
-                    <form id="form-post">
-                        <label for="titulo">Título</label>
-                        <input type="text" id="titulo" placeholder="Digite o título" required>
-
-                        <label for="conteudo">Conteúdo</label>
-                        <textarea id="conteudo" rows="4" placeholder="Escreva sua mensagem..." required></textarea>
-
-                        <label for="anonimo-checkbox" class="anonimo-check">
-                            <input type="checkbox" id="anonimo-checkbox">
-                            <span>Postar como anônimo</span>
-                        </label>
-
-                        <div class="modal-actions">
-                            <button type="button" id="cancelar-post">Cancelar</button>
-                            <button type="submit">Publicar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </section>
+
+        <div class="modal hidden" id="modal-post">
+            <div class="modal-content">
+                <span class="close" id="close-post-modal">&times;</span>
+                <h2>Nova Publicação</h2>
+
+                <form id="form-post">
+                    <label for="titulo">Título</label>
+                    <input type="text" id="titulo" placeholder="Digite o título" required>
+
+                    <label for="conteudo">Conteúdo</label>
+                    <textarea id="conteudo" rows="4" placeholder="Escreva sua mensagem..." required></textarea>
+
+                    <label for="anonimo-checkbox" class="anonimo-check">
+                        <input type="checkbox" id="anonimo-checkbox">
+                        <span>Postar como anônimo</span>
+                    </label>
+
+                    <div class="modal-actions">
+                        <button type="button" id="cancelar-post">Cancelar</button>
+                        <button type="submit">Publicar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <section class="content hidden" id="artigos">
             <p>Ainda em desenvolvimento...</p>
@@ -243,6 +252,7 @@
 
     <script src="./js/globals.js"></script>
     <script src="./js/calendario.js"></script>
+    <script type="module" src="./js/home-parc.js"></script>
 
 </body>
 
