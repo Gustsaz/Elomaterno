@@ -6,20 +6,31 @@ const calendarDates = document.getElementById('calendarDates');
 const monthSelect = document.getElementById('month-select');
 const yearSelect = document.getElementById('year-select');
 
+// Novo elemento de título (mês e ano)
+const calendarHeader = document.querySelector('.calendar-header');
+let monthTitle = document.createElement('h3');
+monthTitle.className = 'month-title';
+calendarHeader.insertBefore(monthTitle, monthSelect.parentElement);
+
 const currentDate = new Date();
 let currentMonth = currentDate.getMonth();
 let currentYear = currentDate.getFullYear();
 
-let currentUser = null; 
+let currentUser = null;
 
 const monthNames = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
 
+function updateMonthTitle() {
+  monthTitle.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+}
+
 function populateMonthYearSelects() {
   monthSelect.innerHTML = '';
   yearSelect.innerHTML = '';
+
   monthNames.forEach((m, i) => {
     const opt = document.createElement('option');
     opt.value = i;
@@ -27,13 +38,16 @@ function populateMonthYearSelects() {
     if (i === currentMonth) opt.selected = true;
     monthSelect.appendChild(opt);
   });
-  for (let y = 2000; y <= 2030; y++) {
+
+  for (let y = 2020; y <= 2035; y++) {
     const opt = document.createElement('option');
     opt.value = y;
     opt.textContent = y;
     if (y === currentYear) opt.selected = true;
     yearSelect.appendChild(opt);
   }
+
+  updateMonthTitle();
 }
 
 function renderCalendar(month, year, eventos = []) {
@@ -42,225 +56,77 @@ function renderCalendar(month, year, eventos = []) {
   calendarDates.innerHTML = '';
 
   const hoje = new Date();
-  hoje.setHours(0,0,0,0);
+  hoje.setHours(0, 0, 0, 0);
 
   for (let i = 0; i < firstDay; i++) {
     calendarDates.innerHTML += `<div class="empty"></div>`;
   }
+
   for (let i = 1; i <= lastDate; i++) {
     const dateObj = new Date(year, month, i);
-    const today = new Date();
-    const isToday = i === today.getDate() &&
-      month === today.getMonth() &&
-      year === today.getFullYear();
-    const isPastDay = dateObj < hoje;
+    const isToday =
+      i === hoje.getDate() &&
+      month === hoje.getMonth() &&
+      year === hoje.getFullYear();
 
     const eventosDoDia = eventos.filter(ev => {
       const d = ev.data;
       if (!d || !(d instanceof Date) || isNaN(d)) return false;
-      return d.getDate() === i && d.getMonth() === month && d.getFullYear() === year;
+      return (
+        d.getDate() === i &&
+        d.getMonth() === month &&
+        d.getFullYear() === year
+      );
     });
 
     const hasEvent = eventosDoDia.length > 0;
-    const tooltip = hasEvent ? eventosDoDia.map(e => e.titulo).join(", ") : "";
-
-    const pastClass = isPastDay ? ' past' : '';
 
     calendarDates.innerHTML += `
-      <div class="date ${isToday ? 'today' : ''} ${hasEvent ? 'has-event' : ''}${pastClass}"
-           ${tooltip ? `data-tooltip="${tooltip}"` : ''}>
+      <div class="date ${isToday ? 'today' : ''} ${hasEvent ? 'has-event' : ''}">
         ${i}
       </div>`;
   }
-  monthSelect.value = month;
-  yearSelect.value = year;
+
+  updateMonthTitle();
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-async function changeMonthWithAnimation(delta, dir) {
-  if (!calendarDates) {
-    currentMonth += delta;
-    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-    await carregarEventosDoUsuario();
-    return;
+function prevMonth() {
+  currentMonth--;
+  if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
   }
-
-  const exitClass = dir === 'left' ? 'anim-exit-left' : 'anim-exit-right';
-  const enterClass = dir === 'left' ? 'anim-enter-right' : 'anim-enter-left';
-
-  calendarDates.classList.remove(enterClass);
-  void calendarDates.offsetWidth;
-  calendarDates.classList.add(exitClass);
-
-  await sleep(220);
-
-  currentMonth += delta;
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-
-  await carregarEventosDoUsuario();
-
-  calendarDates.classList.remove(exitClass);
-  void calendarDates.offsetWidth;
-  calendarDates.classList.add(enterClass);
-
-  setTimeout(() => calendarDates.classList.remove(enterClass), 350);
+  carregarEventosDoUsuario();
 }
 
-function prevMonth() { changeMonthWithAnimation(-1, 'right'); }
-function nextMonth() { changeMonthWithAnimation(1, 'left'); }
+function nextMonth() {
+  currentMonth++;
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
+  }
+  carregarEventosDoUsuario();
+}
 
 function onMonthChange() {
   currentMonth = parseInt(monthSelect.value);
-  calendarDates.classList.add('anim-exit-fade');
-  setTimeout(async () => {
-    await carregarEventosDoUsuario();
-    calendarDates.classList.remove('anim-exit-fade');
-    calendarDates.classList.add('anim-enter-fade');
-    setTimeout(() => calendarDates.classList.remove('anim-enter-fade'), 220);
-  }, 150);
+  carregarEventosDoUsuario();
 }
+
 function onYearChange() {
   currentYear = parseInt(yearSelect.value);
-  calendarDates.classList.add('anim-exit-fade');
-  setTimeout(async () => {
-    await carregarEventosDoUsuario();
-    calendarDates.classList.remove('anim-exit-fade');
-    calendarDates.classList.add('anim-enter-fade');
-    setTimeout(() => calendarDates.classList.remove('anim-enter-fade'), 220);
-  }, 150);
+  carregarEventosDoUsuario();
 }
 
 populateMonthYearSelects();
 renderCalendar(currentMonth, currentYear, []);
 
-function parseToDate(maybe) {
-  if (!maybe) return null;
-  if (typeof maybe === 'object' && typeof maybe.toDate === 'function') {
-    return maybe.toDate();
-  }
-  if (maybe instanceof Date) return maybe;
-  const d = new Date(maybe);
-  return isNaN(d.getTime()) ? null : d;
-}
-
 async function carregarEventosDoUsuario() {
-  const list = document.querySelector('.event-list');
-
-  if (list) {
-    list.innerHTML = `
-      <div class="loader">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>`;
-  }
-
   try {
-    if (!currentUser) {
-      if (list) {
-        list.innerHTML = `<div class="event"><strong>Faça login para ver seus eventos inscritos.</strong></div>`;
-      }
-      renderCalendar(currentMonth, currentYear, []);
-      return;
-    }
-
-    const userRef = doc(db, "usuarios", currentUser.uid);
-    const userSnap = await getDoc(userRef);
-    const inscritos = userSnap.exists() ? (userSnap.data().eventosInscritos || []) : [];
-
-    if (!inscritos || inscritos.length === 0) {
-      if (list) {
-        list.innerHTML = `<div class="event"><strong>Nenhum evento inscrito</strong><p>Inscreva-se em eventos na página Eventos.</p></div>`;
-      }
-      renderCalendar(currentMonth, currentYear, []);
-      return;
-    }
-
-    const carregamentos = inscritos.map(async (ins) => {
-      try {
-        if (ins.id) {
-          const evRef = doc(db, "eventos", ins.id);
-          const evSnap = await getDoc(evRef);
-          if (evSnap.exists()) {
-            const data = evSnap.data();
-            const d = parseToDate(data.data ?? ins.date ?? data.date ?? null);
-            return {
-              id: evSnap.id,
-              titulo: data.titulo ?? ins.titulo ?? "Evento",
-              descricao: data.descricao ?? ins.descricao ?? "",
-              local: data.local ?? ins.local ?? "Online",
-              capa: data.capa ?? ins.capa ?? "",
-              data: d
-            };
-          } else {
-            const d = parseToDate(ins.date ?? ins.data);
-            if (!d) return null;
-            return {
-              id: ins.id,
-              titulo: ins.titulo ?? "Evento",
-              descricao: ins.descricao ?? "",
-              local: ins.local ?? "Online",
-              capa: ins.capa ?? "",
-              data: d
-            };
-          }
-        } else {
-          const d = parseToDate(ins.date ?? ins.data);
-          if (!d) return null;
-          return {
-            id: ins.id ?? null,
-            titulo: ins.titulo ?? "Evento",
-            descricao: ins.descricao ?? "",
-            local: ins.local ?? "Online",
-            capa: ins.capa ?? "",
-            data: d
-          };
-        }
-      } catch (err) {
-        console.error("Erro carregando inscrito:", ins, err);
-        return null;
-      }
-    });
-
-    const eventosCarregados = (await Promise.all(carregamentos)).filter(Boolean);
-
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-
-    const proximosEventos = eventosCarregados
-      .filter(ev => ev.data && ev.data >= hoje)
-      .sort((a, b) => a.data - b.data);
-
-    if (list) {
-      list.innerHTML = '';
-      if (proximosEventos.length === 0) {
-        const msg = document.createElement('div');
-        msg.className = 'event';
-        msg.innerHTML = `<strong>Nenhum evento futuro inscrito</strong>
-                         <p>Inscreva-se em eventos na página Eventos.</p>`;
-        list.appendChild(msg);
-      } else {
-        proximosEventos.forEach(ev => {
-          const d = ev.data;
-          const dataFormatada = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-          const div = document.createElement('div');
-          div.className = 'event';
-          div.innerHTML = `<strong>${dataFormatada} • ${ev.titulo}</strong><p>${ev.descricao}</p>`;
-          list.appendChild(div);
-        });
-      }
-    }
-
-    renderCalendar(currentMonth, currentYear, eventosCarregados);
-
-  } catch (error) {
-    console.error("Erro ao carregar eventos do usuário:", error);
-    if (list) {
-      list.innerHTML = `<div class="event"><strong>Erro ao carregar eventos</strong></div>`;
-    }
+    // 🔹 Apenas exibição do calendário (sem Firebase obrigatório)
+    renderCalendar(currentMonth, currentYear, []);
+  } catch (err) {
+    console.error("Erro ao carregar eventos:", err);
     renderCalendar(currentMonth, currentYear, []);
   }
 }

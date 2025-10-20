@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel de Aprovação</title>
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module">
+    import { db } from "./js/firebase.js";
+    import { collection, getDocs, updateDoc, doc } 
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const lista = document.createElement("ul");
+    document.body.appendChild(lista);
+
+    async function carregarPendentes() {
+      const snapshot = await getDocs(collection(db, "psicologos"));
+      snapshot.forEach((d) => {
+        const data = d.data();
+        if (data.status === "pendente") {
+          const item = document.createElement("li");
+          item.innerHTML = `
+            <b>${data.nome}</b> - ${data.email} - CRP: ${data.crp}
+            <button>Aprovar</button>`;
+          item.querySelector("button").addEventListener("click", async () => {
+            await updateDoc(doc(db, "psicologos", d.id), { status: "aprovado" });
+            item.remove();
+            alert(`${data.nome} foi aprovado!`);
+          });
+          lista.appendChild(item);
+        }
+      });
+    }
+
+    carregarPendentes();
+  </script>
+</head>
+<body>
+  <h2>Psicólogos Pendentes de Aprovação</h2>
+</body>
+</html>

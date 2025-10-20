@@ -1,13 +1,13 @@
 import { auth, db } from "./firebase.js";
-import { createUserWithEmailAndPassword, sendEmailVerification } 
+import { createUserWithEmailAndPassword } 
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 import { doc, setDoc } 
   from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { showPopup } from "./popup.js";
 
-const form = document.querySelector('.cadastro-form');
+const form = document.querySelector(".cadastro-form");
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const nome = form.querySelector('[name="nome"]').value.trim();
@@ -16,54 +16,61 @@ form.addEventListener('submit', async (e) => {
   const senha = form.querySelector('[name="senha"]').value;
   const senha2 = form.querySelector('[name="senha2"]').value;
 
+  if (!nome || !email || !crp || !senha || !senha2) {
+    showPopup("Preencha todos os campos para continuar.");
+    return;
+  }
+
   if (senha !== senha2) {
     showPopup("As senhas não coincidem. Digite novamente.");
     return;
   }
 
   try {
+    // Cria o usuário no Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
+    // Salva dados no Firestore com status pendente
     await setDoc(doc(db, "psicologos", user.uid), {
       nome: nome,
       email: email,
       crp: crp,
-      tipo: "psicologo"
+      status: "pendente", // 🔒 bloqueado até aprovação manual
+      tipo: "psicologo",
+      dataCadastro: new Date().toISOString()
     });
 
-    await sendEmailVerification(user, {
-      url: "http://localhost:5500/formPsi.html", 
-      handleCodeInApp: false
-    });
+    // Mostra instrução personalizada
+    showPopup(
+      `Cadastro realizado com sucesso! 
+      Envie uma foto da sua carteirinha do CRP para o e-mail: 
+      <b>eloomaterno@gmail.com</b> com o assunto: 
+      "Verificação CRP - ${nome}". 
+      Assim que for validado, liberaremos seu acesso.`
+    );
 
-    showPopup("Cadastro realizado com sucesso! Verifique sua caixa de e-mail (ou spam) para ativar sua conta.");
+    // Redireciona ou limpa formulário
     setTimeout(() => {
-      window.location.href = "formPsi.html";
-    }, 2500);
+      window.location.href = "logPsi.html";
+    }, 5000);
 
   } catch (error) {
     console.error("Erro no cadastro:", error.code, error.message);
-
-    let mensagemAmigavel = "Erro ao realizar o cadastro. Tente novamente.";
+    let msg = "Erro ao realizar o cadastro. Tente novamente.";
 
     switch (error.code) {
       case "auth/email-already-in-use":
-        mensagemAmigavel = "Este e-mail já está em uso. Tente outro ou recupere sua senha.";
+        msg = "Este e-mail já está em uso.";
         break;
       case "auth/invalid-email":
-        mensagemAmigavel = "O e-mail informado não é válido.";
+        msg = "E-mail inválido.";
         break;
       case "auth/weak-password":
-        mensagemAmigavel = "A senha deve ter pelo menos 6 caracteres.";
+        msg = "A senha deve ter pelo menos 6 caracteres.";
         break;
-      case "auth/missing-password":
-        mensagemAmigavel = "Digite sua senha para continuar.";
-        break;
-      default:
-        mensagemAmigavel = "Erro ao realizar o cadastro. Por favor, tente novamente.";
     }
 
-    showPopup(mensagemAmigavel);
+    showPopup(msg);
   }
 });
