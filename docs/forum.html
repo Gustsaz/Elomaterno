@@ -389,71 +389,80 @@
       const q = query(collection(db, "posts"), orderBy("data", "desc"));
 
       onSnapshot(q, async (snapshot) => {
-        const fragment = document.createDocumentFragment();
-        const cardsHtml = [];
+        const docs = snapshot.docs;
+        const userCache = new Map();
+        const likeCache = new Map();
 
-        // Monta todo o HTML em memória, respeitando a ordem do snapshot (data desc)
-        for (const docSnap of snapshot.docs) {
-          const postId = docSnap.id;
-          const p = docSnap.data();
+        const autorIds = [...new Set(docs.map(d => d.data().autorId).filter(id => id && id !== "anonimo"))];
 
-          const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
-          let linkPerfil = "";
-          if (p.autorId !== "anonimo") {
-            linkPerfil = (usuarioLogado && usuarioLogado.uid === p.autorId)
-              ? "perfil.html"
-              : `perfilPessoa.html?uid=${p.autorId}`;
+        await Promise.all(autorIds.map(async (uid) => {
+          const snap = await getDoc(doc(db, "usuarios", uid));
+          if (snap.exists()) {
+            const data = snap.data();
+            userCache.set(uid, {
+              nome: data.nome || "Usuário",
+              foto: data.fotoURL || data.avatar || "./img/account_icon.png"
+            });
           }
+        }));
 
-          let autorFoto = p.autorFoto || "./img/account_icon.png";
-          try {
-            const userSnap = await getDoc(doc(db, "usuarios", p.autorId));
-            if (userSnap.exists()) {
-              const dadosAutor = userSnap.data();
-              if (dadosAutor.fotoURL) autorFoto = dadosAutor.fotoURL;
-              else if (dadosAutor.avatar) autorFoto = dadosAutor.avatar;
-            }
-          } catch (_) {}
-
-          let likeIconSrc = "./img/like_icon.png";
-          if (usuarioLogado) {
-            const likeRef = doc(db, "posts", postId, "likes", usuarioLogado.uid);
+        if (usuarioLogado) {
+          await Promise.all(docs.map(async (docSnap) => {
+            const likeRef = doc(db, "posts", docSnap.id, "likes", usuarioLogado.uid);
             const likeSnap = await getDoc(likeRef);
-            if (likeSnap.exists()) likeIconSrc = "./img/like_curtido.png";
-          }
-
-          const cardHtml = `
-            <div class="post-card com-brilho" data-id="${postId}">
-              <h3 class="post-title">${escapeHtml(p.titulo)}</h3>
-              <div class="post-meta">
-                ${p.autorId === "anonimo" ?
-                  `<img src="${escapeAttr(autorFoto)}" class="author-avatar">` :
-                  `<a href="${linkPerfil}"><img src="${escapeAttr(autorFoto)}" class="author-avatar"></a>`}
-                <div>
-                  <span class="author-name">
-                    ${p.autorId === "anonimo" ? "Anônimo" : `<a href="${linkPerfil}">${escapeHtml(p.autorNome)}</a>`}
-                  </span>
-                  <span class="post-date">${dataFormatada}</span>
-                </div>
-              </div>
-              <p class="post-content">${escapeHtml(p.conteudo)}</p>
-              <div class="like-wrap" data-id="${postId}">
-                <img src="${likeIconSrc}" alt="Curtir" class="like-icon">
-                <span class="like-count">${p.likes || 0}</span>
-              </div>
-              <div class="post-actions">
-                <img src="./img/consult_icon.png" alt="Comentários" class="comment-icon">
-                <span class="comment-count">0</span>
-                ${usuarioLogado && usuarioLogado.uid === p.autorId ? `<button class="delete-btn action-btn" data-id="${postId}">Excluir</button>` : ""}
-              </div>
-            </div>`;
-
-          cardsHtml.push(cardHtml);
+            likeCache.set(docSnap.id, likeSnap.exists());
+          }));
         }
 
-        // Render único para evitar piscadas e reordenações incorretas
+        const cardsHtml = docs.map((docSnap) => {
+          const p = docSnap.data();
+          const postId = docSnap.id;
+
+          const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
+          const autor = p.autorId === "anonimo"
+            ? { nome: "Anônimo", foto: "./img/account_icon.png" }
+            : userCache.get(p.autorId) || { nome: "Usuário", foto: "./img/account_icon.png" };
+
+          const linkPerfil =
+            p.autorId === "anonimo" ? "#" :
+              (usuarioLogado && usuarioLogado.uid === p.autorId)
+                ? "perfil.html"
+                : `perfilPessoa.html?uid=${p.autorId}`;
+
+          const curtido = likeCache.get(postId) === true;
+          const likeIconSrc = curtido ? "./img/like_curtido.png" : "./img/like_icon.png";
+
+          return `
+      <div class="post-card com-brilho" data-id="${postId}">
+        <h3 class="post-title">${escapeHtml(p.titulo)}</h3>
+        <div class="post-meta">
+          ${p.autorId === "anonimo"
+              ? `<img src="${escapeAttr(autor.foto)}" class="author-avatar">`
+              : `<a href="${linkPerfil}"><img src="${escapeAttr(autor.foto)}" class="author-avatar"></a>`}
+          <div>
+            <span class="author-name">
+              ${p.autorId === "anonimo" ? "Anônimo" : `<a href="${linkPerfil}">${escapeHtml(autor.nome)}</a>`}
+            </span>
+            <span class="post-date">${dataFormatada}</span>
+          </div>
+        </div>
+        <p class="post-content">${escapeHtml(p.conteudo)}</p>
+        <div class="like-wrap" data-id="${postId}">
+          <img src="${likeIconSrc}" alt="Curtir" class="like-icon">
+          <span class="like-count">${p.likes || 0}</span>
+        </div>
+        <div class="post-actions">
+          <img src="./img/consult_icon.png" alt="Comentários" class="comment-icon">
+          <span class="comment-count">0</span>
+          ${usuarioLogado && usuarioLogado.uid === p.autorId
+              ? `<button class="delete-btn action-btn" data-id="${postId}">Excluir</button>` : ""}
+        </div>
+      </div>`;
+        });
+
         postsList.innerHTML = cardsHtml.join("");
       });
+
 
       if (usuarioLogado) {
         const cards = postsList.querySelectorAll(".post-card");
@@ -488,7 +497,6 @@
         const current = parseInt(countEl.textContent, 10) || 0;
         const wasLiked = e.target.src.includes("like_curtido.png");
 
-        // Atualização otimista imediata
         if (wasLiked) {
           countEl.textContent = Math.max(0, current - 1);
           e.target.src = "./img/like_icon.png";
@@ -509,7 +517,6 @@
           }
         } catch (err) {
           console.error("Erro ao (des)curtir:", err);
-          // Reverte em caso de erro
           if (wasLiked) {
             countEl.textContent = current;
             e.target.src = "./img/like_curtido.png";
@@ -593,7 +600,6 @@
       const card = e.target.closest('.post-card.com-brilho');
       if (!card) return;
       if (e.relatedTarget && card.contains(e.relatedTarget)) return;
-      // Move o foco do brilho para fora do cartão para evitar flash central
       card.style.setProperty('--mouse-x', '-9999px');
       card.style.setProperty('--mouse-y', '-9999px');
     });
