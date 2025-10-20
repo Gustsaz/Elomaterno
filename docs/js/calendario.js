@@ -3,14 +3,17 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 const calendarDates = document.getElementById('calendarDates');
-const monthSelect = document.getElementById('month-select');
-const yearSelect = document.getElementById('year-select');
+const monthSelect = document.getElementById('monthSelect'); // ✅ corrigido
+const yearSelect = document.getElementById('yearSelect');   // ✅ corrigido
 
 // Novo elemento de título (mês e ano)
 const calendarHeader = document.querySelector('.calendar-header');
 let monthTitle = document.createElement('h3');
 monthTitle.className = 'month-title';
-calendarHeader.insertBefore(monthTitle, monthSelect.parentElement);
+
+// Inserir ANTES do bloco .month-year-select
+const monthYearSelectDiv = document.querySelector('.month-year-select');
+calendarHeader.insertBefore(monthTitle, monthYearSelectDiv); // ✅ corrigido
 
 const currentDate = new Date();
 let currentMonth = currentDate.getMonth();
