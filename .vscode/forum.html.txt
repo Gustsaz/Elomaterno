@@ -405,127 +405,118 @@
           q = query(postsRef, orderBy("data", "desc"), startAfter(lastVisible), limit(pageSize));
         }
 
-        try {
-          const snapshot = await getDocs(q);
-
-          if (snapshot.empty) {
-            terminou = true;
-            if (inicial) postsList.innerHTML = "<p class='no-posts'>Nenhuma publicação encontrada.</p>";
-            carregando = false;
-            return;
-          }
-
-          lastVisible = snapshot.docs[snapshot.docs.length - 1];
-          const docs = snapshot.docs;
-
-          const userCache = new Map();
-          const likeCache = new Map();
-
-          const autorIds = [...new Set(docs.map(d => d.data().autorId).filter(id => id && id !== "anonimo"))];
-
-          await Promise.all(autorIds.map(async (uid) => {
-            try {
-              const snap = await getDoc(doc(db, "usuarios", uid));
-              if (snap.exists()) {
-                const data = snap.data();
-                userCache.set(uid, {
-                  nome: data.nome || "Usuário",
-                  foto: data.fotoURL || data.avatar || "./img/account_icon.png"
-                });
-              }
-            } catch (err) {
-              console.error("Erro ao buscar usuário:", uid, err);
-            }
-          }));
-
-          if (usuarioLogado) {
-            await Promise.all(docs.map(async (docSnap) => {
-              try {
-                const likeRef = doc(db, "posts", docSnap.id, "likes", usuarioLogado.uid);
-                const likeSnap = await getDoc(likeRef);
-                likeCache.set(docSnap.id, likeSnap.exists());
-              } catch (err) {
-                console.error("Erro ao checar like:", docSnap.id, err);
-                likeCache.set(docSnap.id, false);
-              }
-            }));
-          }
-
-          const novosCards = docs.map((docSnap) => {
-            const p = docSnap.data();
-            const postId = docSnap.id;
-
-            let nomeAutor = p.autorNome || "Usuário";
-            let fotoAutor = p.autorFoto || "./img/account_icon.png";
-
-            if (p.autorId && userCache.has(p.autorId)) {
-              const cached = userCache.get(p.autorId);
-              nomeAutor = cached.nome || nomeAutor;
-              fotoAutor = cached.foto || fotoAutor;
-            }
-
-            if (p.autorId === "anonimo") {
-              nomeAutor = "Anônimo";
-              fotoAutor = "./img/account_icon.png";
-            }
-
-            const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
-
-            const linkPerfil = (p.autorId === "anonimo") ? "#" :
-              ((usuarioLogado && usuarioLogado.uid === p.autorId) ? "perfil.html" : `perfilPessoa.html?uid=${p.autorId}`);
-
-            const curtido = likeCache.get(postId) === true;
-            const likeIconSrc = curtido ? "./img/like_curtido.png" : "./img/like_icon.png";
-
-            return `
-        <div class="post-card com-brilho" data-id="${postId}">
-          <h3 class="post-title">${escapeHtml(p.titulo)}</h3>
-          <div class="post-meta">
-            ${p.autorId === "anonimo"
-                ? `<img src="${escapeAttr(fotoAutor)}" class="author-avatar">`
-                : `<a href="${linkPerfil}"><img src="${escapeAttr(fotoAutor)}" class="author-avatar"></a>`}
-            <div>
-              <span class="author-name">
-                ${p.autorId === "anonimo" ? "Anônimo" : `<a href="${linkPerfil}">${escapeHtml(nomeAutor)}</a>`}
-              </span>
-              <span class="post-date">${dataFormatada}</span>
-            </div>
-          </div>
-          <p class="post-content">${escapeHtml(p.conteudo)}</p>
-          <div class="like-wrap" data-id="${postId}">
-            <img src="${likeIconSrc}" alt="Curtir" class="like-icon">
-            <span class="like-count">${p.likes || 0}</span>
-          </div>
-          <div class="post-actions">
-            <img src="./img/consult_icon.png" alt="Comentários" class="comment-icon">
-            <span class="comment-count">0</span>
-            ${usuarioLogado && usuarioLogado.uid === p.autorId ? `<button class="delete-btn action-btn" data-id="${postId}">Excluir</button>` : ""}
-          </div>
-        </div>`;
-          }).join("");
-
-          if (inicial) postsList.innerHTML = novosCards;
-          else postsList.insertAdjacentHTML("beforeend", novosCards);
-
-        } catch (err) {
-          console.error("Erro ao carregar posts:", err);
-          if (inicial) postsList.innerHTML = "<p class='no-posts'>Erro ao carregar publicações.</p>";
-        } finally {
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) {
+          terminou = true;
+          if (inicial) postsList.innerHTML = "<p class='no-posts'>Nenhuma publicação encontrada.</p>";
           carregando = false;
+          return;
         }
+
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+
+        const docs = snapshot.docs;
+        const userCache = new Map();
+        const likeCache = new Map();
+
+        // carrega dados dos autores e likes
+        const autorIds = [...new Set(docs.map(d => d.data().autorId).filter(id => id && id !== "anonimo"))];
+        await Promise.all(autorIds.map(async (uid) => {
+          const snap = await getDoc(doc(db, "usuarios", uid));
+          if (snap.exists()) {
+            const data = snap.data();
+            userCache.set(uid, {
+              nome: data.nome || "Usuário",
+              foto: data.fotoURL || data.avatar || "./img/account_icon.png"
+            });
+          }
+        }));
+
+        if (usuarioLogado) {
+          await Promise.all(docs.map(async (docSnap) => {
+            const likeRef = doc(db, "posts", docSnap.id, "likes", usuarioLogado.uid);
+            const likeSnap = await getDoc(likeRef);
+            likeCache.set(docSnap.id, likeSnap.exists());
+          }));
+        }
+
+        const novosCards = docs.map((docSnap) => {
+          const p = docSnap.data();
+          const postId = docSnap.id;
+          const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
+          const autor = (() => {
+            if (p.autorId === "anonimo") {
+              return { nome: "Anônimo", foto: "./img/account_icon.png" };
+            }
+
+            // 🔹 Se o post já traz nome e foto, use-os
+            if (p.autorNome && p.autorFoto) {
+              return { nome: p.autorNome, foto: p.autorFoto };
+            }
+
+            // 🔹 Caso contrário, tenta o cache
+            return userCache.get(p.autorId) || { nome: "Usuário", foto: "./img/account_icon.png" };
+          })();
+
+          const linkPerfil =
+            p.autorId === "anonimo" ? "#" :
+              (usuarioLogado && usuarioLogado.uid === p.autorId)
+                ? "perfil.html"
+                : `perfilPessoa.html?uid=${p.autorId}`;
+
+          const curtido = likeCache.get(postId) === true;
+          const likeIconSrc = curtido ? "./img/like_curtido.png" : "./img/like_icon.png";
+
+          return `
+      <div class="post-card com-brilho" data-id="${postId}">
+        <h3 class="post-title">${escapeHtml(p.titulo)}</h3>
+        <div class="post-meta">
+          ${p.autorId === "anonimo"
+              ? `<img src="${escapeAttr(autor.foto)}" class="author-avatar">`
+              : `<a href="${linkPerfil}"><img src="${escapeAttr(autor.foto)}" class="author-avatar"></a>`}
+          <div>
+            <span class="author-name">
+              ${p.autorId === "anonimo" ? "Anônimo" : `<a href="${linkPerfil}">${escapeHtml(autor.nome)}</a>`}
+            </span>
+            <span class="post-date">${dataFormatada}</span>
+          </div>
+        </div>
+        <p class="post-content">${escapeHtml(p.conteudo)}</p>
+        <div class="like-wrap" data-id="${postId}">
+          <img src="${likeIconSrc}" alt="Curtir" class="like-icon">
+          <span class="like-count">${p.likes || 0}</span>
+        </div>
+        <div class="post-actions">
+          <img src="./img/consult_icon.png" alt="Comentários" class="comment-icon">
+          <span class="comment-count">0</span>
+          ${usuarioLogado && usuarioLogado.uid === p.autorId
+              ? `<button class="delete-btn action-btn" data-id="${postId}">Excluir</button>` : ""}
+        </div>
+      </div>`;
+        }).join("");
+
+        if (inicial) postsList.innerHTML = novosCards;
+        else postsList.insertAdjacentHTML("beforeend", novosCards);
+
+        carregando = false;
       }
+
+      // 🔹 Agora o carregamento ocorre independente do login
       carregarPosts(true);
 
+      // 🔹 Continua observando o login apenas para atualizar likes
       onAuthStateChanged(auth, (user) => {
         usuarioLogado = user;
       });
 
+      // 🔹 Scroll infinito
       window.addEventListener("scroll", () => {
         const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 400;
         if (nearBottom && !carregando && !terminou) carregarPosts(false);
       });
 
     });
+
 
     postsList.addEventListener("click", async (e) => {
       const card = e.target.closest(".post-card");
