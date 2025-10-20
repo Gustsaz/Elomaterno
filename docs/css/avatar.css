@@ -11,7 +11,8 @@ html {
   padding: 20px;
   text-align: center;
 }
-.controls{
+
+.controls {
   overflow: hidden;
 }
 
@@ -236,16 +237,97 @@ body {
 }
 
 .modal-avatar-criador {
-  max-width: 600px;
+  max-width: 700px;
   width: 95%;
+  max-height: 90vh;
+  overflow: hidden;
+  /* impede rolagem interna */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 20px;
 }
 
 .modal {
-  display: none; 
+  display: none;
   position: fixed;
   z-index: 9999;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
+}
+
+/* ==== Ajuste visual do criador de avatar ==== */
+#avatar-criador-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  #avatar-criador-area {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-around;
+  }
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.control-group {
+  background: #f8f6ff;
+  border-radius: 14px;
+  padding: 15px 20px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.control-group h3 {
+  color: #583E8E;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.control-group button {
+  background: #644c9a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin: 4px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.control-group button:hover {
+  background: #583E8E;
+  transform: scale(1.05);
+}
+
+#salvarAvatarBtn {
+  background: #644c9a;
+  color: white;
+  border: none;
+  padding: 12px 26px;
+  font-size: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 10px;
+}
+
+#salvarAvatarBtn:hover {
+  background: #583E8E;
+  transform: scale(1.05);
 }

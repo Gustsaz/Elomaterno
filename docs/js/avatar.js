@@ -247,8 +247,24 @@ document.addEventListener("DOMContentLoaded", () => {
         // Salvar no Firestore
         await setDoc(doc(fb.db, "usuarios", user.uid), { avatar: imageUrl }, { merge: true });
 
-        alert("✅ Avatar salvo com sucesso!");
-        console.log("Link salvo:", imageUrl);
+        // Exibe modal de sucesso
+        const successModal = document.getElementById("successModal");
+        if (successModal) {
+          successModal.style.display = "flex";
+
+          const closeBtn = successModal.querySelector(".close-btn");
+          const okBtn = successModal.querySelector("#modalOkBtn");
+
+          if (closeBtn) closeBtn.onclick = () => (successModal.style.display = "none");
+          if (okBtn) okBtn.onclick = () => (successModal.style.display = "none");
+
+          window.onclick = (e) => {
+            if (e.target === successModal) successModal.style.display = "none";
+          };
+        }
+
+        console.log("Avatar salvo com sucesso! Link:", imageUrl);
+
       } catch (err) {
         console.error("Erro ao salvar avatar:", err);
         alert("Erro ao salvar avatar. Veja o console.");
