@@ -1,4 +1,3 @@
-// ./js/eventos.js
 import { db, auth } from './firebase.js';
 import {
   collection,
@@ -15,7 +14,6 @@ let allEventos = [];
 let currentUser = null;
 let userInscritos = [];
 
-/* ---------- Helpers ---------- */
 function normalizeEventDoc(docData, id=null) {
   const obj = { ...docData, id };
   const raw = docData.data ?? docData.date ?? null;
@@ -37,7 +35,6 @@ function formatTime(date) {
   return date.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
 }
 
-/* ---------- Carregamento ---------- */
 async function carregarEventos() {
   grid.innerHTML = `<loader><dot></dot><dot></dot><dot></dot></loader>`;
   const snap = await getDocs(collection(db, "eventos"));
@@ -49,7 +46,6 @@ async function carregarEventos() {
   renderGrid();
 }
 
-/* ---------- Renderização do grid ---------- */
 function renderGrid() {
   if (!allEventos.length) {
     grid.innerHTML = `<p>Nenhum evento encontrado.</p>`;
@@ -93,7 +89,6 @@ function renderGrid() {
   });
 }
 
-/* ---------- Modais ---------- */
 function showModalConfirm(titulo, mensagem, onConfirm) {
   const overlay = document.createElement('div');
   overlay.className = 'em-overlay';
@@ -244,7 +239,6 @@ function showEventModal(ev, opts = { mode: 'detalhes' }) {
   overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 }
 
-/* ---------- Auth ---------- */
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   if (user) {

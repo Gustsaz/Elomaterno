@@ -1,4 +1,3 @@
-// ./js/calendario.js
 import { db, auth } from './firebase.js';
 import {
   doc,
@@ -108,7 +107,6 @@ function renderCalendar(month, year, eventos = []) {
     const hasEvent = eventosDoDia.length > 0;
     const isPast = dateObj < hoje;
 
-    // construir bolinhas
     let dotsHtml = '';
     if (hasEvent) {
       const count = eventosDoDia.length;
@@ -132,7 +130,6 @@ function renderCalendar(month, year, eventos = []) {
 
   updateMonthTitle();
 
-  // conectar cliques nas células com evento
   document.querySelectorAll('.calendar-dates .date.has-event').forEach(cell => {
     cell.addEventListener('click', (e) => {
       const day = parseInt(cell.dataset.day, 10);
@@ -157,7 +154,6 @@ function prevMonth() {
     currentMonth = 11;
     currentYear--;
   }
-  // anim opcional poderia ser adicionado
   carregarEventosDoUsuario();
 }
 
@@ -221,7 +217,6 @@ function renderEventList(eventos = []) {
   });
 }
 
-/* ---------- carregar eventos do usuário (onSnapshot) ---------- */
 async function carregarEventosDoUsuario() {
   try {
     if (!currentUser) {
@@ -258,7 +253,6 @@ async function carregarEventosDoUsuario() {
   }
 }
 
-/* ---------- modal para clicar em um dia do calendário (estilizado) ---------- */
 function showEventsModalForDate(eventosDoDia = []) {
   const overlay = document.createElement('div');
   overlay.className = 'em-overlay';
@@ -292,7 +286,6 @@ function showEventsModalForDate(eventosDoDia = []) {
     actions.className = 'ev-actions';
 
     if (currentUser) {
-      // checar inscrição atual do usuário (leitura pontual)
       (async () => {
         try {
           const userRef = doc(db, 'usuarios', currentUser.uid);
@@ -331,21 +324,16 @@ function showEventsModalForDate(eventosDoDia = []) {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
-  // fechar
   overlay.querySelector('.em-modal-close').addEventListener('click', () => overlay.remove());
   overlay.addEventListener('click', (ev) => { if (ev.target === overlay) overlay.remove(); });
 }
 
-/* conecta selects e botões do header (prev/next) — torna as setas funcionais */
 function connectHeaderButtons() {
-  // se houver botões diretos no header (provavelmente existem 2), ligue-os
   const buttons = calendarHeader.querySelectorAll('button');
   if (buttons.length >= 2) {
-    // assume primeiro = prev, último = next
     buttons[0].addEventListener('click', prevMonth);
     buttons[buttons.length - 1].addEventListener('click', nextMonth);
   }
-  // procurar por classes/ids alternativos
   const prev = document.querySelector('.prev-month') || document.getElementById('prevMonthBtn') || document.querySelector('[data-prev-month]');
   const next = document.querySelector('.next-month') || document.getElementById('nextMonthBtn') || document.querySelector('[data-next-month]');
   if (prev) prev.addEventListener('click', prevMonth);
@@ -368,11 +356,9 @@ onAuthStateChanged(auth, (user) => {
   carregarEventosDoUsuario();
 });
 
-// expõe funções para debug/navegação externa
 window.prevMonth = prevMonth;
 window.nextMonth = nextMonth;
 
-/* ---- Função utilitária para exibir modais de alerta ---- */
 function showStyledAlert(message, type = "info") {
   const overlay = document.createElement("div");
   overlay.className = "em-overlay";
