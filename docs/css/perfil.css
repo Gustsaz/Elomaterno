@@ -432,6 +432,7 @@ body {
   align-items: center;
   gap: 16px;
   overflow: hidden;
+  overflow-y: auto;
 }
 
 .control-group {
@@ -569,3 +570,4 @@ body {
     transform: scale(1);
   }
 }
+
