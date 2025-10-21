@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EloMaterno - Home</title>
+  <link rel="stylesheet" href="./css/homePsi.css">
+  <link rel="stylesheet" href="./css/globals.css">
+  <link rel="stylesheet" href="./css/calendario.css">
+  <link rel="stylesheet" href="./css/agendamento.css">
+  <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+  <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+</head>
+
+<body>
+  <header class="header">
+    <h1>Bem vindo(a) Dr. Gustavo Almeida</h1>
+    <img src="./img/account_psi_icon.png" alt="Foto de perfil" class="profile-img">
+  </header>
+
+  <main class="main-container">
+    <aside class="sidebar">
+      <button class="menu-btn active" data-target="dashboard">
+        <img src="./img/painel_icon.png" alt="ícone painel">
+        <span>Painel de controle</span>
+      </button>
+      <button class="menu-btn" data-target="agenda">
+        <img src="./img/agenda_icon.png" alt="ícone agenda">
+        <span>Agenda</span>
+      </button>
+      <button class="menu-btn" data-target="pacientes">
+        <img src="./img/pacientes_icon.png" alt="ícone pacientes">
+        <span>Pacientes</span>
+      </button>
+
+      <div class="last-activities">
+        <h3>Últimas Atividades</h3>
+        <ul>
+          <li>Paciente Maria - Sessão concluída às 14:00</li>
+          <li>Novo paciente - Consulta agendada às 16:00</li>
+        </ul>
+      </div>
+    </aside>
+
+    <section class="content" id="dashboard">
+      <h2>Consultas Agendadas</h2>
+      <div class="appointment-card">
+        <div>
+          <strong>Mariana Souza</strong>
+          <p>2 de maio de 2024 - 10:00</p>
+        </div>
+        <button class="contact-btn">Entrar em contato</button>
+      </div>
+
+      <div class="appointment-card">
+        <div>
+          <strong>Patrícia Lima</strong>
+          <p>6 de maio de 2024 - 14:00</p>
+        </div>
+        <button class="contact-btn">Entrar em contato</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <span>2</span>
+          <p>Consultas agendadas hoje</p>
+        </div>
+        <div class="stat-card">
+          <span>5</span>
+          <p>Sessões realizadas essa semana</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🩺 NOVA SEÇÃO DE AGENDAMENTO + CALENDÁRIO -->
+    <section class="content hidden" id="agenda">
+      <h2>Agendamento de Consultas</h2>
+
+      <div class="agendamento-container">
+        <!-- Formulário -->
+        <form id="agendamentoForm" class="agendamento-form">
+          <div class="form-group tipo-atendimento">
+            <label>Tipo de Atendimento:</label>
+            <div class="tipo-options">
+              <label><input type="radio" name="tipo" value="presencial" checked> Presencial</label>
+              <label><input type="radio" name="tipo" value="online"> Online</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="paciente">Paciente:</label>
+            <input type="text" id="paciente" placeholder="Digite o nome do paciente" required>
+          </div>
+
+          <div class="form-group">
+            <label for="especialidade">Especialidade:</label>
+            <select id="especialidade" required>
+              <option value="">Selecione</option>
+              <option value="psicologia">Psicologia</option>
+              <option value="terapia">Terapia Familiar</option>
+              <option value="neuropsicologia">Neuropsicologia</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="data">Data:</label>
+            <input type="date" id="data" required>
+          </div>
+
+          <div class="form-group">
+            <label for="horario">Horário:</label>
+            <select id="horario" required>
+              <option value="">Selecione</option>
+              <option>08:00</option>
+              <option>09:00</option>
+              <option>10:00</option>
+              <option>11:00</option>
+              <option>14:00</option>
+              <option>15:00</option>
+              <option>16:00</option>
+            </select>
+          </div>
+
+          <button type="submit" class="confirmar-btn">Confirmar Agendamento</button>
+        </form>
+
+        <!-- Calendário -->
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <button onclick="prevMonth()">&lt;</button>
+            <div class="month-year-select">
+              <select id="month-select" onchange="onMonthChange()"></select>
+              <select id="year-select" onchange="onYearChange()"></select>
+            </div>
+            <button onclick="nextMonth()">&gt;</button>
+          </div>
+
+          <div class="calendar-days">
+            <div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div>
+          </div>
+          <div class="calendar-dates" id="calendarDates"></div>
+
+          <div class="consultas-lista">
+            <h3>Consultas Agendadas</h3>
+            <ul id="listaConsultas"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content hidden" id="pacientes">
+      <h2>Histórico de Pacientes</h2>
+      <div class="patients-grid">
+        <div class="patient-card" data-id="1">
+          <div class="patient-header">
+            <span>Maria da Silva | 09:00</span>
+            <button class="note-btn"><img src="./img/edit_icon.png" alt="Editar"></button>
+          </div>
+          <div class="patient-body">
+            <p class="patient-notes">Nenhuma anotação adicionada.</p>
+            <button class="contact-btn">Entrar em contato</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="popup hidden" id="notesPopup">
+      <div class="popup-content">
+        <h3>Anotações do Paciente</h3>
+        <textarea id="notesArea" placeholder="Escreva suas anotações aqui..."></textarea>
+        <div class="popup-actions">
+          <button id="saveNote" class="contact-btn">Salvar</button>
+          <button id="closePopup" class="add-consult-btn" type="button">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="./js/homePsi.js"></script>
+  <script src="./js/calendario.js"></script>
+  <script src="./js/agendamento.js"></script>
+</body>
+</html>

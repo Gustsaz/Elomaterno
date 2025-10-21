@@ -1,9 +1,14 @@
 import { auth, db } from "./firebase.js";
-import { createUserWithEmailAndPassword } 
-  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { doc, setDoc } 
-  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-import { showPopup } from "./popup.js";
+import {
+  createUserWithEmailAndPassword,
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const form = document.querySelector(".cadastro-form");
 
@@ -17,60 +22,65 @@ form.addEventListener("submit", async (e) => {
   const senha2 = form.querySelector('[name="senha2"]').value;
 
   if (!nome || !email || !crp || !senha || !senha2) {
-    showPopup("Preencha todos os campos para continuar.");
+    alert("Preencha todos os campos.");
     return;
   }
 
   if (senha !== senha2) {
-    showPopup("As senhas não coincidem. Digite novamente.");
+    alert("As senhas não coincidem.");
     return;
+  }
+
+  // 🔍 Verifica se o CRP já existe
+  const psicologosRef = collection(db, "psicologos");
+  const q = query(psicologosRef, where("crp", "==", crp));
+  const querySnapshot = await getDocs(q);
+  if (!querySnapshot.empty) {
+    alert("Este CRP já está cadastrado.");
+    return;
+  }
+
+  // ✅ Validação do CRP com API pública
+  try {
+    const resposta = await fetch(`https://api.crpapi.vercel.app/validate?crp=${crp}`);
+    const dados = await resposta.json();
+
+    if (!dados.valido) {
+      alert("CRP inválido. Verifique o número digitado.");
+      return;
+    }
+
+    // Preenche automaticamente o nome se vier da API
+    if (dados.nome && !nome) {
+      form.querySelector('[name="nome"]').value = dados.nome;
+    }
+
+  } catch (error) {
+    console.warn("Não foi possível validar o CRP automaticamente:", error);
   }
 
   try {
     // Cria o usuário no Auth
-    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-    const user = userCredential.user;
+    const cred = await createUserWithEmailAndPassword(auth, email, senha);
 
-    // Salva dados no Firestore com status pendente
-    await setDoc(doc(db, "psicologos", user.uid), {
-      nome: nome,
-      email: email,
-      crp: crp,
-      status: "pendente", // 🔒 bloqueado até aprovação manual
+    // Cria no Firestore
+    await addDoc(collection(db, "psicologos"), {
+      nome,
+      email,
+      crp,
       tipo: "psicologo",
-      dataCadastro: new Date().toISOString()
+      status: "pendente", // Pode ser "pendente" até ser validado manualmente
+      uid: cred.user.uid
     });
 
-    // Mostra instrução personalizada
-    showPopup(
-      `Cadastro realizado com sucesso! 
-      Envie uma foto da sua carteirinha do CRP para o e-mail: 
-      <b>eloomaterno@gmail.com</b> com o assunto: 
-      "Verificação CRP - ${nome}". 
-      Assim que for validado, liberaremos seu acesso.`
-    );
-
-    // Redireciona ou limpa formulário
-    setTimeout(() => {
-      window.location.href = "logPsi.html";
-    }, 5000);
+    alert("Cadastro realizado! Aguarde a aprovação da sua conta.");
+    window.location.href = "logPsi.html";
 
   } catch (error) {
-    console.error("Erro no cadastro:", error.code, error.message);
-    let msg = "Erro ao realizar o cadastro. Tente novamente.";
-
-    switch (error.code) {
-      case "auth/email-already-in-use":
-        msg = "Este e-mail já está em uso.";
-        break;
-      case "auth/invalid-email":
-        msg = "E-mail inválido.";
-        break;
-      case "auth/weak-password":
-        msg = "A senha deve ter pelo menos 6 caracteres.";
-        break;
-    }
-
-    showPopup(msg);
+    console.error("Erro ao cadastrar:", error);
+    let msg = "Erro ao cadastrar.";
+    if (error.code === "auth/email-already-in-use") msg = "Email já cadastrado.";
+    if (error.code === "auth/weak-password") msg = "Senha muito fraca.";
+    alert(msg);
   }
 });

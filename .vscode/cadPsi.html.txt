@@ -52,17 +52,17 @@
         </div>
 
         <br>
-        <button type="submit" class="btn-cadastrar">Cadastrar</button>
+        <button type="submit" class="btn-cadastrar"><a href="homePsi.html">Cadastrar</a></button>
       </form>
 
       <br>
       <p class="login-link">Já possui conta? <!--<a href="logPsi.html">--><a href="homePsi.html">Entrar</a></p>
 
     </div>
-
+    
   </div>
   <script type="module" src="./js/firebase.js"></script>
-  <script type="module" src="./js/cadastro-psi.js"></script>
+<script type="module" src="./js/cadastro-psi.js"></script>
 </body>
 
 </html>
