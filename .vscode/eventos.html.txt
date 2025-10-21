@@ -1,12 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
-    <title>EloMaterno - Calendário</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./css/calendario.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EloMaterno - Eventos</title>
     <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/eventos.css">
     <link rel="stylesheet" href="./css/globals.css">
     <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
     <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
@@ -247,30 +247,25 @@
 
     </div>
 
-    <div class="container">
-        <div class="calendar-container">
-            <div class="calendar-header">
-                <button id="prevMonth">&lt;</button>
-                <div class="month-year-select">
-                    <select id="monthSelect"></select>
-                    <select id="yearSelect"></select>
-                </div>
-                <button id="nextMonth">&gt;</button>
-            </div>
-            <div class="calendar-days">
-                <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
-            </div>
-            <div class="calendar-dates" id="calendarDates"></div>
+    <section class="eventos-hero com-brilho">
+        <div class="hero-text">
+            <h1>Eventos para você</h1>
+            <p>Participe de palestras, encontros e atividades da comunidade. Inscreva-se e veja no calendário.</p>
         </div>
+    </section>
 
-        <div class="events-container">
-            <h3>Meus Eventos</h3>
-            <div class="event-list" id="eventList"></div>
+    <section class="eventos-grid">
+        <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
-    </div>
+    </section>
 
-    <script type="module" src="./js/calendario.js"></script>
+    </main>
+
     <script type="module" src="./js/globals.js"></script>
+    <script type="module" src="./js/eventos.js"></script>
     <script type="module" src="./js/pesquisa.js"></script>
     <script type="module" src="./js/carregar-avatar.js"></script>
 
