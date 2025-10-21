@@ -372,10 +372,11 @@ function showStyledAlert(message, type = "info") {
 
   const icon = document.createElement("div");
   icon.style.fontSize = "36px";
+  icon.style.color = "var(--accent-color)";
   icon.style.marginBottom = "12px";
   icon.innerHTML =
-    type === "success" ? "✅" :
-      type === "error" ? "❌" : "ℹ️";
+    type === "success" ? "Cancelado" :
+      type === "error" ? "Erro" : "ℹ️";
 
   const msg = document.createElement("p");
   msg.textContent = message;

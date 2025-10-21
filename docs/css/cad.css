@@ -2,9 +2,9 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
-
 body {
     font-family: 'Nunito', sans-serif;
     background-color: #f7f5ff;
@@ -16,7 +16,8 @@ body {
     min-height: 100vh;
     transform: scale(1.2);
     transform-origin:  center;
-   
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 i{
@@ -166,7 +167,6 @@ i{
 
 .password-group input {
     padding-right: 35px;
-    /* espaço pro olho */
 }
 
 .toggle-pass {

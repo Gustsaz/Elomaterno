@@ -1,8 +1,8 @@
 * {
     margin: 0;
     padding: 0;
-    overflow: hidden;
-
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 body {
@@ -15,7 +15,8 @@ body {
     align-items: center;
     transform: scale(1.1);
     transform-origin: center;
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 i {

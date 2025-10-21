@@ -70,7 +70,7 @@ img {
 }
 
 a,
-button {
+button, div {
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }

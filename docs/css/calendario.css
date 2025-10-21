@@ -553,76 +553,96 @@ select {
 }
 
 .calendar-dates .date {
-  position: relative; 
-  z-index: 1;
-  color: inherit; 
-  background: transparent !important;
-  border: none !important;
-  overflow: visible;
+    position: relative;
+    z-index: 1;
+    color: inherit;
+    background: transparent !important;
+    border: none !important;
+    overflow: visible;
 }
 
 .calendar-dates .date::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(40px, 9vw, 64px);
-  height: clamp(40px, 9vw, 64px);
-  border-radius: 50%;
-  background: transparent;
-  box-shadow: none;
-  transition: background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
-  z-index: -1;
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(40px, 9vw, 64px);
+    height: clamp(40px, 9vw, 64px);
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    transition: background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    z-index: -1;
 }
 
 .calendar-dates .date {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
 }
 
 .calendar-dates .date:hover::before {
-  background: var(--hovercalendariobotao);
-  transform: translate(-50%, -50%) scale(1.04);
+    background: var(--hovercalendariobotao);
+    transform: translate(-50%, -50%) scale(1.04);
 }
 
 .calendar-dates .date.today::before {
-  background: var(--accent-color);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    background: var(--accent-color);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
+
 .calendar-dates .date.today {
-  color: #fff; 
+    color: #fff;
 }
 
 .calendar-dates .date.has-event::before {
-  background: var(--botaocalendar);
-  box-shadow: 0 0 0 2px rgba(0,0,0,0.03) inset;
-  border: 2px solid #7b56d6;
+    background: var(--botaocalendar);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.03) inset;
+    border: 2px solid #7b56d6;
 }
+
 .calendar-dates .date.has-event {
-  color: var(--accent-color);
-  font-weight: 600;
+    color: var(--accent-color);
+    font-weight: 600;
 }
 
 .calendar-dates .date.past.has-event::before {
-  background: #f3f3f3;
-  border: 2px solid #cfcfcf;
-  box-shadow: none;
+    background: #f3f3f3;
+    border: 2px solid #cfcfcf;
+    box-shadow: none;
 }
+
 .calendar-dates .date.past.has-event {
-  color: #666;
-  font-weight: 600;
+    color: #666;
+    font-weight: 600;
 }
 
 .calendar-dates .date[data-tooltip]:hover::after {
-  bottom: calc(50% + clamp(40px, 9vw, 64px) / 2 + 10px);
+    bottom: calc(50% + clamp(40px, 9vw, 64px) / 2 + 10px);
 }
 
 @media (max-width: 480px) {
-  .calendar-dates .date::before {
-    width: 44px;
-    height: 44px;
-  }
+    .calendar-dates .date::before {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+.btn-fechar {
+    background: var(--muted-bg);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.25s ease;
+}
+
+.btn-fechar:hover {
+  background: var(--border-color);
 }
