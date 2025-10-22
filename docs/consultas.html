@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EloMaterno - Consultas</title>
+    <link rel="stylesheet" href="./css/header.css" />
+    <link rel="stylesheet" href="./css/consultas.css" />
+    <link rel="stylesheet" href="./css/globals.css" />
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+    <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <header class="top-header">
+        <div class="left-section">
+            <div class="logo-area">
+                <a href="home.html" class="botao-link">
+                    <img src="./img/logo_icon.png" alt="Ícone Empresa" class="icon">
+                </a>
+                <span class="company-name">elomaterno</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="global-search" placeholder="Pesquisar...">
+                <button class="btn-search"><i class="fa fa-search"></i></button>
+                <button class="btn-filter"><i class="fa fa-sliders"></i></button>
+                <div id="filter-menu" class="filter-menu hidden">
+                    <label><input type="checkbox" value="todos" checked> Todos</label>
+                    <label><input type="checkbox" value="posts"> Posts</label>
+                    <label><input type="checkbox" value="artigos"> Artigos</label>
+                    <label><input type="checkbox" value="eventos"> Eventos</label>
+                    <label><input type="checkbox" value="perfis"> Perfis</label>
+                </div>
+                <div id="search-results" class="search-results hidden"></div>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon" id="theme-toggle-icon"></i>
+            </div>
+            <div class="logout-btn" id="logoutBtn" title="Sair da conta">
+                <i class="fa fa-sign-out"></i>
+            </div>
+            <div class="user-avatar">
+                <a href="perfil.html">
+                    <div class="avatar-loader-container">
+                        <img id="perfil-avatar">
+                        <div class="loader">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <button id="menuToggle" class="menu-toggle">☰</button>
+
+    <!-- menu lateral -->
+    <div class="botoes">
+        <div class="menu-user">
+            <a href="perfil.html">
+                <div class="avatar-loader-container">
+                    <img id="menu-avatar" src="./img/avatar_usuario.png" alt="Avatar do usuário">
+                    <div class="loader">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </a>
+            <h3 id="menu-nome">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </h3>
+            <span id="menu-email">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </span>
+        </div>
+
+        <a href="consultoria.html" class="botao-link">
+            <div class="botao-item"><i class="fa fa-comments"></i><span>Consultorias</span></div>
+        </a>
+
+        <a href="forum.html" class="botao-link">
+            <div class="botao-item"><i class="fa fa-users"></i><span>Fórum</span></div>
+        </a>
+        <a href="home.html" class="botao-link">
+            <div class="botao-item"><i class="fa fa-home"></i><span>Home</span></div>
+        </a>
+        <a href="artigos.html" class="botao-link">
+            <div class="botao-item"><i class="fa fa-book"></i><span>Artigos</span></div>
+        </a>
+        <a href="calendario.html" class="botao-link">
+            <div class="botao-item"><i class="fa fa-calendar"></i><span>Calendário</span></div>
+        </a>
+        <a href="eventos.html" class="botao-link">
+            <div class="botao-item"><i class="fa fa-bell"></i><span>Eventos</span></div>
+        </a>
+
+        <div class="menu-actions">
+            <div class="theme-toggle mobile-toggle" id="menuThemeToggle"><i class="fas fa-moon"
+                    id="menu-theme-toggle-icon"></i></div>
+            <div class="logout-btn mobile-logout" id="menuLogoutBtn" title="Sair da conta"><i
+                    class="fa fa-sign-out"></i></div>
+        </div>
+    </div>
+
+    <main class="consultas-container">
+        <div class="tabs">
+            <button class="tab ativo" data-tab="agendadas">Agendadas</button>
+            <button class="tab" data-tab="realizadas">Realizadas</button>
+            <button class="tab" data-tab="canceladas">Canceladas</button>
+        </div>
+
+        <div class="conteudo-tab ativo" id="agendadas">
+            <img src="./img/consultas-ilustracao.png" alt="Sem consultas" class="consulta-img">
+            <h2>Você não tem consultas agendadas</h2>
+            <p>Estamos aqui para te ajudar, agende uma consulta para manter em dia os cuidados com a saúde e o
+                bem-estar.</p>
+            <button class="agendar-btn"><a href="consulta-lista-psi.html">Agendar consulta</a></button>
+        </div>
+
+        <div class="conteudo-tab" id="realizadas">
+            <h2>Você ainda não realizou nenhuma consulta</h2>
+        </div>
+
+        <div class="conteudo-tab" id="canceladas">
+            <h2>Você não possui consultas canceladas</h2>
+        </div>
+    </main>
+
+    <script type="module" src="./js/globals.js"></script>
+    <script type="module" src="./js/pesquisa.js"></script>
+    <script type="module" src="./js/carregar-avatar.js"></script>
+    <script type="module" src="./js/heade"></script>
+    <script type="module" src="./js/consultas.js"></script>
+</body>
+
+</html>
