@@ -689,7 +689,7 @@ input:focus-visible {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 20px;
-    color: var(--accent-color);
+    color: white;
 }
 
 .footer-links ul,
@@ -722,7 +722,7 @@ input:focus-visible {
 
 .footer-contact i {
     margin-right: 10px;
-    color: var(--accent-color);
+    color: white;
     width: 20px;
     text-align: center;
     margin-top: 4px;
