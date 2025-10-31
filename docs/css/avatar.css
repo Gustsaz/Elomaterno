@@ -124,7 +124,8 @@ html {
 
 .modal-content h2 {
   color: #583E8E;
-  margin-bottom: 10px;
+  margin-bottom: -20px;
+  overflow-y: hidden;
 }
 
 .modal-content p {
@@ -325,9 +326,32 @@ body {
   cursor: pointer;
   transition: 0.3s;
   margin-top: 10px;
+  overflow-y: hidden;
 }
 
 #salvarAvatarBtn:hover {
   background: #583E8E;
   transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+
+  .avatar-container,
+  .control-group {
+    overflow-y: hidden;
+  }
+
+  .avatar-container {
+    margin: 0;
+  }
+
+  .control-group {
+    padding: 0;
+    width: 100%;
+  }
+
+  .controls {
+    width: 100%;
+  }
+  
 }
