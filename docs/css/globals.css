@@ -33,6 +33,7 @@
   --botaocalendar: #f6ecff;
   --hovercalendariobotao: #e8defc;
   --icon-color: #ffffff;
+  --blue-consult: #1a3d8f;
 }
 
 [data-theme="dark"] {
@@ -61,13 +62,18 @@
   --hovercalendariobotao: #48454e;
   --selectcalendario: #383838;
   --icon-color: #ffffff;
+  --blue-consult: #3a67d1;
 }
 
 @font-face {
   font-family: "Nunito";
-  src: url("./fonts/Nunito.ttf") format("truetype");
+  src: url("/fonts/Nunito.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
+}
+
+body {
+  font-family: Nunito, sans-serif !important;
 }
 
 img {

@@ -96,7 +96,7 @@ header .profile-img {
   background: #fff;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -117,10 +117,11 @@ header .profile-img {
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
-.user-table th, .user-table td {
+.user-table th,
+.user-table td {
   padding: 14px;
   border-bottom: 1px solid #eee;
   text-align: left;
@@ -152,6 +153,7 @@ header .profile-img {
   background: #d5ccff;
   color: #3c2f80;
 }
+
 button {
   cursor: pointer;
   border: none;
@@ -160,25 +162,30 @@ button {
   transition: all 0.3s ease;
 }
 
-.edit-btn, .approve-btn {
+.edit-btn,
+.approve-btn {
   background: #826faf;
   color: #fff;
   padding: 6px 12px;
 }
 
-.remove-btn, .deny-btn {
+.remove-btn,
+.deny-btn {
   background: #d36262;
   color: #fff;
   padding: 6px 12px;
 }
 
-.edit-btn:hover, .approve-btn:hover {
+.edit-btn:hover,
+.approve-btn:hover {
   opacity: 0.9;
 }
 
-.remove-btn:hover, .deny-btn:hover {
+.remove-btn:hover,
+.deny-btn:hover {
   opacity: 0.9;
 }
+
 .request-list {
   width: 80%;
   display: flex;
@@ -194,7 +201,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .request-card strong {
@@ -205,12 +212,13 @@ button {
   display: flex;
   gap: 10px;
 }
+
 .activity-list {
   width: 80%;
   background: #fff;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   list-style: none;
 }
 
@@ -220,16 +228,22 @@ button {
   font-size: 15px;
   color: #555;
 }
+
 @media (max-width: 900px) {
   .main-container {
     flex-direction: column;
   }
+
   .sidebar {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
   }
-  .stats-grid, .user-table, .request-list, .activity-list {
+
+  .stats-grid,
+  .user-table,
+  .request-list,
+  .activity-list {
     width: 100%;
   }
 }

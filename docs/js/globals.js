@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const avatarEl = document.getElementById("menu-avatar");
 const nomeEl = document.getElementById("menu-nome");
@@ -120,6 +120,7 @@ applyTheme(localStorage.getItem("theme") === "dark");
   }
 });
 
+// ===== REPLACE: initAccessibility() with firestore syncing + active-class support =====
 function initAccessibility() {
   const toggles = document.querySelectorAll("#accessibility-toggle, #accessibility-toggle-mobile");
   const menus = document.querySelectorAll("#accessibility-menu, #accessibility-menu-mobile");
@@ -142,6 +143,175 @@ function initAccessibility() {
   const selectAll = (action) =>
     document.querySelectorAll(`#${action}, [data-action="${action}"]`);
 
+  // --- local state we persist to localStorage + Firestore ---
+  let savedAccessibility =
+    JSON.parse(localStorage.getItem("accessibilitySettings")) || {
+      readingMask: false,
+      boldText: false,
+      highContrast: false,
+      lineSpacing: "normal",
+      fonte_number: 1,
+      espacamento_number: 1,
+      filtro_daltonismo: "Filtros_daltonismo",
+      leitura_voz: false,
+      mascara_leitura: false,
+      letras_destaque: false
+    };
+
+  // helper: write localStorage
+  function saveAccessibilityLocal() {
+    localStorage.setItem("accessibilitySettings", JSON.stringify(savedAccessibility));
+  }
+
+  // helper to toggle active class for both desktop + mobile list items
+  function setActiveFor(action, isActive) {
+    selectAll(action).forEach(el => {
+      if (!el) return;
+      el.classList.toggle("active", !!isActive);
+    });
+  }
+
+  // update all active classes according to savedAccessibility/currentModeIndex
+  function updateActiveStates() {
+    const fonteActive = (savedAccessibility.fonte_number || 1) !== 1;
+    setActiveFor("increase-font", fonteActive);
+    setActiveFor("decrease-font", fonteActive);
+
+    const espActive = (savedAccessibility.espacamento_number || 1) !== 1;
+    setActiveFor("increase-line", espActive);
+    setActiveFor("decrease-line", espActive);
+
+    const filtroActive = (modes[currentModeIndex]?.name !== "Filtros Daltonismo");
+    setActiveFor("colorblind-filter", filtroActive);
+
+    setActiveFor("screen-reader", !!savedAccessibility.leitura_voz);
+    setActiveFor("reading-mask", !!savedAccessibility.mascara_leitura);
+    setActiveFor("bold-text", !!savedAccessibility.letras_destaque);
+
+    // high-contrast is kept local in the implementation; reflect its active state too
+    setActiveFor("high-contrast", !!savedAccessibility.highContrast);
+  }
+
+  // helper: resolve current logged user doc ref (waits once if needed)
+  async function getUserDocRefOrNull() {
+    let user = auth.currentUser;
+    if (!user) {
+      user = await new Promise(resolve => {
+        const unsub = onAuthStateChanged(auth, (u) => {
+          unsub();
+          resolve(u);
+        });
+      });
+    }
+    if (!user) return null;
+    return doc(db, "usuarios", user.uid);
+  }
+
+  // helper: save specific fields under extras map in Firestore
+  async function saveExtrasToFirestore(updates = {}) {
+    try {
+      const userDocRef = await getUserDocRefOrNull();
+      if (!userDocRef) return;
+      const payload = {};
+      for (const [k, v] of Object.entries(updates)) {
+        payload[`extras.${k}`] = v;
+      }
+      try {
+        await updateDoc(userDocRef, payload);
+      } catch (err) {
+        const base = { extras: {} };
+        for (const [k, v] of Object.entries(updates)) base.extras[k] = v;
+        await setDoc(userDocRef, base, { merge: true });
+      }
+    } catch (err) {
+      console.error("[accessibility] Erro ao salvar extras no Firestore:", err);
+    }
+  }
+
+  // ---------- Colorblind / filtro daltonismo (modes array) ----------
+  const modes = [
+    { name: "Filtros Daltonismo", className: "" },
+    { name: "Protanopia", className: "colorblind-protanopia" },
+    { name: "Deuteranopia", className: "colorblind-deuteranopia" },
+    { name: "Tritanopia", className: "colorblind-tritanopia" },
+    { name: "Acromatopsia", className: "colorblind-Acromatopsia" },
+  ];
+  let savedMode =
+    localStorage.getItem("colorblindMode") || (savedAccessibility.filtro_daltonismo === "Filtros_daltonismo" ? "Filtros Daltonismo" : savedAccessibility.filtro_daltonismo) || "Filtros Daltonismo";
+  let currentModeIndex = modes.findIndex((m) => m.name === savedMode);
+  if (currentModeIndex === -1) currentModeIndex = 0;
+
+  function mapModeToFirestoreName(modeName) {
+    if (modeName === "Filtros Daltonismo") return "Filtros_daltonismo";
+    return modeName;
+  }
+
+  // apply colorblind mode and optionally persist
+  function applyColorblindMode(index, persist = true) {
+    const classesToRemove = modes.map((m) => m.className).filter(Boolean);
+    if (classesToRemove.length) document.body.classList.remove(...classesToRemove);
+
+    const mode = modes[index];
+    if (mode.className) document.body.classList.add(mode.className);
+
+    localStorage.setItem("colorblindMode", mode.name);
+
+    const desktopBtn = document.querySelector("#colorblind-filter");
+    const mobileBtn = document.querySelector('[data-action="colorblind-filter"]');
+
+    if (desktopBtn) desktopBtn.innerHTML = `<i class="fa fa-low-vision"></i> ${mode.name}`;
+    if (mobileBtn) mobileBtn.innerHTML = `<i class="fa fa-low-vision"></i> ${mode.name}`;
+
+    savedAccessibility.filtro_daltonismo = mapModeToFirestoreName(mode.name);
+    saveAccessibilityLocal();
+    if (persist) saveExtrasToFirestore({ filtro_daltonismo: savedAccessibility.filtro_daltonismo });
+    updateActiveStates();
+  }
+
+  // Try to hydrate savedAccessibility from Firestore (if available)
+  (async function hydrateFromFirestore() {
+    try {
+      const userDocRef = await getUserDocRefOrNull();
+      if (!userDocRef) {
+        // still apply UI active states from localStorage
+        updateActiveStates();
+        return;
+      }
+      const snap = await getDoc(userDocRef);
+      if (!snap.exists()) {
+        updateActiveStates();
+        return;
+      }
+      const extras = snap.data()?.extras || {};
+      if (typeof extras.fonte_number === "number") savedAccessibility.fonte_number = extras.fonte_number;
+      if (typeof extras.espacamento_number === "number") savedAccessibility.espacamento_number = extras.espacamento_number;
+      if (typeof extras.filtro_daltonismo === "string") savedAccessibility.filtro_daltonismo = extras.filtro_daltonismo;
+      if (typeof extras.leitura_voz === "boolean") savedAccessibility.leitura_voz = extras.leitura_voz;
+      if (typeof extras.mascara_leitura === "boolean") savedAccessibility.mascara_leitura = extras.mascara_leitura;
+      if (typeof extras.letras_destaque === "boolean") savedAccessibility.letras_destaque = extras.letras_destaque;
+
+      // apply to localStorage/UI
+      if (savedAccessibility.leitura_voz) localStorage.setItem("screenReader", "true");
+      else localStorage.removeItem("screenReader");
+
+      if (savedAccessibility.filtro_daltonismo) {
+        const mapBack = savedAccessibility.filtro_daltonismo === "Filtros_daltonismo" ? "Filtros Daltonismo" : savedAccessibility.filtro_daltonismo;
+        localStorage.setItem("colorblindMode", mapBack);
+        currentModeIndex = modes.findIndex(m => m.name === mapBack);
+        if (currentModeIndex === -1) currentModeIndex = 0;
+      }
+
+      saveAccessibilityLocal();
+      // update UI to reflect hydration
+      applyColorblindMode(currentModeIndex, false);
+      updateActiveStates();
+    } catch (err) {
+      console.warn("[accessibility] hydrate error:", err);
+      updateActiveStates();
+    }
+  })();
+
+  // ---------- Font-size logic (updated with fonte_number) ----------
   const increaseBtns = selectAll("increase-font");
   const decreaseBtns = selectAll("decrease-font");
   const defaultFontSize = parseFloat(getComputedStyle(document.body).fontSize);
@@ -161,9 +331,13 @@ function initAccessibility() {
       });
   }
 
-  function changeFontSize(delta) {
+  function changeFontSize(delta, deltaFonteNumber = 0) {
     currentFontSize += delta;
     applyFontSize(delta);
+    savedAccessibility.fonte_number = Math.max(1, (savedAccessibility.fonte_number || 1) + deltaFonteNumber);
+    saveAccessibilityLocal();
+    saveExtrasToFirestore({ fonte_number: savedAccessibility.fonte_number });
+    updateActiveStates();
   }
 
   if (currentFontSize !== defaultFontSize) {
@@ -172,54 +346,18 @@ function initAccessibility() {
 
   increaseBtns.forEach((btn) =>
     btn.addEventListener("click", () => {
-      changeFontSize(2);
+      changeFontSize(2, +1);
       localStorage.setItem("fontSize", currentFontSize);
     })
   );
   decreaseBtns.forEach((btn) =>
     btn.addEventListener("click", () => {
-      changeFontSize(-2);
+      changeFontSize(-2, -1);
       localStorage.setItem("fontSize", currentFontSize);
     })
   );
 
-  const modes = [
-    { name: "Filtros Daltonismo", className: "" },
-    { name: "Protanopia", className: "colorblind-protanopia" },
-    { name: "Deuteranopia", className: "colorblind-deuteranopia" },
-    { name: "Tritanopia", className: "colorblind-tritanopia" },
-    { name: "Acromatopsia", className: "colorblind-Acromatopsia" },
-  ];
-  let savedMode =
-    localStorage.getItem("colorblindMode") || "Filtros Daltonismo";
-  let currentModeIndex = modes.findIndex((m) => m.name === savedMode);
-  if (currentModeIndex === -1) currentModeIndex = 0;
-
-  function applyColorblindMode(index) {
-    const classesToRemove = modes.map((m) => m.className).filter(Boolean);
-    if (classesToRemove.length) document.body.classList.remove(...classesToRemove);
-
-    const mode = modes[index];
-
-    if (mode.className) {
-      document.body.classList.add(mode.className);
-    }
-
-    localStorage.setItem("colorblindMode", mode.name);
-
-    const desktopBtn = document.querySelector("#colorblind-filter");
-    const mobileBtn = document.querySelector('[data-action="colorblind-filter"]');
-
-    if (desktopBtn) {
-      desktopBtn.innerHTML = `<i class="fa fa-low-vision"></i> ${mode.name}`;
-    }
-    if (mobileBtn) {
-      mobileBtn.innerHTML = `<i class="fa fa-low-vision"></i> ${mode.name}`;
-    }
-  }
-
-  applyColorblindMode(currentModeIndex);
-
+  // Colorblind toggles
   selectAll("colorblind-filter").forEach((btn) =>
     btn.addEventListener("click", () => {
       currentModeIndex = (currentModeIndex + 1) % modes.length;
@@ -227,6 +365,7 @@ function initAccessibility() {
     })
   );
 
+  // ---------- Screen reader ----------
   let speechEnabled = localStorage.getItem("screenReader") === "true";
   let navigationMode = "mouse";
   let lastSpokenElement = null;
@@ -271,6 +410,10 @@ function initAccessibility() {
       if (speechEnabled) enableSpeech();
       else disableSpeech();
       localStorage.setItem("screenReader", speechEnabled);
+      savedAccessibility.leitura_voz = !!speechEnabled;
+      saveAccessibilityLocal();
+      saveExtrasToFirestore({ leitura_voz: savedAccessibility.leitura_voz });
+      updateActiveStates();
     })
   );
 
@@ -281,64 +424,130 @@ function initAccessibility() {
     navigationMode = "mouse";
   });
 
+  // ---------- Reading mask (updated: follows mouse vertically) ----------
   const readingMaskOverlay = document.getElementById("reading-mask-overlay");
-  let savedAccessibility =
-    JSON.parse(localStorage.getItem("accessibilitySettings")) || {
-      readingMask: false,
-      boldText: false,
-      highContrast: false,
-      lineSpacing: "normal",
-    };
+  const highlightWindow = readingMaskOverlay?.querySelector(".highlight-window");
 
-  function saveAccessibility() {
-    localStorage.setItem(
-      "accessibilitySettings",
-      JSON.stringify(savedAccessibility)
-    );
+  // ensure highlightWindow exists and is non-interactive
+  if (highlightWindow) {
+    highlightWindow.style.pointerEvents = "none";
   }
 
-  if (savedAccessibility.readingMask && readingMaskOverlay) {
+  // Use the same key used elsewhere / in Firestore
+  if (savedAccessibility.mascara_leitura && readingMaskOverlay) {
     readingMaskOverlay.style.display = "block";
     document.body.classList.add("reading-mask-active");
   }
-  if (savedAccessibility.boldText) document.body.classList.add("bold-text-active");
-  if (savedAccessibility.highContrast) document.body.classList.add("high-contrast-active");
-  if (savedAccessibility.lineSpacing) {
-    document.body.classList.add(
-      savedAccessibility.lineSpacing === "small"
-        ? "line-spacing-sm"
-        : savedAccessibility.lineSpacing === "large"
-          ? "line-spacing-lg"
-          : "line-spacing-normal"
-    );
+
+  // handlers for following mouse vertically
+  let readingMaskAttached = false;
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  function updateHighlightPositionByClientY(clientY) {
+    if (!highlightWindow) return;
+    const viewportH = window.innerHeight;
+    const h = highlightWindow.offsetHeight || 120;
+    // center highlight on cursor vertically, but keep within viewport
+    const top = clamp(clientY - Math.round(h / 2), 0, Math.max(0, viewportH - h));
+    highlightWindow.style.top = `${top}px`;
   }
 
+  function onReadingMouseMove(e) {
+    // e.clientY for mouse, for touch use touches[0]
+    const clientY = e.touches?.[0]?.clientY ?? e.clientY;
+    if (typeof clientY === "number") updateHighlightPositionByClientY(clientY);
+  }
+
+  function onReadingScrollOrResize() {
+    // keep current top within new viewport if resized/scrolled
+    if (!highlightWindow) return;
+    const currentTop = parseInt(highlightWindow.style.top || "0", 10) || 0;
+    const h = highlightWindow.offsetHeight || 120;
+    const maxTop = Math.max(0, window.innerHeight - h);
+    const newTop = clamp(currentTop, 0, maxTop);
+    highlightWindow.style.top = `${newTop}px`;
+  }
+
+  function attachReadingMaskListeners() {
+    if (readingMaskAttached) return;
+    window.addEventListener("mousemove", onReadingMouseMove, { passive: true });
+    window.addEventListener("touchmove", onReadingMouseMove, { passive: true });
+    window.addEventListener("scroll", onReadingScrollOrResize, { passive: true });
+    window.addEventListener("resize", onReadingScrollOrResize, { passive: true });
+    readingMaskAttached = true;
+  }
+
+  function detachReadingMaskListeners() {
+    if (!readingMaskAttached) return;
+    window.removeEventListener("mousemove", onReadingMouseMove);
+    window.removeEventListener("touchmove", onReadingMouseMove);
+    window.removeEventListener("scroll", onReadingScrollOrResize);
+    window.removeEventListener("resize", onReadingScrollOrResize);
+    readingMaskAttached = false;
+  }
+
+  // toggle via menu items (desktop + mobile)
   selectAll("reading-mask").forEach((btn) =>
     btn.addEventListener("click", () => {
       const active = readingMaskOverlay.style.display === "block";
+      // toggle display + class
       readingMaskOverlay.style.display = active ? "none" : "block";
       document.body.classList.toggle("reading-mask-active", !active);
-      savedAccessibility.readingMask = !active;
-      saveAccessibility();
+
+      // update saved state under the key used elsewhere
+      savedAccessibility.mascara_leitura = !active;
+      saveAccessibilityLocal();
+      saveExtrasToFirestore({ mascara_leitura: savedAccessibility.mascara_leitura });
+
+      // attach/detach listeners and set initial position
+      if (!active) {
+        // show -> attach and place highlight centered vertically under mouse if possible
+        attachReadingMaskListeners();
+        // try position at current mouse if available, otherwise center viewport
+        // if there's a last known mouse position, update; fallback center:
+        const centerY = window.innerHeight / 2;
+        updateHighlightPositionByClientY(centerY);
+      } else {
+        // hide -> detach
+        detachReadingMaskListeners();
+      }
+
+      updateActiveStates();
     })
   );
+
+  // if overlay is visible on init, attach listeners so it follows
+  if (readingMaskOverlay && readingMaskOverlay.style.display === "block") {
+    attachReadingMaskListeners();
+    // center on load
+    updateHighlightPositionByClientY(window.innerHeight / 2);
+  }
+
+
+  // ---------- Bold text ----------
+  if (savedAccessibility.boldText) document.body.classList.add("bold-text-active");
 
   selectAll("bold-text").forEach((btn) =>
     btn.addEventListener("click", () => {
       const active = document.body.classList.toggle("bold-text-active");
-      savedAccessibility.boldText = active;
-      saveAccessibility();
+      savedAccessibility.letras_destaque = active;
+      saveAccessibilityLocal();
+      saveExtrasToFirestore({ letras_destaque: savedAccessibility.letras_destaque });
+      updateActiveStates();
     })
   );
 
+  // ---------- High contrast (kept local only) ----------
   selectAll("high-contrast").forEach((btn) =>
     btn.addEventListener("click", () => {
       const active = document.body.classList.toggle("high-contrast-active");
       savedAccessibility.highContrast = active;
-      saveAccessibility();
+      saveAccessibilityLocal();
+      updateActiveStates();
     })
   );
 
+  // ---------- Line spacing (numeric espacamento_number) ----------
   function applyLineSpacing(state) {
     document.body.classList.remove(
       "line-spacing-sm",
@@ -349,8 +558,14 @@ function initAccessibility() {
     else if (state === "normal") document.body.classList.add("line-spacing-normal");
     else if (state === "large") document.body.classList.add("line-spacing-lg");
     savedAccessibility.lineSpacing = state;
-    saveAccessibility();
+    if (state === "small") savedAccessibility.espacamento_number = Math.max(1, (savedAccessibility.espacamento_number || 1) - 1);
+    else if (state === "normal") savedAccessibility.espacamento_number = 1;
+    else if (state === "large") savedAccessibility.espacamento_number = Math.max(1, (savedAccessibility.espacamento_number || 1) + 1);
+    saveAccessibilityLocal();
+    saveExtrasToFirestore({ espacamento_number: savedAccessibility.espacamento_number });
+    updateActiveStates();
   }
+
   selectAll("increase-line").forEach((btn) =>
     btn.addEventListener("click", () => {
       if (savedAccessibility.lineSpacing === "small") applyLineSpacing("normal");
@@ -364,6 +579,7 @@ function initAccessibility() {
     })
   );
 
+  // ---------- Reset accessibility (resets local + firestore fields) ----------
   selectAll("reset-accessibility").forEach((btn) =>
     btn.addEventListener("click", () => {
       const removeClasses = [
@@ -389,8 +605,15 @@ function initAccessibility() {
         boldText: false,
         highContrast: false,
         lineSpacing: "normal",
+        fonte_number: 1,
+        espacamento_number: 1,
+        filtro_daltonismo: "Filtros_daltonismo",
+        leitura_voz: false,
+        mascara_leitura: false,
+        letras_destaque: false
       };
-      saveAccessibility();
+      saveAccessibilityLocal();
+
       localStorage.removeItem("fontSize");
       localStorage.removeItem("colorblindMode");
       localStorage.removeItem("screenReader");
@@ -399,8 +622,23 @@ function initAccessibility() {
         disableSpeech();
         speechEnabled = false;
       }
+
+      saveExtrasToFirestore({
+        fonte_number: 1,
+        espacamento_number: 1,
+        filtro_daltonismo: "Filtros_daltonismo",
+        leitura_voz: false,
+        mascara_leitura: false,
+        letras_destaque: false
+      });
+
+      // limpa estados visuais
+      updateActiveStates();
     })
   );
+
+  // initial update of active states (in case localStorage had something)
+  updateActiveStates();
 }
 
 initAccessibility();

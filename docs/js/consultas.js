@@ -2,6 +2,7 @@
 import { auth, db } from "./firebase.js";
 import {
     doc,
+    getDoc,
     getDocs,
     collection,
     query,
@@ -120,6 +121,27 @@ function limparAbasPadrao() {
     </div>`;
 }
 
+const profissionalNameCache = new Map(); // cache `${collection}:${id}` => nome
+
+async function fetchProfissionalNome(profissionalId, collectionName) {
+  if (!profissionalId || !collectionName) return null;
+  const key = `${collectionName}:${profissionalId}`;
+  if (profissionalNameCache.has(key)) return profissionalNameCache.get(key);
+  try {
+    const q = query(collection(db, collectionName), where('uid', '==', profissionalId));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      const nome = snap.docs[0].data()?.nome ?? null;
+      profissionalNameCache.set(key, nome);
+      return nome;
+    }
+  } catch (err) {
+    console.warn('Erro buscando profissional nome', err);
+  }
+  profissionalNameCache.set(key, null);
+  return null;
+}
+
 function ouvirConsultasDaMae(uidMae) {
     const q = query(collection(db, "Consultas"), where("Mae", "==", uidMae));
 
@@ -140,12 +162,40 @@ function ouvirConsultasDaMae(uidMae) {
             return;
         }
 
-        const arr = [];
+        const normalized = [];
         snapshot.forEach(snapDoc => {
-            arr.push({ id: snapDoc.id, ...snapDoc.data() });
+            const raw = { id: snapDoc.id, ...snapDoc.data() };
+            let profissionalId = null;
+            let collectionName = null;
+            if (raw.Psicologo) {
+              profissionalId = raw.Psicologo;
+              collectionName = 'psicologos';
+            } else if (raw.Advogado) {
+              profissionalId = raw.Advogado;
+              collectionName = 'advogados';
+            }
+            normalized.push({ ...raw, profissionalId, collectionName });
         });
 
-        arr.sort((a, b) => {
+        const fetchPromises = [];
+        normalized.forEach(c => {
+            if (c.profissionalId && c.collectionName) {
+                const key = `${c.collectionName}:${c.profissionalId}`;
+                if (!profissionalNameCache.has(key)) {
+                    fetchPromises.push(fetchProfissionalNome(c.profissionalId, c.collectionName));
+                }
+            }
+        });
+        if (fetchPromises.length) await Promise.all(fetchPromises);
+
+        normalized.forEach(c => {
+            if (c.profissionalId && c.collectionName) {
+                const key = `${c.collectionName}:${c.profissionalId}`;
+                c.profissionalNome = profissionalNameCache.get(key) || '';
+            }
+        });
+
+        const arr = normalized.sort((a, b) => {
             const ta = a.Datahora?.toMillis ? a.Datahora.toMillis() : (a.Datahora?.seconds || 0);
             const tb = b.Datahora?.toMillis ? b.Datahora.toMillis() : (b.Datahora?.seconds || 0);
             return ta - tb;
@@ -157,14 +207,13 @@ function ouvirConsultasDaMae(uidMae) {
             const dataFormatada = formatDataHora(c.Datahora);
 
             // determinar tipo e uid do profissional do card
-            const uidPsi = c.Psicologo || null;
-            const uidAdv = c.Advogado || null;
-            const profissionalUid = uidPsi || uidAdv || "";
-            const tipo = uidPsi ? "psicologo" : (uidAdv ? "advogado" : null);
+            const profissionalUid = c.profissionalId || "";
+            const tipo = c.collectionName === 'psicologos' ? "psicologo" : (c.collectionName === 'advogados' ? "advogado" : null);
 
             const card = document.createElement("div");
             card.className = "consulta-card";
             card.innerHTML = `
+                <h3>Consulta${c.profissionalNome ? ' com ' + c.profissionalNome : ''}</h3>
                 <div class="consulta-header">
                     <h3>${dataFormatada}</h3>
                     ${gerarBadge(c.status)}

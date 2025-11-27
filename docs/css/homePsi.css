@@ -1212,3 +1212,92 @@ section[id="chats"] {
     color: #583e8e;
     font-weight: 600;
 }
+
+/* Pacientes Section Styles */
+#pacientes .patient-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(12,18,33,0.06);
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#pacientes .patient-header {
+  display:flex;
+  align-items:center;
+  gap: 12px;
+}
+
+#pacientes .patient-avatar {
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  object-fit:cover;
+  flex:0 0 56px;
+}
+
+#pacientes .patient-name {
+  margin:0;
+  font-size:1.05rem;
+}
+
+#pacientes .chip {
+  display:inline-block;
+  font-size:0.8rem;
+  padding:4px 8px;
+  margin-right:6px;
+  background:#f3f4f6;
+  border-radius:999px;
+  color:#333;
+}
+
+#pacientes .patient-last {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:8px 0 0 0;
+  font-size:0.9rem;
+  color:#222;
+}
+
+#pacientes .last-value {
+  display:inline-block;
+  background: #f8fafc;
+  border: 1px solid #e6eef8;
+  padding:6px 10px;
+  border-radius:8px;
+  font-weight:600;
+  color:#111;
+}
+
+#pacientes .patient-actions {
+  display:flex;
+  gap:8px;
+  margin-top:6px;
+}
+
+.patient-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.patient-subinfo {
+  display: flex;
+  gap: 4px;
+}
+
+#pacientes .patient-card .patient-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#pacientes .patient-notes {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}

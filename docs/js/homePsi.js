@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (target === "agenda") carregarEventos();
       if (target === "chats") carregarChatsPsi();
+      if (target === "pacientes") carregarPacientes();
 
     });
   });
@@ -282,7 +283,7 @@ async function carregarUltimasAtividades() {
   const ul = document.querySelector(".last-activities ul");
   if (!ul) return;
 
-  ul.innerHTML = "<li>Carregando...</li>";
+  ul.innerHTML = "<div class='loader'><div class='dot'></div><div class='dot'></div><div class='dot'></div></div>";
 
   const q = query(
     collection(db, "Consultas"),
@@ -772,11 +773,13 @@ psiForm?.addEventListener("submit", async (e) => {
 // ========== SISTEMA DE DISPONIBILIDADE AUTOMÁTICA ==========
 import { Timestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
+// ========== nova initDisponibilidade() (substituir a antiga) ==========
 function initDisponibilidade() {
   try {
     const calendar = document.getElementById("calendarDates");
     if (!calendar) return;
 
+    // cria o modal apenas 1 vez
     const modal = document.createElement("div");
     modal.className = "modal hidden";
     modal.innerHTML = `
@@ -792,37 +795,47 @@ function initDisponibilidade() {
     document.body.appendChild(modal);
 
     const horariosPadrao = [
-      "08:00",
-      "09:00",
-      "10:00",
-      "11:00",
-      "13:00",
-      "14:00",
-      "15:00",
-      "16:00",
-      "17:00",
+      "08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00",
     ];
 
-    // estilo adicional para horários já ocupados
+    // estilo adicional (mantive seu estilo)
     const style = document.createElement("style");
     style.textContent = `
-      .horario-btn.ocupado {
-        background: #ccc !important;
-        color: #777 !important;
-        border-color: #aaa !important;
-        cursor: not-allowed !important;
-      }
-      .horario-btn.ocupado:hover {
-        background: #ccc !important;
-      }
+      .horario-btn.ocupado { background: #ccc !important; color: #777 !important; border-color: #aaa !important; cursor: not-allowed !important; }
+      .horario-btn.ocupado:hover { background: #ccc !important; }
     `;
     document.head.appendChild(style);
 
-    calendar.addEventListener("click", async (e) => {
-      const dia = e.target.textContent.trim();
-      if (!dia || isNaN(dia)) return;
+    // helper: exibe modal imediatamente com estilo inline
+    function showModal() {
+      modal.classList.remove("hidden");
+      modal.style.display = "flex";
+      try { window.modalManager?.adoptOne?.(modal); } catch (e) {}
+    }
+    function hideModal() {
+      modal.classList.add("hidden");
+      modal.style.display = "none";
+    }
 
-      const dataClicada = new Date(currentYear, currentMonth, dia);
+    // cache simples do doc do psicólogo
+    async function getPsiDocCached() {
+      if (window.__psiCache) return window.__psiCache;
+      const user = auth.currentUser;
+      if (!user) throw new Error("Usuário não autenticado");
+      const q = query(collection(db, "psicologos"), where("uid", "==", user.uid));
+      const snap = await getDocs(q);
+      if (snap.empty) throw new Error("Psicólogo não encontrado");
+      const docSnap = snap.docs[0];
+      window.__psiCache = { id: docSnap.id, data: docSnap.data() };
+      return window.__psiCache;
+    }
+
+    calendar.addEventListener("click", async (e) => {
+      const diaText = (e.target && e.target.textContent) ? e.target.textContent.trim() : "";
+      if (!diaText || isNaN(diaText)) return;
+
+      const diaNum = parseInt(diaText, 10);
+      const dataClicada = new Date(currentYear, currentMonth, diaNum);
       const hoje = new Date();
       hoje.setHours(0, 0, 0, 0);
       if (dataClicada < hoje) {
@@ -830,235 +843,210 @@ function initDisponibilidade() {
         return;
       }
 
-      modal.classList.remove("hidden");
+      // mostra modal imediatamente para evitar sensação de travamento
+      showModal();
       document.getElementById("dataSelecionada").textContent =
-        dataClicada.toLocaleDateString("pt-BR", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        });
+        dataClicada.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
       const container = document.getElementById("horariosContainer");
-      container.innerHTML = "";
+      container.innerHTML = `<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
 
-      // 🔹 buscar horários já salvos no Firebase + consultas da data
       const user = auth.currentUser;
       if (!user) {
         alert("Usuário não autenticado.");
+        hideModal();
         return;
       }
 
-      let horariosMarcados = {}; // Mapa: "HH:MM" → { status, maeNome }
-      let horariosOcupados = []; // Para bloquear os clicáveis
-
       try {
-        const q = query(
-          collection(db, "psicologos"),
-          where("uid", "==", user.uid)
+        // pega doc do psicólogo (cache)
+        const { id: psiDocId, data: psiData } = await getPsiDocCached();
+
+        // constroi intervalo do dia (start <= Datahora < end)
+        const startOfDay = new Date(dataClicada);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(startOfDay);
+        endOfDay.setDate(endOfDay.getDate() + 1);
+
+        const startTS = Timestamp.fromDate(startOfDay);
+        const endTS = Timestamp.fromDate(endOfDay);
+
+        // consulta APENAS as consultas do dia (muito mais leve)
+        const consultasQ = query(
+          collection(db, "Consultas"),
+          where("Psicologo", "==", user.uid),
+          where("Datahora", ">=", startTS),
+          where("Datahora", "<", endTS)
         );
-        const snap = await getDocs(q);
 
-        if (!snap.empty) {
-          const data = snap.docs[0].data();
-          const disponibilidade = data.disponibilidade || [];
-          const agendados = data.agendados || [];
-
-          const dataDia = dataClicada.toDateString();
-
-          function toHorario(d) {
-            return `${String(d.getHours()).padStart(2, "0")}:${String(
-              d.getMinutes()
-            ).padStart(2, "0")}`;
-          }
-
-          // 🔹 1. Buscar consultas do dia
-          const consultasQ = query(
-            collection(db, "Consultas"),
-            where("Psicologo", "==", user.uid)
-          );
-          const consultasSnap = await getDocs(consultasQ);
-
-          for (const docSnap of consultasSnap.docs) {
-            const c = docSnap.data();
-            if (!c.Datahora) continue;
-
-            const d = c.Datahora.toDate();
-            if (d.toDateString() !== dataDia) continue;
-
-            const horario = toHorario(d);
-
-            // buscar nome da mãe
-            let maeNome = "Paciente";
-            try {
-              const maeRef = doc(db, "usuarios", c.Mae);
-              const maeSnap = await getDoc(maeRef);
-              if (maeSnap.exists()) maeNome = maeSnap.data().nome;
-            } catch { }
-
-            horariosMarcados[horario] = {
-              status: c.status, // pendente / aceito / realizado
-              maeNome
-            };
-          }
-
-          // 🔹 2. horários agendados que devem ficar cinza
-          agendados
-            .map(t => t.toDate())
-            .filter(d => d.toDateString() === dataDia)
-            .forEach(d => {
-              horariosOcupados.push(toHorario(d));
-            });
-
-          // 🔹 3. horários da DISPONIBILIDADE também devem bloquear seleção (ocupados)
-          disponibilidade
-            .map(t => t.toDate())
-            .filter(d => d.toDateString() === dataDia)
-            .forEach(d => {
-              horariosOcupados.push(toHorario(d));
-            });
-
+        let consultasSnap;
+        try {
+          consultasSnap = await getDocs(consultasQ);
+        } catch (qErr) {
+          // se Firestore pedir índice composto, mostra aviso no console (link aparece no erro)
+          console.error("Erro na query de consultas (verifique se precisa criar índice):", qErr);
+          throw qErr;
         }
-      } catch (err) {
-        console.error("Erro ao buscar disponibilidade existente:", err);
-      }
 
-      // 🔹 gerar botões
-      horariosPadrao.forEach((h) => {
-        const btn = document.createElement("button");
-        btn.textContent = h;
-        btn.className = "horario-btn";
+        const dataDiaStr = dataClicada.toDateString();
+        const toHorario = (d) => `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
 
-        if (horariosMarcados[h]) {
-          const info = horariosMarcados[h];
+        const horariosMarcados = {};
+        const maesToLoad = new Set();
 
-          // Tooltip com o nome da mãe
-          btn.title = `${info.maeNome}`;
+        consultasSnap.forEach(docSnap => {
+          const c = docSnap.data();
+          if (!c.Datahora) return;
+          const d = c.Datahora.toDate();
+          if (d.toDateString() !== dataDiaStr) return;
+          const horario = toHorario(d);
+          horariosMarcados[horario] = { status: c.status || "pendente", maeId: c.Mae };
+          if (c.Mae) maesToLoad.add(c.Mae);
+        });
 
-          if (info.status === "realizado") {
-            btn.classList.add("finalizadobtn");
-            btn.disabled = true;
-          } else if (info.status === "aceito") {
+        // agendados + disponibilidade atual (do psiData) para bloquear horários
+        const horariosOcupados = new Set();
+        (psiData.agendados || []).map(t => (t.toDate ? t.toDate() : new Date(t))).forEach(d => {
+          if (d.toDateString() === dataDiaStr) horariosOcupados.add(toHorario(d));
+        });
+        (psiData.disponibilidade || []).map(t => (t.toDate ? t.toDate() : new Date(t))).forEach(d => {
+          if (d.toDateString() === dataDiaStr) horariosOcupados.add(toHorario(d));
+        });
+
+        // buscar nomes das mães em paralelo (apenas as do dia)
+        const maeIdList = Array.from(maesToLoad);
+        const maesMap = {};
+        if (maeIdList.length > 0) {
+          const maePromises = maeIdList.map(id => getDoc(doc(db, "usuarios", id)).then(s => ({ id, snap: s })));
+          const maesSnaps = await Promise.all(maePromises);
+          maesSnaps.forEach(({ id, snap }) => {
+            maesMap[id] = snap.exists() ? (snap.data().nome || "Paciente") : "Paciente";
+          });
+        }
+
+        // renderiza botões
+        container.innerHTML = "";
+        horariosPadrao.forEach(h => {
+          const btn = document.createElement("button");
+          btn.textContent = h;
+          btn.className = "horario-btn";
+
+          if (horariosMarcados[h]) {
+            const info = horariosMarcados[h];
+            btn.title = maesMap[info.maeId] || "Paciente";
+            if (info.status === "realizado") {
+              btn.classList.add("finalizadobtn");
+              btn.disabled = true;
+            } else if (info.status === "aceito") {
+              btn.classList.add("ocupado");
+              btn.disabled = true;
+            } else {
+              btn.addEventListener("click", () => btn.classList.toggle("selecionado"));
+            }
+          } else if (horariosOcupados.has(h)) {
             btn.classList.add("ocupado");
             btn.disabled = true;
           } else {
-            // pendente ainda permite selecionar
-            btn.addEventListener("click", () =>
-              btn.classList.toggle("selecionado")
-            );
+            btn.addEventListener("click", () => btn.classList.toggle("selecionado"));
           }
-        } else if (horariosOcupados.includes(h)) {
-          btn.classList.add("ocupado");
-          btn.disabled = true;
-        } else {
-          btn.addEventListener("click", () =>
-            btn.classList.toggle("selecionado")
-          );
-        }
 
-        container.appendChild(btn);
-      });
+          container.appendChild(btn);
+        });
 
-      document.getElementById("confirmarDisponibilidade").onclick =
-        async () => {
-          const selecionados = Array.from(
-            container.querySelectorAll(".selecionado")
-          ).map((b) => b.textContent);
-
+        // confirmar seleção
+        document.getElementById("confirmarDisponibilidade").onclick = async () => {
+          const selecionados = Array.from(container.querySelectorAll(".selecionado")).map(b => b.textContent);
           if (selecionados.length === 0) {
             alert("Selecione pelo menos um horário.");
             return;
           }
 
-          const novosTimestamps = selecionados.map((h) => {
+          const novosTimestamps = selecionados.map(h => {
             const [hr, min] = h.split(":").map(Number);
-            const dataFinal = new Date(
-              dataClicada.getFullYear(),
-              dataClicada.getMonth(),
-              dataClicada.getDate(),
-              hr,
-              min,
-              0,
-              0
-            );
-
+            const dataFinal = new Date(dataClicada.getFullYear(), dataClicada.getMonth(), dataClicada.getDate(), hr, min, 0, 0);
             return Timestamp.fromDate(dataFinal);
-
           });
 
           try {
-            const q = query(
-              collection(db, "psicologos"),
-              where("uid", "==", user.uid)
-            );
-            const snap = await getDocs(q);
-
-            if (snap.empty) {
-              alert("Erro: psicólogo não encontrado no banco de dados.");
-              return;
-            }
-
-            const docRef = doc(db, "psicologos", snap.docs[0].id);
-            const data = snap.docs[0].data();
-            const antigos = data.disponibilidade || [];
-
-            const antigosMs = antigos.map((t) => t.toMillis());
-            const novosUnicos = novosTimestamps.filter(
-              (t) => !antigosMs.includes(t.toMillis())
-            );
+            const psiDocRef = doc(db, "psicologos", psiDocId);
+            const atuais = psiData.disponibilidade || [];
+            const atuaisMs = new Set(atuais.map(t => (t.toMillis ? t.toMillis() : (t.seconds * 1000))));
+            const novosUnicos = novosTimestamps.filter(t => !atuaisMs.has(t.toMillis()));
 
             if (novosUnicos.length === 0) {
               alert("Todos os horários selecionados já estão disponíveis.");
-              modal.classList.add("hidden");
+              hideModal();
               return;
             }
 
-            await updateDoc(docRef, {
-              disponibilidade: [...antigos, ...novosUnicos],
-            });
+            await updateDoc(psiDocRef, { disponibilidade: arrayUnion(...novosUnicos) });
+
+            // atualizar cache local (opcional)
+            window.__psiCache = window.__psiCache || { id: psiDocId, data: psiData };
+            window.__psiCache.data.disponibilidade = [...(psiData.disponibilidade || []), ...novosUnicos];
 
             alert("Disponibilidade atualizada com sucesso!");
-            modal.classList.add("hidden");
+            hideModal();
+            marcarDiasComDisponibilidade().catch(() => {});
           } catch (err) {
             console.error("Erro ao salvar disponibilidade:", err);
             alert("Erro ao salvar disponibilidade. Verifique o console.");
           }
         };
 
-      document.getElementById("cancelarDisponibilidade").onclick = () =>
-        modal.classList.add("hidden");
+        document.getElementById("cancelarDisponibilidade").onclick = () => hideModal();
+
+      } catch (err) {
+        console.error("Erro ao buscar disponibilidade existente:", err);
+        // se for erro de índice do Firestore, o console já trará link para criar índice
+        alert("Erro ao carregar dados. Veja o console para mais detalhes.");
+        hideModal();
+      }
     });
   } catch (err) {
     console.error("Erro ao inicializar disponibilidade:", err);
   }
 }
 
+
 // ---------- Fix + Debugger universal para modais ----------
+// ---------- Fix + Debugger universal para modais (corrigido) ----------
 (function () {
+  if (window.__modalFixerInstalled) return;
+  window.__modalFixerInstalled = true;
+
   function forceStyleForModal(el) {
-    if (!el) return;
-    // força estilos inline para evitar interferências de CSS externos
-    Object.assign(el.style, {
-      position: "fixed",
-      top: "0",
-      left: "0",
-      width: "100vw",
-      height: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      background: "rgba(0,0,0,0.55)",
-      zIndex: "2147483647", // máximo seguro
-      pointerEvents: "auto",
-    });
-    // garante que o conteúdo interno seja centrado e com z-index acima
-    const inner = el.querySelector(
-      ".modal-content, .popup-content, .detalhes-consulta-card"
-    );
-    if (inner) {
-      Object.assign(inner.style, {
-        zIndex: "2147483648",
-        position: "relative",
+    if (!el || !(el instanceof HTMLElement)) return;
+    // marca pra evitar feedback loop
+    el.dataset.__modalFixing = "1";
+    try {
+      Object.assign(el.style, {
+        position: "fixed",
+        top: "0",
+        left: "0",
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "rgba(0,0,0,0.55)",
+        zIndex: "2147483647",
+        pointerEvents: "auto",
       });
+      const inner = el.querySelector(".modal-content, .popup-content, .detalhes-consulta-card");
+      if (inner) {
+        Object.assign(inner.style, {
+          zIndex: "2147483648",
+          position: "relative",
+        });
+      }
+    } catch (err) {
+      /* ignore */
+    } finally {
+      // remove a marca após o navegador aplicar estilos (pequeno delay)
+      setTimeout(() => {
+        try { delete el.dataset.__modalFixing; } catch (e) {}
+      }, 50);
     }
   }
 
@@ -1099,14 +1087,9 @@ function initDisponibilidade() {
           a.display === "none"
       );
       if (problematic) {
-        console.warn(
-          "⚠️ Possível ancestral problemático encontrado:",
-          problematic
-        );
+        console.warn("⚠️ Possível ancestral problemático encontrado:", problematic);
       } else {
-        console.log(
-          "✅ Nenhum ancestral óbvio com transform/opacity/display encontrado."
-        );
+        console.log("✅ Nenhum ancestral óbvio com transform/opacity/display encontrado.");
       }
     } catch (err) {
       console.error("Erro durante debugModalVisibility:", err);
@@ -1115,91 +1098,63 @@ function initDisponibilidade() {
     }
   }
 
-  function attachModalWatcher() {
-    // corrige modais já existentes
-    document.querySelectorAll(".modal, .popup").forEach((m) => {
-      // se não estiver hidden, força visibilidade
-      if (!m.classList.contains("hidden")) {
-        forceStyleForModal(m);
-        debugModalVisibility(m);
-      }
-    });
-
-    // observa o DOM por modais que apareçam dinamicamente
-    const mo = new MutationObserver((mutations) => {
-      for (const mut of mutations) {
+  // Apenas observa alterações de class ou adição de nós — NÃO observa style para evitar loop
+  const mo = new MutationObserver((mutations) => {
+    for (const mut of mutations) {
+      if (mut.type === "childList") {
         for (const node of mut.addedNodes) {
           if (!(node instanceof HTMLElement)) continue;
-          if (
-            node.matches &&
-            (node.matches(".modal") || node.matches(".popup"))
-          ) {
+          if (node.matches && (node.matches(".modal") || node.matches(".popup"))) {
             console.log("➕ Modal adicionado dinamicamente ao DOM:", node);
-            // força estilo
+            // marca e força estilo
             forceStyleForModal(node);
             debugModalVisibility(node);
           }
         }
-        // mudanças em atributos (ex.: remover adicionar classe hidden)
-        if (mut.type === "attributes" && mut.target instanceof HTMLElement) {
-          const t = mut.target;
-          if (
-            (t.classList.contains("modal") || t.classList.contains("popup")) &&
-            !t.classList.contains("hidden")
-          ) {
+      } else if (mut.type === "attributes") {
+        // ignorar mutações de elementos que nós mesmos estamos arrumando
+        const t = mut.target;
+        if (!(t instanceof HTMLElement)) continue;
+        if (t.dataset && t.dataset.__modalFixing === "1") continue;
+        // só reagir a mudanças de class (não react a style)
+        if (mut.attributeName === "class") {
+          if ((t.classList.contains("modal") || t.classList.contains("popup")) && !t.classList.contains("hidden")) {
             console.log("🛠 Modal alterado para visível (atributos):", t);
             forceStyleForModal(t);
             debugModalVisibility(t);
           }
         }
       }
-    });
-
-    mo.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["class", "style"],
-    });
-
-    // intercepta toggles por event listeners (ex.: btn.classList.remove("hidden"))
-    document.addEventListener(
-      "click",
-      (ev) => {
-        const target = ev.target;
-        // se o clique abrir um modal por algum botão que tem data-modal ou id, tentamos forçar
-        const modalSel =
-          target?.dataset?.modal || target?.getAttribute("data-open-modal");
-        if (modalSel) {
-          const m = document.querySelector(modalSel);
-          if (m) {
-            setTimeout(() => {
-              forceStyleForModal(m);
-              debugModalVisibility(m);
-            }, 10);
-          }
-        }
-      },
-      true
-    );
-  }
-
-  // utilitário que corrige / depura qualquer modal que esteja presente ao abrir uma data do calendário
-  window._forceAndDebugModal = function (modalEl) {
-    forceStyleForModal(modalEl);
-    debugModalVisibility(modalEl);
-  };
-
-  // roda no carregamento
-  document.addEventListener("DOMContentLoaded", () => {
-    try {
-      console.log("🧰 modal-fix detector rodando — aplicando watcher...");
-      attachModalWatcher();
-    } catch (err) {
-      console.error("Erro ao iniciar modal-fixer:", err);
     }
   });
+
+  mo.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class"] // <- removi "style" para evitar loops
+  });
+
+  // click handler pra detectar botões que abrem modais — aplica fix com proteção
+  document.addEventListener("click", (ev) => {
+    const target = ev.target;
+    const modalSel = target?.dataset?.modal || target?.getAttribute("data-open-modal");
+    if (modalSel) {
+      const m = document.querySelector(modalSel);
+      if (m && m instanceof HTMLElement) {
+        // aplica com pequeno atraso, mas marca para evitar reentrada
+        m.dataset.__modalFixing = "1";
+        setTimeout(() => {
+          forceStyleForModal(m);
+          debugModalVisibility(m);
+        }, 10);
+      }
+    }
+  }, true);
+
+  console.log("🧰 modal-fix detector rodando — watcher instalado.");
 })();
+
 
 document.addEventListener("DOMContentLoaded", () => {
   try {
@@ -1427,7 +1382,7 @@ async function carregarConsultasDia() {
   const container = document.getElementById("todayAppointments");
   if (!container) return;
 
-  container.innerHTML = "<p>Carregando consultas...</p>";
+  container.innerHTML = "<div class='loader'><div class='dot'></div><div class='dot'></div><div class='dot'></div></div>";
 
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
@@ -1515,45 +1470,60 @@ onAuthStateChanged(auth, () => {
 });
 
 
-/* ===========================
-   GLOBAL MODAL MANAGER
-   =========================== */
+/* =========================
+   GLOBAL MODAL MANAGER (corrigido)
+   ========================= */
 (function modalManagerInit() {
+  if (window.__globalModalManagerInstalled) return;
+  window.__globalModalManagerInstalled = true;
+
   const LOG = true;
+  const processed = new WeakSet();
 
   function adoptAndFixModal(el) {
     if (!(el instanceof HTMLElement)) return;
-    // se já estiver em body, ok; se não, move (evita problemas de stacking context)
-    if (el.parentElement !== document.body) {
-      try { document.body.appendChild(el); }
-      catch (e) { /* ignore */ }
+    if (processed.has(el)) {
+      if (LOG) console.debug('[modalManager] already adopted', el);
+      return;
     }
 
-    // aplica estilos inline seguros
-    Object.assign(el.style, {
-      position: 'fixed',
-      inset: '0',
-      display: el.classList.contains('hidden') ? 'none' : 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      background: 'rgba(0,0,0,0.55)',
-      zIndex: '2147483646',
-      pointerEvents: 'auto'
-    });
+    // marca pra evitar reação do observer
+    el.dataset.__modalFixing = "1";
+    try {
+      if (el.parentElement !== document.body) {
+        try { document.body.appendChild(el); } catch (e) { /* ignore */ }
+      }
 
-    // garante o conteúdo com z-index maior e scrolling seguro
-    const inner = el.querySelector('.modal-content, .popup-content, .detalhes-consulta-card');
-    if (inner) {
-      Object.assign(inner.style, {
-        position: 'relative',
-        zIndex: '2147483647',
-        maxHeight: '90vh',
-        overflow: 'auto',
-        transform: 'none'
+      Object.assign(el.style, {
+        position: 'fixed',
+        inset: '0',
+        display: el.classList.contains('hidden') ? 'none' : 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'rgba(0,0,0,0.55)',
+        zIndex: '2147483646',
+        pointerEvents: 'auto'
       });
-    }
 
-    if (LOG) console.debug('[modalManager] adopted modal', el);
+      const inner = el.querySelector('.modal-content, .popup-content, .detalhes-consulta-card');
+      if (inner) {
+        Object.assign(inner.style, {
+          position: 'relative',
+          zIndex: '2147483647',
+          maxHeight: '90vh',
+          overflow: 'auto',
+          transform: 'none'
+        });
+      }
+
+      processed.add(el);
+      if (LOG) console.debug('[modalManager] adopted modal', el);
+    } finally {
+      // limpa marca após render
+      setTimeout(() => {
+        try { delete el.dataset.__modalFixing; } catch (e) {}
+      }, 60);
+    }
   }
 
   function handleNewNode(node) {
@@ -1561,11 +1531,9 @@ onAuthStateChanged(auth, () => {
     if (node.matches && (node.matches('.modal') || node.matches('.popup'))) {
       adoptAndFixModal(node);
     }
-    // também verificar descendentes (algumas libs criam wrappers)
     node.querySelectorAll && node.querySelectorAll('.modal, .popup').forEach(adoptAndFixModal);
   }
 
-  // observa adição de modais dinamicamente e atributos (classe hidden toggles)
   const mo = new MutationObserver((mutations) => {
     for (const mut of mutations) {
       if (mut.type === 'childList') {
@@ -1573,8 +1541,10 @@ onAuthStateChanged(auth, () => {
       }
       if (mut.type === 'attributes' && mut.target instanceof HTMLElement) {
         const t = mut.target;
-        if (t.classList && (t.classList.contains('modal') || t.classList.contains('popup'))) {
-          // reaplica estilos quando a classe hidden é removida/colocada
+        // ignora mudanças causadas por nós
+        if (t.dataset && t.dataset.__modalFixing === "1") continue;
+        // só reagir a class changes (não style)
+        if (mut.attributeName === 'class' && (t.classList.contains('modal') || t.classList.contains('popup'))) {
           adoptAndFixModal(t);
         }
       }
@@ -1585,33 +1555,27 @@ onAuthStateChanged(auth, () => {
     childList: true,
     subtree: true,
     attributes: true,
-    attributeFilter: ['class', 'style']
+    attributeFilter: ['class'] // <- removi 'style' para evitar loops
   });
 
-  // also fix existing modals on page load
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.modal, .popup').forEach(adoptAndFixModal);
     if (LOG) console.info('[modalManager] initial scan done');
   });
 
-  // close on ESC
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' || e.key === 'Esc') {
       document.querySelectorAll('.modal:not(.hidden), .popup:not(.hidden)').forEach(m => {
         m.classList.add('hidden');
-        // also hide via inline style in case other code removed hidden
         m.style.display = 'none';
       });
     }
   });
 
-  // click outside to close: delegate to body
   document.body.addEventListener('click', (ev) => {
     const target = ev.target;
-    // se clicar num backdrop (modal ou popup) — fechar
     const modalEl = target.closest ? target.closest('.modal, .popup') : null;
     if (modalEl) {
-      // se clicou exatamente no backdrop (fora do content), fecha
       const inner = modalEl.querySelector('.modal-content, .popup-content, .detalhes-consulta-card');
       if (inner && !inner.contains(target)) {
         modalEl.classList.add('hidden');
@@ -1620,7 +1584,6 @@ onAuthStateChanged(auth, () => {
       }
     }
 
-    // se clicou em um botão com data-close-modal ou .close-modal => fecha
     const closeBtn = target.closest && target.closest('[data-close-modal], .close-modal, #popup-close');
     if (closeBtn) {
       const parentModal = closeBtn.closest('.modal, .popup');
@@ -1631,7 +1594,6 @@ onAuthStateChanged(auth, () => {
     }
   }, true);
 
-  // utilitários expostos (para debug)
   window.modalManager = {
     adoptAll: () => document.querySelectorAll('.modal, .popup').forEach(adoptAndFixModal),
     adoptOne: (el) => adoptAndFixModal(el),
@@ -1641,6 +1603,7 @@ onAuthStateChanged(auth, () => {
 
   if (typeof console !== 'undefined') console.info('[modalManager] ready');
 })();
+
 
 /* ======================================================
       ÁUDIO NO CHAT DO PSICÓLOGO (HomePsi)
@@ -1652,135 +1615,262 @@ let audioChunksPsi = [];
 const voiceBtnPsi = document.getElementById("voiceBtnPsi");
 
 if (voiceBtnPsi) {
-    voiceBtnPsi.addEventListener("click", async () => {
+  voiceBtnPsi.addEventListener("click", async () => {
 
-        // ⛔ agora usa o ID correto do chat!
-        if (!currentChatId) return;
+    // ⛔ agora usa o ID correto do chat!
+    if (!currentChatId) return;
 
-        // Iniciar gravação
-        if (!mediaRecorderPsi || mediaRecorderPsi.state === "inactive") {
+    // Iniciar gravação
+    if (!mediaRecorderPsi || mediaRecorderPsi.state === "inactive") {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        mediaRecorderPsi = new MediaRecorder(stream);
+        audioChunksPsi = [];
+
+        mediaRecorderPsi.ondataavailable = e => audioChunksPsi.push(e.data);
+
+        mediaRecorderPsi.onstop = async () => {
+          const audioBlob = new Blob(audioChunksPsi, { type: "audio/webm" });
+          const reader = new FileReader();
+
+          reader.onload = async () => {
+            const base64Audio = reader.result;
+
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+              const msgRef = collection(db, "chats", currentChatId, "mensagens");
 
-                mediaRecorderPsi = new MediaRecorder(stream);
-                audioChunksPsi = [];
+              await addDoc(msgRef, {
+                audio: base64Audio,
+                texto: "",
+                enviadoPor: auth.currentUser.uid,
+                enviadoEm: serverTimestamp(),
+                lido: false
+              });
 
-                mediaRecorderPsi.ondataavailable = e => audioChunksPsi.push(e.data);
-
-                mediaRecorderPsi.onstop = async () => {
-                    const audioBlob = new Blob(audioChunksPsi, { type: "audio/webm" });
-                    const reader = new FileReader();
-
-                    reader.onload = async () => {
-                        const base64Audio = reader.result;
-
-                        try {
-                            const msgRef = collection(db, "chats", currentChatId, "mensagens");
-
-                            await addDoc(msgRef, {
-                                audio: base64Audio,
-                                texto: "",
-                                enviadoPor: auth.currentUser.uid,
-                                enviadoEm: serverTimestamp(),
-                                lido: false
-                            });
-
-                            await setDoc(doc(db, "chats", currentChatId), {
-                                ultimoMensagem: "[Áudio]",
-                                ultimoEnviadoPor: auth.currentUser.uid,
-                                ultimaAtualizacao: serverTimestamp()
-                            }, { merge: true });
-
-                        } catch (err) {
-                            console.error("Erro ao enviar áudio (PSI):", err);
-                            alert("Erro ao enviar áudio.");
-                        }
-                    };
-
-                    reader.readAsDataURL(audioBlob);
-                };
-
-                mediaRecorderPsi.start();
-                voiceBtnPsi.classList.add("recording");
+              await setDoc(doc(db, "chats", currentChatId), {
+                ultimoMensagem: "[Áudio]",
+                ultimoEnviadoPor: auth.currentUser.uid,
+                ultimaAtualizacao: serverTimestamp()
+              }, { merge: true });
 
             } catch (err) {
-                alert("Não foi possível acessar o microfone.");
-                console.error(err);
+              console.error("Erro ao enviar áudio (PSI):", err);
+              alert("Erro ao enviar áudio.");
             }
+          };
 
-            return;
-        }
+          reader.readAsDataURL(audioBlob);
+        };
 
-        // Parar gravação
-        if (mediaRecorderPsi.state === "recording") {
-            mediaRecorderPsi.stop();
-            voiceBtnPsi.classList.remove("recording");
-        }
-    });
+        mediaRecorderPsi.start();
+        voiceBtnPsi.classList.add("recording");
+
+      } catch (err) {
+        alert("Não foi possível acessar o microfone.");
+        console.error(err);
+      }
+
+      return;
+    }
+
+    // Parar gravação
+    if (mediaRecorderPsi.state === "recording") {
+      mediaRecorderPsi.stop();
+      voiceBtnPsi.classList.remove("recording");
+    }
+  });
 }
 
 function createCustomAudioPlayers() {
-    document.querySelectorAll("audio").forEach(audio => {
-        if (audio.dataset.processed) return;
-        audio.dataset.processed = true;
+  document.querySelectorAll("audio").forEach(audio => {
+    if (audio.dataset.processed) return;
+    audio.dataset.processed = true;
 
-        const wrapper = document.createElement("div");
-        wrapper.className = "audio-wrapper";
+    const wrapper = document.createElement("div");
+    wrapper.className = "audio-wrapper";
 
-        const playBtn = document.createElement("button");
-        playBtn.className = "audio-play-btn";
+    const playBtn = document.createElement("button");
+    playBtn.className = "audio-play-btn";
+    playBtn.innerHTML = "►";
+
+    const progress = document.createElement("input");
+    progress.type = "range";
+    progress.className = "audio-progress";
+    progress.min = 0;
+    progress.value = 0;
+
+    const time = document.createElement("span");
+    time.className = "audio-time";
+    time.textContent = "00:00";
+
+    wrapper.appendChild(playBtn);
+    wrapper.appendChild(progress);
+    wrapper.appendChild(time);
+
+    audio.style.display = "none"; // esconde o player nativo
+    audio.parentNode.insertBefore(wrapper, audio.nextSibling);
+
+    // Play / Pause
+    playBtn.onclick = () => {
+      if (audio.paused) {
+        audio.play();
+        playBtn.innerHTML = "❚❚";
+      } else {
+        audio.pause();
         playBtn.innerHTML = "►";
+      }
+    };
 
-        const progress = document.createElement("input");
-        progress.type = "range";
-        progress.className = "audio-progress";
-        progress.min = 0;
-        progress.value = 0;
-
-        const time = document.createElement("span");
-        time.className = "audio-time";
-        time.textContent = "00:00";
-
-        wrapper.appendChild(playBtn);
-        wrapper.appendChild(progress);
-        wrapper.appendChild(time);
-
-        audio.style.display = "none"; // esconde o player nativo
-        audio.parentNode.insertBefore(wrapper, audio.nextSibling);
-
-        // Play / Pause
-        playBtn.onclick = () => {
-            if (audio.paused) {
-                audio.play();
-                playBtn.innerHTML = "❚❚";
-            } else {
-                audio.pause();
-                playBtn.innerHTML = "►";
-            }
-        };
-
-        // Atualiza barra e tempo
-        audio.addEventListener("timeupdate", () => {
-            progress.value = audio.currentTime;
-            time.textContent = formatTime(audio.currentTime);
-        });
-
-        audio.onloadedmetadata = () => {
-            progress.max = audio.duration;
-        };
-
-        // Permite arrastar a barra
-        progress.oninput = () => {
-            audio.currentTime = progress.value;
-        };
+    // Atualiza barra e tempo
+    audio.addEventListener("timeupdate", () => {
+      progress.value = audio.currentTime;
+      time.textContent = formatTime(audio.currentTime);
     });
+
+    audio.onloadedmetadata = () => {
+      progress.max = audio.duration;
+    };
+
+    // Permite arrastar a barra
+    progress.oninput = () => {
+      audio.currentTime = progress.value;
+    };
+  });
 }
 
 function formatTime(seconds) {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
 // roda sempre que mensagens novas chegam
 setInterval(createCustomAudioPlayers, 500);
+
+/* ============================
+   CARREGAR PACIENTES
+=========================== */
+
+async function carregarPacientes() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const grid = document.querySelector('.patients-grid');
+  if (!grid) return;
+
+  grid.innerHTML = `<div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+
+  try {
+    // Get all consultations for the psi
+    const q = query(collection(db, "Consultas"), where("Psicologo", "==", user.uid));
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      grid.innerHTML = "<p>Nenhum paciente encontrado.</p>";
+      return;
+    }
+
+    // Collect unique maes and their last consultation date
+    const maesMap = new Map();
+    for (const docSnap of snap.docs) {
+      const c = docSnap.data();
+      const maeUid = c.Mae;
+      const date = c.Datahora && c.Datahora.toDate ? c.Datahora.toDate() : null;
+      if (maeUid && date) {
+        if (!maesMap.has(maeUid) || date > maesMap.get(maeUid).lastDate) {
+          maesMap.set(maeUid, { lastDate: date });
+        }
+      }
+    }
+
+    // Now get mae data
+    const maesData = [];
+    for (const uid of maesMap.keys()) {
+      const ref = doc(db, "usuarios", uid);
+      const snapMae = await getDoc(ref);
+      if (!snapMae.exists()) continue;
+      const mae = snapMae.data();
+      const lastDate = maesMap.get(uid).lastDate;
+      maesData.push({ uid, mae, lastDate });
+    }
+
+    if (maesData.length === 0) {
+      grid.innerHTML = "<p>Nenhum paciente encontrado.</p>";
+      return;
+    }
+
+    // Sort by lastDate descending
+    maesData.sort((a, b) => b.lastDate - a.lastDate);
+
+    grid.innerHTML = "";
+
+    for (const item of maesData) {
+      const { uid, mae, lastDate } = item;
+      const ultimaStr = lastDate.toLocaleDateString("pt-BR");
+
+      const card = document.createElement("div");
+      card.classList.add("patient-card");
+
+      card.innerHTML = `
+          <div class="patient-header">
+            <img src="${mae.avatar || './img/avatar_usuario.png'}" class="patient-avatar" alt="Avatar paciente">
+            <div class="patient-header-info">
+              <h3 class="patient-name">${mae.nome || "Paciente"}</h3>
+              <div class="patient-subinfo">
+                ${mae.cidade ? `<span class="chip">${mae.cidade}</span>` : ''}
+                ${mae.emprego ? `<span class="chip">${mae.emprego}</span>` : ''}
+              </div>
+            </div>
+          </div>
+          <div class="patient-body">
+            <p class="patient-notes">${(mae.sobre || mae.observacao || '').trim() || "Nenhuma informação adicional."}</p>
+            <p class="patient-last">
+              <strong>Última consulta</strong>
+              <span class="last-value">${ultimaStr}</span>
+            </p>
+            <div class="patient-actions">
+              <button class="contact-btn open-chat-btn" data-uid="${uid}">Abrir chat</button>
+            </div>
+          </div>
+        `;
+
+      grid.appendChild(card);
+    }
+
+    // Add event listeners
+    document.querySelectorAll('.ver-perfil-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const uid = btn.dataset.uid;
+        window.location.href = `perfilPessoa.html?id=${uid}`;
+      });
+    });
+
+    document.querySelectorAll('.open-chat-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const uid = btn.dataset.uid;
+        // Switch to chats tab and open chat
+        const contents = document.querySelectorAll(".content");
+        document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("active"));
+        contents.forEach(c => c.classList.add("hidden"));
+
+        const chatSection = document.getElementById("chats");
+        if (chatSection) chatSection.classList.remove("hidden");
+
+        const menuBtn = document.querySelector('.menu-btn[data-target="chats"]');
+        if (menuBtn) menuBtn.classList.add("active");
+
+        // Load mae data
+        const refMae = doc(db, "usuarios", uid);
+        const snapMae = await getDoc(refMae);
+        if (snapMae.exists()) {
+          abrirChatInterno(uid, snapMae.data());
+        }
+      });
+    });
+
+  } catch (err) {
+    console.error("Erro ao carregar pacientes:", err);
+    grid.innerHTML = "<p>Erro ao carregar pacientes.</p>";
+  }
+}

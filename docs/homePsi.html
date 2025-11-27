@@ -19,7 +19,7 @@
 
 <body>
   <header class="header">
-    <h1>Bem vindo(a) Dr. Psicólogo</h1>
+    <h1>Bem-vindo(a), Dr.</h1>
     <div class="header-actions">
       <button id="infoBtn" class="info-btn">
         <i class="fa-solid fa-circle-info"></i>
@@ -70,8 +70,7 @@
       <div class="last-activities">
         <h3>Últimas Atividades</h3>
         <ul>
-          <li>Consulta concluída - 09:00</li>
-          <li>Nova consulta - 16:00</li>
+
         </ul>
       </div>
     </aside>
@@ -82,11 +81,23 @@
 
       <div class="stats">
         <div class="stat-card">
-          <span>3</span>
+          <span>
+            <div class="loader">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+          </span>
           <p>Consultas agendadas hoje</p>
         </div>
         <div class="stat-card">
-          <span>8</span>
+          <span>
+            <div class="loader">
+              <div class="dot"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+          </span>
           <p>Sessões agendadas no total</p>
         </div>
       </div>
@@ -264,6 +275,7 @@
   </main>
 
   <script type="module" src="./js/homePsi.js"></script>
+  <script type="module" src="./js/globals.js"></script>
 
 </body>
 

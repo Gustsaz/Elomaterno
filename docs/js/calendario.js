@@ -1,9 +1,13 @@
+// js/calendario.js (SUBSTITUIR TODO O ARQUIVO)
 import { db, auth } from './firebase.js';
 import {
   doc,
   getDoc,
-  onSnapshot,
-  updateDoc
+  getDocs,
+  collection,
+  query,
+  where,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
@@ -24,6 +28,7 @@ let currentYear = currentDate.getFullYear();
 
 let currentUser = null;
 let userUnsubscribe = null;
+let consultasUnsubscribe = null;
 
 const monthNames = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -57,24 +62,46 @@ function populateMonthYearSelects() {
   updateMonthTitle();
 }
 
+/* normalize a mixed array of event-like objects to { data: Date, titulo, descricao, id, type, ... } */
+function parsePossibleDate(raw) {
+  if (!raw) return null;
+  if (raw.toDate && typeof raw.toDate === 'function') {
+    try {
+      const d = raw.toDate();
+      if (!isNaN(d)) return d;
+    } catch (e) { /* ignore */ }
+  }
+  if (raw instanceof Date) {
+    if (!isNaN(raw)) return raw;
+  }
+  if (typeof raw === 'string') {
+    const parsed = new Date(raw);
+    if (!isNaN(parsed)) return parsed;
+  }
+  if (raw.toMillis && typeof raw.toMillis === 'function') {
+    try {
+      const maybe = new Date(raw.toMillis());
+      if (!isNaN(maybe)) return maybe;
+    } catch (e) { }
+  }
+  return null;
+}
+
 function normalizeEventosArray(arr = []) {
   return arr.map(ev => {
     const copy = { ...ev };
-    const raw = ev.date ?? ev.data ?? ev.dataString ?? null;
-    let dt = null;
-    if (raw instanceof Date) {
-      dt = raw;
-    } else if (raw && typeof raw === 'string') {
-      const parsed = new Date(raw);
+    const raw = ev.date ?? ev.data ?? ev.dataString ?? ev.Datahora ?? ev.DataHora ?? ev.Data ?? ev.date;
+    let dt = parsePossibleDate(raw);
+    if (!dt && typeof ev.date === 'string') {
+      const parsed = new Date(ev.date);
       if (!isNaN(parsed)) dt = parsed;
-    } else if (raw && raw.toDate) {
-      try { dt = raw.toDate(); } catch (e) { dt = null; }
     }
     copy.data = dt;
     return copy;
   }).filter(e => e.data instanceof Date && !isNaN(e.data));
 }
 
+/* ----------------- Rendering calendar ----------------- */
 function renderCalendar(month, year, eventos = []) {
   const firstDay = new Date(year, month, 1).getDay();
   const lastDate = new Date(year, month + 1, 0).getDate();
@@ -115,11 +142,12 @@ function renderCalendar(month, year, eventos = []) {
         dotsHtml += `<span class="dot ${isPast ? 'past' : ''}" aria-hidden="true"></span>`;
       }
       if (count > 3) {
-        dotsHtml += `<span class="more">${count - 3}</span>`;
+        dotsHtml += `<span class="more">+${count - 3}</span>`;
       }
     }
 
-    const titles = eventosDoDia.map(ev => ev.titulo ?? ev.title ?? '').filter(Boolean).join(' — ');
+    // use ev.titulo (preparado para consultas como "Consulta com [nome]")
+    const titles = eventosDoDia.map(ev => ev.titulo ?? ev.title ?? (ev.type === 'consulta' ? `Consulta` : '')).filter(Boolean).join(' — ');
 
     calendarDates.innerHTML += `
       <div class="date ${isToday ? 'today' : ''} ${hasEvent ? 'has-event' : ''} ${isPast ? 'past' : ''}" ${titles ? `data-tooltip="${escapeHtml(titles)}"` : ''} data-day="${i}">
@@ -130,6 +158,7 @@ function renderCalendar(month, year, eventos = []) {
 
   updateMonthTitle();
 
+  // attach click handlers for days with events
   document.querySelectorAll('.calendar-dates .date.has-event').forEach(cell => {
     cell.addEventListener('click', (e) => {
       const day = parseInt(cell.dataset.day, 10);
@@ -145,16 +174,17 @@ function renderCalendar(month, year, eventos = []) {
 }
 
 function escapeHtml(str) {
-  return String(str).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(str).replace(/"/g, '"').replace(/</g, '<').replace(/>/g, '>');
 }
 
+/* ----------------- Month navigation ----------------- */
 function prevMonth() {
   currentMonth--;
   if (currentMonth < 0) {
     currentMonth = 11;
     currentYear--;
   }
-  carregarEventosDoUsuario();
+  renderCombinedFromCaches();
 }
 
 function nextMonth() {
@@ -163,22 +193,23 @@ function nextMonth() {
     currentMonth = 0;
     currentYear++;
   }
-  carregarEventosDoUsuario();
+  renderCombinedFromCaches();
 }
 
 function onMonthChange() {
   currentMonth = parseInt(monthSelect.value);
-  carregarEventosDoUsuario();
+  renderCombinedFromCaches();
 }
 
 function onYearChange() {
   currentYear = parseInt(yearSelect.value);
-  carregarEventosDoUsuario();
+  renderCombinedFromCaches();
 }
 
 populateMonthYearSelects();
 renderCalendar(currentMonth, currentYear, []);
 
+/* ----------------- Event list UI ----------------- */
 function renderEventList(eventos = []) {
   eventList.innerHTML = '';
   if (!eventos.length) {
@@ -198,61 +229,197 @@ function renderEventList(eventos = []) {
   }
 
   futuros.forEach(ev => {
+    // se for consulta, classe 'consult', caso contrário 'event'
     const div = document.createElement('div');
-    div.className = 'event';
+    div.className = (ev.type === 'consulta') ? 'consult' : 'event';
+
     const dataFmt = ev.data ? ev.data.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
     const horaFmt = ev.data ? ev.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
-    div.innerHTML = `
-      <strong>${ev.titulo ?? ev.title ?? 'Evento'}</strong>
-      <p class="meta">${dataFmt} • ${horaFmt}</p>
-      <p class="descricao">${ev.descricao ?? ev.description ?? ''}</p>
-    `;
-    if (ev.id) {
-      div.style.cursor = 'pointer';
-      div.addEventListener('click', () => {
-        window.location.href = `eventos.html?evento=${encodeURIComponent(ev.id)}`;
-      });
+
+    if (ev.type === 'consulta') {
+      div.innerHTML = `
+        <strong>Consulta${ev.profissionalNome ? ' com ' + ev.profissionalNome : ''}</strong>
+        <p class="meta">${dataFmt} • ${horaFmt} • ${ev.status ?? ''}</p>
+        <p class="descricao">${escapeHtml(ev.Motivo ?? ev.motivo ?? '')}</p>
+      `;
+    } else {
+      div.innerHTML = `
+        <strong>${ev.titulo ?? ev.title ?? 'Evento'}</strong>
+        <p class="meta">${dataFmt} • ${horaFmt}</p>
+        <p class="descricao">${ev.descricao ?? ev.description ?? ''}</p>
+      `;
+      if (ev.id) {
+        div.style.cursor = 'pointer';
+        div.addEventListener('click', () => {
+          window.location.href = `eventos.html?evento=${encodeURIComponent(ev.id)}`;
+        });
+      }
     }
+
     eventList.appendChild(div);
+  });
+}
+
+/* ----------------- Firestore listeners and merging ----------------- */
+
+// caches to hold latest snapshots
+let inscritosCache = [];   // events from usuarios.eventosInscritos
+let consultasCache = [];   // consultations from collection Consultas
+const profissionalNameCache = new Map(); // cache `${collection}:${id}` => nome
+
+function renderCombinedFromCaches() {
+  const combined = [...inscritosCache, ...consultasCache];
+  renderCalendar(currentMonth, currentYear, combined);
+  renderEventList(combined);
+}
+
+async function fetchProfissionalNome(profissionalId, collectionName) {
+  if (!profissionalId || !collectionName) return null;
+  const key = `${collectionName}:${profissionalId}`;
+  if (profissionalNameCache.has(key)) return profissionalNameCache.get(key);
+  try {
+    const q = query(collection(db, collectionName), where('uid', '==', profissionalId));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      const nome = snap.docs[0].data()?.nome ?? null;
+      profissionalNameCache.set(key, nome);
+      return nome;
+    }
+  } catch (err) {
+    console.warn('Erro buscando profissional nome', err);
+  }
+  profissionalNameCache.set(key, null);
+  return null;
+}
+
+async function setupConsultasListenerForUser(uid) {
+  if (consultasUnsubscribe) {
+    try { consultasUnsubscribe(); } catch (e) { /* ignore */ }
+    consultasUnsubscribe = null;
+  }
+
+  if (!uid) {
+    consultasCache = [];
+    renderCombinedFromCaches();
+    return;
+  }
+
+  const q = query(collection(db, 'Consultas'), where('Mae', '==', uid));
+  consultasUnsubscribe = onSnapshot(q, async (snapshot) => {
+    try {
+      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const normalized = [];
+      for (const raw of docs) {
+        const copy = { ...raw };
+        const dt = parsePossibleDate(raw.Datahora ?? raw.datahora ?? raw.DataHora ?? raw.Data ?? raw.date);
+        copy.data = dt;
+        copy.type = 'consulta';
+        copy.Motivo = raw.Motivo ?? raw.motivo ?? '';
+        copy.status = raw.status ?? '';
+        let profissionalId = null;
+        let collectionName = null;
+        if (raw.Psicologo) {
+          profissionalId = raw.Psicologo;
+          collectionName = 'psicologos';
+        } else if (raw.Advogado) {
+          profissionalId = raw.Advogado;
+          collectionName = 'advogados';
+        }
+        copy.profissionalId = profissionalId;
+        copy.collectionName = collectionName;
+        normalized.push(copy);
+      }
+
+      const fetchPromises = [];
+      normalized.forEach(c => {
+        if (c.profissionalId && c.collectionName) {
+          const key = `${c.collectionName}:${c.profissionalId}`;
+          if (!profissionalNameCache.has(key)) {
+            fetchPromises.push(fetchProfissionalNome(c.profissionalId, c.collectionName));
+          }
+        }
+      });
+      if (fetchPromises.length) await Promise.all(fetchPromises);
+
+      normalized.forEach(c => {
+        c.profissionalNome = null;
+        if (c.profissionalId && c.collectionName) {
+          const key = `${c.collectionName}:${c.profissionalId}`;
+          c.profissionalNome = profissionalNameCache.get(key) || '';
+        }
+        c.titulo = c.profissionalNome ? `Consulta com ${c.profissionalNome}` : 'Consulta';
+      });
+
+      consultasCache = normalizeEventosArray(normalized);
+      consultasCache = consultasCache.map(orig => {
+        const full = normalized.find(n => {
+          const d1 = n.data; const d2 = orig.data;
+          return n.id === orig.id || (d1 && d2 && d1.getTime() === d2.getTime());
+        }) || {};
+        return { ...orig, id: full.id, type: 'consulta', Motivo: full.Motivo, status: full.status, profissionalNome: full.profissionalNome, profissionalId: full.profissionalId, titulo: full.titulo, collectionName: full.collectionName };
+      });
+
+      renderCombinedFromCaches();
+    } catch (err) {
+      console.error('Erro no listener Consultas:', err);
+    }
+  }, (err) => {
+    console.error('Erro snapshot Consultas:', err);
+  });
+}
+
+async function setupUserListener(uid) {
+  if (userUnsubscribe) {
+    try { userUnsubscribe(); } catch (e) { /* ignore */ }
+    userUnsubscribe = null;
+  }
+
+  if (!uid) {
+    inscritosCache = [];
+    renderCombinedFromCaches();
+    return;
+  }
+
+  const userRef = doc(db, 'usuarios', uid);
+  userUnsubscribe = onSnapshot(userRef, (snap) => {
+    if (!snap.exists()) {
+      inscritosCache = [];
+      renderCombinedFromCaches();
+      return;
+    }
+    const data = snap.data();
+    const inscritosRaw = data.eventosInscritos || [];
+    const eventos = normalizeEventosArray(inscritosRaw).map(e => ({ ...e, type: 'evento' }));
+    inscritosCache = eventos;
+    renderCombinedFromCaches();
+  }, (err) => {
+    console.error("Erro snapshot usuario:", err);
+    inscritosCache = [];
+    renderCombinedFromCaches();
   });
 }
 
 async function carregarEventosDoUsuario() {
   try {
     if (!currentUser) {
-      renderCalendar(currentMonth, currentYear, []);
-      renderEventList([]);
+      inscritosCache = [];
+      consultasCache = [];
+      renderCombinedFromCaches();
       return;
     }
 
-    const userRef = doc(db, "usuarios", currentUser.uid);
-    if (userUnsubscribe) userUnsubscribe();
-
-    userUnsubscribe = onSnapshot(userRef, snap => {
-      if (!snap.exists()) {
-        renderCalendar(currentMonth, currentYear, []);
-        renderEventList([]);
-        return;
-      }
-      const data = snap.data();
-      const inscritosRaw = data.eventosInscritos || [];
-      const eventos = normalizeEventosArray(inscritosRaw);
-
-      renderCalendar(currentMonth, currentYear, eventos);
-      renderEventList(eventos);
-    }, (err) => {
-      console.error("Erro snapshot usuario:", err);
-      renderCalendar(currentMonth, currentYear, []);
-      renderEventList([]);
-    });
+    await setupUserListener(currentUser.uid);
+    await setupConsultasListenerForUser(currentUser.uid);
 
   } catch (err) {
-    console.error("Erro ao carregar eventos do usuário:", err);
-    renderCalendar(currentMonth, currentYear, []);
-    renderEventList([]);
+    console.error("Erro ao carregar eventos/consultas do usuário:", err);
+    inscritosCache = [];
+    consultasCache = [];
+    renderCombinedFromCaches();
   }
 }
 
+/* ----------------- Modal for events (adaptado para consultas) ----------------- */
 function showEventsModalForDate(eventosDoDia = []) {
   const overlay = document.createElement('div');
   overlay.className = 'em-overlay';
@@ -271,51 +438,30 @@ function showEventsModalForDate(eventosDoDia = []) {
     const item = document.createElement('div');
     item.className = 'em-event-item';
 
-    const imgHtml = ev.capa ? `<div class="ev-img"><img src="${ev.capa}" alt="${ev.titulo}"></div>` : '';
-    const horaFmt = ev.data ? ev.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
-    item.innerHTML = `
-      ${imgHtml}
-      <div class="ev-info">
-        <h3>${ev.titulo ?? ''}</h3>
-        <p class="ev-meta">${ev.local ?? ''} • ${horaFmt}</p>
-        <p class="ev-desc">${ev.descricao ?? ''}</p>
-      </div>
-    `;
-
-    const actions = document.createElement('div');
-    actions.className = 'ev-actions';
-
-    if (currentUser) {
-      (async () => {
-        try {
-          const userRef = doc(db, 'usuarios', currentUser.uid);
-          const snapshot = await getDoc(userRef);
-          const inscritos = snapshot.exists() ? (snapshot.data().eventosInscritos || []) : [];
-          const esta = inscritos.some(i => i.id === ev.id);
-          if (esta) {
-            const btnCancel = document.createElement('button');
-            btnCancel.className = 'btn-cancel-inscricao';
-            btnCancel.textContent = 'Cancelar inscrição';
-            btnCancel.addEventListener('click', async () => {
-              try {
-                const novos = inscritos.filter(i => i.id !== ev.id);
-                await updateDoc(userRef, { eventosInscritos: novos });
-                showStyledAlert('Inscrição cancelada.', 'success');
-                overlay.remove();
-              } catch (err) {
-                console.error(err);
-                showStyledAlert('Erro ao cancelar inscrição.', 'error');
-              }
-            });
-            actions.appendChild(btnCancel);
-          }
-        } catch (err) {
-          console.error('Erro lendo inscricoes', err);
-        }
-      })();
+    if (ev.type === 'consulta') {
+      const horaFmt = ev.data ? ev.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+      // h3 com "Consulta com [nome do profissional]"
+      item.innerHTML = `
+        <div class="ev-info" style="flex:1">
+          <h3>Consulta${ev.profissionalNome ? ' com ' + ev.profissionalNome : ''}</h3>
+          <p class="ev-meta">${horaFmt} • ${ev.status ?? ''}</p>
+          <p class="ev-desc"><strong>Motivo:</strong> ${escapeHtml(ev.Motivo ?? ev.motivo ?? '')}</p>
+        </div>
+      `;
+      // removido botão de cancelar (pedido)
+    } else {
+      const imgHtml = ev.capa ? `<div class="ev-img"><img src="${ev.capa}" alt="${ev.titulo}"></div>` : '';
+      const horaFmt = ev.data ? ev.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+      item.innerHTML = `
+        ${imgHtml}
+        <div class="ev-info">
+          <h3>${ev.titulo ?? ev.title ?? ''}</h3>
+          <p class="ev-meta">${ev.local ?? ''} • ${horaFmt}</p>
+          <p class="ev-desc">${ev.descricao ?? ev.description ?? ''}</p>
+        </div>
+      `;
     }
 
-    item.appendChild(actions);
     body.appendChild(item);
   });
 
@@ -328,6 +474,7 @@ function showEventsModalForDate(eventosDoDia = []) {
   overlay.addEventListener('click', (ev) => { if (ev.target === overlay) overlay.remove(); });
 }
 
+/* ----------------- Hook header buttons & initial listeners ----------------- */
 function connectHeaderButtons() {
   const buttons = calendarHeader.querySelectorAll('button');
   if (buttons.length >= 2) {
@@ -345,20 +492,25 @@ connectHeaderButtons();
 monthSelect.addEventListener('change', onMonthChange);
 yearSelect.addEventListener('change', onYearChange);
 
+/* ----------------- Auth state: start listeners ----------------- */
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (!user) {
     if (userUnsubscribe) { userUnsubscribe(); userUnsubscribe = null; }
-    renderCalendar(currentMonth, currentYear, []);
-    renderEventList([]);
+    if (consultasUnsubscribe) { consultasUnsubscribe(); consultasUnsubscribe = null; }
+    inscritosCache = [];
+    consultasCache = [];
+    renderCombinedFromCaches();
     return;
   }
   carregarEventosDoUsuario();
 });
 
+/* expose prev/next for markup usage */
 window.prevMonth = prevMonth;
 window.nextMonth = nextMonth;
 
+/* ----------------- styled alert helper (kept from your code) -------------- */
 function showStyledAlert(message, type = "info") {
   const overlay = document.createElement("div");
   overlay.className = "em-overlay";
@@ -375,8 +527,8 @@ function showStyledAlert(message, type = "info") {
   icon.style.color = "var(--accent-color)";
   icon.style.marginBottom = "12px";
   icon.innerHTML =
-    type === "success" ? "Cancelado" :
-      type === "error" ? "Erro" : "ℹ️";
+    type === "success" ? "✔️" :
+      type === "error" ? "❌" : "ℹ️";
 
   const msg = document.createElement("p");
   msg.textContent = message;
