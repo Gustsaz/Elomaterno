@@ -1,0 +1,175 @@
+
+@font-face {
+    font-family: 'Nunito';
+    src: url('Nunito.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+body {
+   
+    font-family: 'Nunito', Arial, sans-serif; 
+    background-color: #f4f7f6; 
+    margin: 0;
+    color: #444; 
+}
+
+
+.header-simulado {
+    background-color: #fff;
+    padding: 15px 30px;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.header-simulado .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #5b3c91;
+    text-decoration: none;
+}
+.header-simulado nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #555;
+    font-weight: bold;
+}
+
+.policy-container {
+    max-width: 900px;
+    margin: 40px auto; 
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+
+.policy-header {
+    display: flex;
+    align-items: center;
+    padding: 24px 30px; 
+    border-bottom: 1px solid #eee;
+}
+
+
+.back-button {
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-decoration: none;
+    margin-right: 20px;
+    transition: background-color 0.2s ease-in-out;
+    border: 1px solid #e0e0e0; 
+    flex-shrink: 0; 
+}
+.back-button:hover {
+    background-color: #e5e5e5;
+}
+
+
+.back-button img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7; 
+}
+
+
+
+.policy-title {
+    font-size: 2rem; 
+    color: #3d265a;
+    margin: 0;
+    font-weight: 800; 
+}
+
+
+.policy-content {
+    padding: 30px 40px;
+    line-height: 1.7;
+    font-size: 1rem; 
+}
+
+.policy-content h5 {
+    font-size: 1.5rem; 
+    color: #5b3c91;
+    margin-top: 40px; 
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e6e0f0;
+    padding-bottom: 8px;
+    font-weight: 700;
+}
+
+.policy-content p {
+    margin-bottom: 16px;
+}
+
+.policy-content ul {
+    padding-left: 20px;
+}
+
+.policy-content li {
+    margin-bottom: 10px;
+}
+
+
+.policy-content strong, 
+.policy-content b {
+    color: #3d265a;
+    font-weight: 700;
+}
+
+
+
+
+@media (max-width: 768px) {
+    
+    .header-simulado {
+        padding: 15px 20px;
+    }
+    .header-simulado nav {
+        display: none; 
+    }
+
+    
+    .policy-container {
+       
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .policy-header {
+        padding: 16px 20px;
+    }
+
+    .policy-title {
+        font-size: 1.5rem; 
+    }
+
+    .back-button {
+        width: 36px;
+        height: 36px;
+        margin-right: 15px;
+    }
+    .back-button img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .policy-content {
+        padding: 20px 24px; 
+        font-size: 0.95rem; 
+    }
+
+    .policy-content h5 {
+        font-size: 1.3rem; 
+    }
+}

@@ -1,0 +1,364 @@
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.consultas-container {
+    text-align: center;
+    padding: 40px 20px;
+    animation: fadeSlideDown 0.6s ease-out forwards;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 40px;
+    gap: 50px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color-light);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab.ativo {
+    color: var(--accent-color);
+    border-bottom: 3px solid var(--accent-color);
+}
+
+.conteudo-tab {
+    display: none;
+    animation: fadeSlideDown 0.4s ease-out forwards;
+}
+
+.conteudo-tab.ativo {
+    display: block;
+}
+
+.consulta-img {
+    width: 320px;
+    max-width: 80%;
+    margin: 20px auto;
+    display: block;
+}
+
+h2 {
+    font-size: 20px;
+    color: var(--text-color);
+    margin-top: 20px;
+}
+
+p {
+    font-size: 15px;
+    margin-top: 8px;
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.agendar-btn {
+    background-color: var(--botaoconsultoria);
+    color: var(--text-on-primary);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 32px;
+    font-size: 16px;
+    margin-top: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.agendar-btn:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateY(-2px);
+}
+
+.agendar-btn a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .tabs {
+        gap: 25px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    p {
+        font-size: 14px;
+    }
+}
+
+/* Cards */
+.consulta-card {
+    background: var(--postbackground);
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    text-align: left;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.consulta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.badge-pendente {
+    background: #e9c46a;
+    color: #4a3f20;
+}
+
+.badge-aceito {
+    background: #6c63ff;
+}
+
+/* Botão psicólogo */
+.btn-psi {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border: none;
+    background: var(--accent-color);
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-chat {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border: none;
+    background: var(--accent-color);
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-psi:hover,
+.btn-chat:hover {
+    transform: translateY(-2px);
+}
+
+.consulta-card p {
+    margin: 6px 0;
+    color: var(--text-color2);
+}
+
+/* MODAL */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+
+.psi-foto-modal {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 10px auto;
+}
+
+.close-modal {
+    position: absolute;
+    background: var(--text-color);
+    border: none;
+    padding: 6px 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    right: 10px;
+    top: 10px;
+}
+
+.loading-consultas {
+    width: 100%;
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#agendadas .avatar-loader-container {
+    width: 90px !important;
+    height: 90px !important;
+    border-radius: 100%;
+    overflow: hidden;
+}
+
+#agendadas .avatar-loader-container img {
+    border-radius: 100%;
+}
+
+#agendadas .loader {
+    border-radius: 100%;
+}
+
+/* === MODAL GLOBAL === */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+}
+
+.modal.hidden {
+    display: none !important;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 25px;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 18px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+    animation: fadeInScale 0.3s ease;
+    text-align: center;
+}
+
+.close-modal {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+/* animação */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Foto do profissional */
+.psi-foto-modal {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+/* Botão de detalhes */
+.btn-detalhes {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.btn-detalhes:hover {
+    background: var(--muted-accent);
+    transform: translateY(-2px);
+}
+
+.btn-chat {
+    background: var(--bg-light);
+    color: var(--text-color);
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.btn-chat:hover {
+    transform: translateY(-2px);
+}
+
+/* --- Botão "Fazer outros agendamentos" --- */
+.fazer-outros-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
+
+.fazer-outros-link {
+    text-decoration: none;
+}
+
+.fazer-outros-btn {
+    background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-color-dark) 100%);
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(62, 42, 114, 0.16);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.fazer-outros-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 38px rgba(62, 42, 114, 0.2);
+}
+
+/* garante responsividade */
+@media (max-width: 480px) {
+    .fazer-outros-btn {
+        width: 92%;
+        padding: 12px;
+    }
+}

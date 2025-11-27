@@ -1,0 +1,1204 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Nunito, sans-serif;
+  background-color: #f6f2fc;
+  color: #333;
+}
+
+header.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 2px solid #d3cbe2;
+}
+
+header h1 {
+  font-size: 24px;
+  color: #583E8E;
+}
+
+header .profile-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.main-container {
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+}
+
+.sidebar {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 16px;
+  color: #583E8E;
+  transition: background 0.3s;
+}
+
+.menu-btn.active {
+  background: #d3cbe2;
+}
+
+.menu-btn:hover {
+  background: #e8e2f3;
+}
+
+.menu-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+.last-activities {
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.last-activities h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #583E8E;
+}
+
+.last-activities ul {
+  padding-left: 16px;
+  font-size: 14px;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #583E8E;
+  width: 75%;
+  text-align: left;
+}
+
+.appointment-card {
+  width: 75%;
+  min-height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 18px 22px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  justify-content: flex-start;
+  width: 75%;
+}
+
+.contact-btn {
+  background: #826faf;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.contact-btn:hover {
+  opacity: 0.9;
+}
+
+.stat-card {
+  width: 160px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card span {
+  display: block;
+  font-size: 28px;
+  font-weight: bold;
+  color: #583E8E;
+}
+
+.hidden {
+  display: none;
+}
+
+.add-consult-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.add-consult-form input,
+.add-consult-form button {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.add-consult-btn {
+  margin-top: 15px;
+  padding: 10px 14px;
+  border: 1px solid #826faf;
+  background: #fff;
+  color: #583E8E;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.add-consult-btn:hover {
+  background: #f1eaff;
+}
+
+.patients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  width: 90%;
+  margin-top: 20px;
+}
+
+.patient-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patients-title {
+  width: 90%;
+  text-align: left;
+  margin: 0 auto 20px;
+  color: #583E8E;
+}
+
+.patient-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+.patient-notes {
+  font-size: 13px;
+  color: #555;
+  max-width: 70%;
+  line-height: 1.4;
+  margin-right: 10px;
+}
+
+.patient-card .contact-btn {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.patient-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.note-btn img {
+  width: 20px;
+  height: 20px;
+  filter: invert(30%) sepia(50%) saturate(400%) hue-rotate(220deg);
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup.hidden {
+  display: none;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.popup-content h3 {
+  color: #583E8E;
+  margin-bottom: 10px;
+}
+
+.popup-content textarea {
+  width: 100%;
+  min-height: 120px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  resize: none;
+}
+
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 1024px) {
+  .main-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .last-activities {
+    display: none;
+  }
+
+  .content {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .content h2 {
+    width: 100%;
+    text-align: left;
+    padding: 0 10px;
+  }
+
+  .appointment-card,
+  .stats {
+    width: 100%;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 768px) {
+  header.header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 16px;
+  }
+
+  header h1 {
+    font-size: 18px;
+    flex: 1;
+  }
+
+  header .profile-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sidebar {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .menu-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .appointment-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .appointment-card .contact-btn {
+    align-self: flex-end;
+  }
+
+  .stats {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .patients-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .patient-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 16px;
+  }
+
+  .menu-btn span {
+    font-size: 13px;
+  }
+
+  .appointment-card {
+    padding: 14px;
+  }
+
+  .stat-card {
+    font-size: 12px;
+    padding: 14px;
+  }
+
+  .stat-card span {
+    font-size: 22px;
+  }
+
+  .contact-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .popup-content {
+    width: 90%;
+    padding: 15px;
+  }
+}
+
+.consultas-container {
+  padding: 30px;
+  background: var(--bg-color);
+  border-radius: 16px;
+  box-shadow: 0 4px 10px var(--shadow-accent-soft);
+  animation: fadeSlideDown 0.5s ease;
+}
+
+.section-header h2 {
+  color: var(--accent-color);
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.consultas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.consulta-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 6px var(--shadow-accent-soft);
+  border-radius: 14px;
+  padding: 18px 22px;
+  transition: all 0.2s ease;
+}
+
+.consulta-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px var(--shadow-accent-strong);
+}
+
+.consulta-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.consulta-info img {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-color);
+  background: var(--bg-color);
+}
+
+.consulta-detalhes p {
+  margin: 3px 0;
+  color: var(--text-color2);
+  font-size: 0.95rem;
+}
+
+.consulta-detalhes h3 {
+  color: var(--accent-color);
+  margin-bottom: 5px;
+}
+
+.consulta-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.consulta-actions button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.consulta-actions .btn-ver {
+  background: var(--botaocalendar);
+  color: var(--accent-color);
+}
+
+.consulta-actions .btn-ver:hover {
+  background: var(--hovercalendariobotao);
+}
+
+.consulta-actions .btn-aceitar {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.consulta-actions .btn-aceitar:hover {
+  background: var(--primary-color-dark);
+}
+
+.consulta-actions .btn-recusar {
+  background: #d9534f;
+  color: #fff;
+}
+
+.consulta-actions .btn-recusar:hover {
+  opacity: 0.9;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content.detalhes-consulta-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  width: 420px;
+  max-width: 90%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  animation: fadeSlideDown 0.4s ease;
+}
+
+.detalhes-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.detalhes-header img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-color);
+  object-fit: cover;
+}
+
+.detalhes-body p {
+  margin: 8px 0;
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.close {
+  float: right;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color2);
+}
+
+.close:hover {
+  color: var(--accent-color);
+}
+
+.consultas-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-color);
+  background: #fff;
+  color: var(--accent-color);
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.tab-btn.active {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+/* fallback para abas de consulta (caso variáveis CSS falhem) */
+.tab-btn {
+  border: 1px solid #826faf;
+  background: #fff;
+  color: #583E8E;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.tab-btn.active {
+  background: #826faf;
+  color: #fff;
+}
+
+.horario-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.horario-btn.selecionado {
+  background: #826faf;
+  color: #fff;
+  border-color: #6b2f9a;
+}
+.horario-btn.ocupado {
+  background: #e6e6e6;
+  color: #777;
+  border-color: #d0d0d0;
+  cursor: not-allowed;
+}
+#advDisponModal .horario-btn.ocupado[title] {
+  background: #6f49a8; /* roxo para agendados se quiser diferenciá-los */
+  color: #fff;
+}
+
+.date.date-past {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ================================
+   PRIORIDADE MÁXIMA - SOBREPOR calendairo.css
+   ================================ */
+
+/* container da agenda */
+#calendario .container {
+  display: flex !important;
+  gap: 20px !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+}
+
+/* coluna do calendário */
+#calendario .calendar-container {
+  flex: 1 1 auto !important;
+  min-width: 280px !important;
+  max-width: 650px !important;
+}
+
+/* coluna direita da lista de consultas */
+#calendario .events-container {
+  width: 360px !important;
+  max-width: 36% !important;
+  background: #fff !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Título */
+#calendario .events-container h3 {
+  margin: 0 0 10px 0 !important;
+  color: #583E8E !important;
+  font-size: 1.05rem !important;
+}
+
+/* LISTA */
+#calendario .event-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  max-height: 420px !important;
+  overflow-y: auto !important;
+}
+
+/* CARD DE CONSULTA NA LISTA */
+#calendario .event-list .event {
+  border: 1px solid #e6dafb !important;
+  background: #ffffff !important;
+  padding: 12px !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  transition: background .2s, transform .15s !important;
+}
+
+#calendario .event-list .event:hover {
+  background: #f8f2ff !important;
+  transform: translateY(-2px) !important;
+}
+
+/* NOME + STATUS */
+#calendario .event-title {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-weight: 700 !important;
+  color: #44286a !important;
+}
+
+/* STATUS */
+#calendario .event-status {
+  background: #f0eef8 !important;
+  padding: 4px 8px !important;
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  color: #583E8E !important;
+}
+
+/* META - horário e motivo */
+#calendario .event .meta {
+  font-size: 0.9rem !important;
+  color: #666 !important;
+}
+
+/* RESPONSIVO */
+@media (max-width: 900px) {
+  #calendario .container {
+    flex-direction: column !important;
+  }
+  #calendario .events-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Loader roxo animado (3 bolinhas) */
+.loader {
+  display: inline-flex;
+  gap: 8px;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px 0;
+}
+.loader .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7b56d6; /* roxo principal */
+  opacity: 0.95;
+  transform: translateY(0);
+  animation: jump 0.72s cubic-bezier(.2,.7,.2,1) infinite;
+}
+.loader .dot:nth-child(2) { animation-delay: 0.08s; }
+.loader .dot:nth-child(3) { animation-delay: 0.16s; }
+
+@keyframes jump {
+  0%   { transform: translateY(0); }
+  30%  { transform: translateY(-8px); }
+  60%  { transform: translateY(0); }
+  100% { transform: translateY(0); }
+}
+
+/* Força prioridade sobre calendario.css se necessário */
+.event-list-consultas .empty,
+.event-list-consultas .loader,
+#consultas-list .loader {
+  /* garante que o loader fique visível mesmo com regras do calendario.css */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* CARD DE CONSULTA NA LISTA DO CALENDÁRIO — força máxima */
+#calendario .events-container .event-list-consultas .event,
+#calendario .events-container .event-list .event {
+  margin-bottom: 14px !important;
+  border: 1px solid #e6dafb !important;
+  background: #ffffff !important;
+  padding: 12px !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  transition: background .2s, transform .15s !important;
+}
+
+/* HOVER — seletor mais forte que o calendário.css */
+#calendario .events-container .event-list-consultas .event:hover,
+#calendario .events-container .event-list .event:hover {
+  background: #f6f0ff !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15) !important;
+}
+
+
+.event-list-consultas .loader {
+  display: flex !important;
+}
+
+/* =======================================================
+   CHAT — ESTILO IGUAL AO homePsi.css
+   ======================================================= */
+
+/* Container geral do chat */
+section[id="chats"] {
+  padding: 0;
+  height: calc(100vh - 120px);
+  width: 100%;
+  display: flex;
+}
+
+.chat-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Sidebar de usuários */
+.chat-sidebar {
+  width: 300px;
+  background: #f8f9fa;
+  border-right: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 55px;
+  padding: 0 15px;
+  font-weight: bold;
+  background: var(--accent-color);
+  color: #fff;
+}
+
+/* Área principal do chat */
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header .chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.chat-header .chat-title {
+  flex: 1;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Lista de mensagens */
+.chat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 3px;
+}
+
+/* Mensagens */
+.msg {
+  margin: 5px 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 70%;
+  word-wrap: break-word;
+  position: relative;
+  font-size: 14px;
+}
+
+/* Mensagem enviada */
+.msg-enviada {
+  align-self: flex-end;
+  background: var(--accent-color);
+  color: #fff;
+}
+
+/* Mensagem recebida */
+.msg-recebida {
+  align-self: flex-start;
+  background: #e5e5e5;
+  color: #333;
+}
+
+.msg audio {
+  width: 100%;
+  min-width: 220px;
+  display: block;
+  margin-top: 5px;
+}
+
+/* Input do chat */
+.chat-input {
+  display: flex;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  gap: 8px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 24px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.chat-input input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.chat-input button {
+  padding: 10px 20px;
+  background: var(--card-bg);
+  color: var(--accent-color) !important;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.chat-input button:hover {
+  background: var(--hover-bg);
+}
+
+/* Botão gravar voz */
+.voice-btn {
+  width: 45px;
+  border: none;
+  background: var(--card-bg);
+  color: var(--accent-color);
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.voice-btn:hover {
+  background: var(--hover-bg);
+}
+
+.voice-btn.recording {
+  color: red !important;
+  animation: pulse 0.6s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* -------------------------
+   PLAYER DE ÁUDIO CUSTOM
+-------------------------- */
+
+.audio-wrapper {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #d3cbe2;
+  padding: 12px 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+.audio-play-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: #826faf;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.audio-progress {
+  flex: 1;
+  height: 6px;
+  border-radius: 4px;
+  background: #e5dff5;
+  cursor: pointer;
+}
+
+.audio-time {
+  font-size: 12px;
+  color: #583e8e;
+  font-weight: 600;
+}
+
+/* Lista de usuários */
+#chatUsersList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.chat-user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.chat-user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.chat-user-card img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Botão voltar no mobile */
+.back-btn {
+  margin-right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .chat-sidebar {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+  }
+
+  .chat-main {
+    position: absolute;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    transition: 0.3s ease;
+  }
+
+  .chat-main.active {
+    left: 0;
+  }
+}
+#pacientes .patient-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(12,18,33,0.06);
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#pacientes .patient-header {
+  display:flex;
+  align-items:center;
+  gap: 12px;
+}
+
+#pacientes .patient-avatar {
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  object-fit:cover;
+  flex:0 0 56px;
+}
+
+#pacientes .patient-name {
+  margin:0;
+  font-size:1.05rem;
+}
+
+#pacientes .chip {
+  display:inline-block;
+  font-size:0.8rem;
+  padding:4px 8px;
+  margin-right:6px;
+  background:#f3f4f6;
+  border-radius:999px;
+  color:#333;
+}
+
+#pacientes .patient-last {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:8px 0 0 0;
+  font-size:0.9rem;
+  color:#222;
+}
+
+#pacientes .last-value {
+  display:inline-block;
+  background: #f8fafc;
+  border: 1px solid #e6eef8;
+  padding:6px 10px;
+  border-radius:8px;
+  font-weight:600;
+  color:#111;
+}
+
+#pacientes .patient-actions {
+  display:flex;
+  gap:8px;
+  margin-top:6px;
+}
+
+#pacientes .contact-btn {
+  padding:8px 10px;
+  border-radius:8px;
+  border: none;
+  cursor:pointer;
+  background:#826faf;
+  color:white;
+  font-weight:600;
+}
