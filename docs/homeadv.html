@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EloMaterno - Home</title>
+  <link rel="stylesheet" href="./css/homeAdv.css">
+  <link rel="stylesheet" href="./css/artigos.css">
+  <link rel="stylesheet" href="./css/forum.css">
+  <link rel="stylesheet" href="./css/globals.css">
+  <link rel="stylesheet" href="./css/calendario.css">
+  <link rel="stylesheet" href="./css/chat.css">
+  <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+  <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f7f5fc;
+      padding: 15px 25px;
+      border-bottom: 2px solid #e3dcf9;
+    }
+
+    #boasVindas {
+      color: #3d265a;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    .logout-btn {
+      background-color: #5b3c91;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .logout-btn:hover {
+      background-color: #472f75;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <h1 id="boasVindas">Bem vindo(a) Dr. Advogado</h1>
+    <button id="logoutBtn" class="logout-btn">Sair</button>
+  </header>
+
+  <div id="eventModal" class="modal hidden">
+    <div class="modal-content">
+      <span id="closeEventModal" class="close">&times;</span>
+      <h2>Criar novo evento</h2>
+
+      <form id="eventForm">
+        <label>Título</label>
+        <input type="text" id="tituloEvento" required>
+
+        <label>Descrição</label>
+        <textarea id="descricaoEvento" rows="3"></textarea>
+
+        <label>Data do evento</label>
+        <input type="datetime-local" id="dataEvento" required>
+
+        <label>Local</label>
+        <input type="text" id="localEvento" placeholder="Ex: Online, Auditório Central..." required>
+
+        <label>Imagem de capa (URL)</label>
+        <input type="text" id="capaEvento" placeholder="img/palestra_img.png" required>
+
+        <button type="submit">Publicar Evento</button>
+        <div id="eventMsg"></div>
+      </form>
+    </div>
+  </div>
+
+  <main class="main-container">
+    <aside class="sidebar">
+      <button class="menu-btn active" data-target="dashboard">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Painel de controle</span>
+      </button>
+      <button class="menu-btn" data-target="calendario">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span>Agenda</span>
+      </button>
+      <button class="menu-btn" data-target="artigos">
+        <i class="fa-solid fa-newspaper"></i>
+        <span>Artigos</span>
+      </button>
+      <button class="menu-btn" data-target="consultas">
+        <i class="fa-solid fa-hands-helping"></i>
+        <span>Consultas</span>
+      </button>
+      <button class="menu-btn" data-target="forum">
+        <i class="fa-solid fa-comments"></i>
+        <span>Fórum</span>
+      </button>
+      <button class="menu-btn" data-target="pacientes">
+        <i class="fa-solid fa-user-group"></i>
+        <span>Pacientes</span>
+      </button>
+      <button class="menu-btn" data-target="chats">
+        <i class="fa-solid fa-message"></i>
+        <span>Chats</span>
+      </button>
+
+      <div class="last-activities">
+        <h3>Próximos Eventos</h3>
+        <ul>
+          <li>Palestra Mulheres - 13/06</li>
+          <li>Paternidade Ativa - 15/07</li>
+        </ul>
+      </div>
+    </aside>
+
+    <section class="content" id="dashboard">
+      <h2>Consultas Agendadas</h2>
+      <div class="appointment-card">
+        <div>
+          <strong>Mariana Souza</strong>
+          <p>2 de maio de 2024 - 10:00</p>
+        </div>
+        <button class="contact-btn">Entrar em contato</button>
+      </div>
+
+      <div class="appointment-card">
+        <div>
+          <strong>Patrícia Lima</strong>
+          <p>6 de maio de 2024 - 14:00</p>
+        </div>
+        <button class="contact-btn">Entrar em contato</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <span>2</span>
+          <p>Consultas agendadas hoje</p>
+        </div>
+        <div class="stat-card">
+          <span>5</span>
+          <p>Sessões realizadas essa semana</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content hidden" id="calendario">
+      <div class="container">
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <button onclick="prevMonth()">&lt;</button>
+            <div class="month-year-select">
+              <select id="month-select" onchange="onMonthChange()"></select>
+              <select id="year-select" onchange="onYearChange()"></select>
+            </div>
+            <button onclick="nextMonth()">&gt;</button>
+          </div>
+
+          <div class="calendar-days">
+            <div>D</div>
+            <div>S</div>
+            <div>T</div>
+            <div>Q</div>
+            <div>Q</div>
+            <div>S</div>
+            <div>S</div>
+          </div>
+          <div class="calendar-dates" id="calendarDates"></div>
+        </div>
+
+        <div class="events-container">
+          <h3>Consultas Agendadas</h3>
+
+          <!-- Lista que receberá AS CONSULTAS (renderConsultasSidebar) -->
+          <div class="event-list-consultas"></div>
+
+          <!-- Lista separada para eventos (renderListaEventos) — se quiser esconder, mantemos aqui oculto) -->
+          <div class="event-list-eventos" style="display:none;"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="content hidden" id="forum">
+      <div class="forum-container">
+        <div class="forum-search">
+          <input type="text" id="forum-search-input" placeholder="Pesquisar no fórum">
+          <button class="add-for-btn" id="nova-post-btn">+</button>
+        </div>
+
+        <div id="posts-list">
+          <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <div class="modal hidden" id="modal-post">
+      <div class="modal-content">
+        <span class="close" id="close-post-modal">&times;</span>
+        <h2>Nova Publicação</h2>
+
+        <form id="form-post">
+          <label for="titulo">Título</label>
+          <input type="text" id="titulo" placeholder="Digite o título" required>
+
+          <label for="conteudo">Conteúdo</label>
+          <textarea id="conteudo" rows="4" placeholder="Escreva sua mensagem..." required></textarea>
+
+          <label for="anonimo-checkbox" class="anonimo-check">
+            <input type="checkbox" id="anonimo-checkbox">
+            <span>Postar como anônimo</span>
+          </label>
+
+          <div class="modal-actions">
+            <button type="button" id="cancelar-post">Cancelar</button>
+            <button type="submit">Publicar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <section class="content hidden" id="artigos">
+      <p>Carregando...</p>
+    </section>
+
+    <section class="content hidden" id="pacientes">
+      <h2>Histórico de Pacientes</h2>
+      <div class="patients-grid">
+        <div class="patient-card" data-id="1">
+          <div class="patient-header">
+            <span>Maria da Silva | 09:00</span>
+          </div>
+          <div class="patient-body">
+            <p class="patient-notes">Nenhuma anotação adicionada.</p>
+            <button class="contact-btn">Entrar em contato</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="popup hidden" id="notesPopup">
+      <div class="popup-content">
+        <h3>Anotações do Paciente</h3>
+        <textarea id="notesArea" placeholder="Escreva suas anotações aqui..."></textarea>
+        <div class="popup-actions">
+          <button id="saveNote" class="contact-btn">Salvar</button>
+          <button id="closePopup" class="add-consult-btn" type="button">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="chats" class="content hidden">
+      <main class="chat-wrapper">
+        <aside class="chat-sidebar">
+          <div class="sidebar-header">Usuários</div>
+          <ul id="chatUsersList" class="user-list"></ul>
+        </aside>
+
+        <section class="chat-main">
+          <header class="chat-header" id="chatHeaderAdv">
+            <button class="back-btn hidden" id="backBtnAdv"><i class="fa fa-arrow-left"></i></button>
+            <img id="chatAvatarAdv" class="chat-avatar hidden" src="" alt="Avatar do usuário">
+            <span id="chatTitleAdv">Selecione um usuário</span>
+          </header>
+
+          <div id="messagesAdv" class="chat-messages"></div>
+
+          <form id="messageFormAdv" class="chat-input hidden">
+            <button type="button" id="voiceBtnAdv" class="voice-btn">
+              <i class="fa fa-microphone"></i>
+            </button>
+            <input type="text" id="messageInputAdv" placeholder="Digite sua mensagem..." required>
+            <button type="submit"><i class="fa fa-paper-plane"></i></button>
+          </form>
+        </section>
+      </main>
+    </section>
+
+    <section class="content hidden" id="consultas">
+      <div class="consultas-container">
+
+        <div class="section-header">
+          <div class="consultas-tabs">
+            <button class="tab-btn active" data-status="pendente">Pendentes</button>
+            <button class="tab-btn" data-status="aceito">Agendadas</button>
+            <button class="tab-btn" data-status="realizado">Realizadas</button>
+            <button class="tab-btn" data-status="negado">Negadas</button>
+          </div>
+
+          <h2 id="titulo-consultas">Consultas</h2>
+        </div>
+
+        <div class="consultas-list" id="consultas-list">
+          <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL -->
+      <div class="modal hidden" id="detalhesConsultaModal">
+        <div class="modal-content detalhes-consulta-card">
+          <span class="close" id="closeDetalhesConsulta">&times;</span>
+
+          <div class="detalhes-header">
+            <img id="detalhesAvatar" src="" alt="Avatar da mãe">
+            <div>
+              <h2 id="detalhesNome"></h2>
+              <p id="detalhesTelefone"></p>
+            </div>
+          </div>
+
+          <div class="detalhes-body">
+            <p><strong>Motivo:</strong> <span id="detalhesMotivo"></span></p>
+            <p><strong>Data da Consulta:</strong> <span id="detalhesDataConsulta"></span></p>
+            <p><strong>Horário:</strong> <span id="detalhesHoraConsulta"></span></p>
+            <p><strong>Status:</strong> <span id="detalhesStatus"></span></p>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn-aceitar">Aceitar</button>
+            <button class="btn-recusar">Recusar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal Perfil Paciente -->
+    <!-- Modal: Perfil do Paciente -->
+    <div id="perfilPacienteModal" class="modal hidden">
+      <div class="modal-content">
+        <button class="close" id="closePerfilPaciente">&times;</button>
+
+        <div class="detalhes-header" style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <img id="perfilPacienteAvatar" src="./img/account_icon.png" alt="Avatar"
+            style="width:72px;height:72px;border-radius:50%;object-fit:cover;">
+          <div>
+            <h2 id="perfilPacienteNome">Paciente</h2>
+            <p id="perfilPacienteEmail" style="margin:0;font-size:0.9rem;color:#666;">email@exemplo.com</p>
+            <p id="perfilPacienteTelefone" style="margin:0;font-size:0.9rem;color:#666;">(00) 0 0000-0000</p>
+          </div>
+        </div>
+
+        <div class="detalhes-body">
+          <h3>Sobre</h3>
+          <p id="perfilPacienteSobre">Nenhuma informação disponível.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script type="module" src="./js/homeAdv.js"></script>
+
+</body>
+
+</html>

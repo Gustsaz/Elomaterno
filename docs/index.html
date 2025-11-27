@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EloMaterno - Apoio e Conexão para Mães Solo</title>
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/globals.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+    <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+
+    <style>
+        /* --- estilo privacidade --- */
+        @font-face {
+            font-family: 'Nunito';
+            src: url('Nunito.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+      
+        body.blocked {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+      
+        #page-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+        }
+
+       
+        #cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            z-index: 999;
+            box-sizing: border-box;
+            border-top: 1px solid #ddd;
+        }
+
+        .banner-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+
+        .banner-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .banner-content p a {
+            text-decoration: underline;
+            cursor: pointer;
+            color: #5b3c91;
+            font-weight: bold;
+        }
+
+        .banner-buttons {
+            display: flex;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+       
+        #cookie-banner .btn,
+        #preferences-modal .btn {
+            font-family: 'Nunito', Arial, sans-serif;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        #cookie-banner .btn-primary,
+        #preferences-modal .btn-primary {
+            background-color: #5b3c91;
+            color: white;
+        }
+
+        #cookie-banner .btn-primary:hover,
+        #preferences-modal .btn-primary:hover {
+            background-color: #472f75;
+        }
+
+        #cookie-banner .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+
+        #cookie-banner .btn-secondary:hover {
+            background-color: #e5e5e5;
+        }
+
+    
+        #preferences-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            overflow: hidden;
+            font-family: 'Nunito', Arial, sans-serif;
+        }
+
+        .modal-sidebar {
+            width: 200px;
+            background-color: #f9f9f9;
+            border-right: 1px solid #eee;
+            flex-shrink: 0;
+        }
+
+        .modal-sidebar h3 {
+            font-size: 1.2rem;
+            color: #3d265a;
+            padding: 24px;
+            margin: 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .modal-sidebar li {
+            padding: 16px 24px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #555;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s ease;
+        }
+
+        .modal-sidebar li.active,
+        .modal-sidebar li:hover {
+            background-color: #e6e0f0;
+            color: #5b3c91;
+        }
+
+        .modal-main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h4 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: #3d265a;
+        }
+
+        #close-modal {
+            font-size: 2rem;
+            color: #aaa;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        #close-modal:hover {
+            color: #333;
+        }
+
+        .modal-policy-content {
+            padding: 24px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .modal-policy-content h5 {
+            font-size: 1.1rem;
+            color: #5b3c91;
+            margin-top: 20px;
+        }
+
+        .modal-policy-content p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .policy-links {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        .policy-links li {
+            margin-bottom: 10px;
+        }
+
+        .policy-links a {
+            display: block;
+            padding: 12px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #5b3c91;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .policy-links a:hover {
+            background-color: #e6e0f0;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .toggle-container strong {
+            color: #3d265a;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #5b3c91;
+        }
+
+        input:checked:disabled+.slider {
+            background-color: #9d8ab7;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-consent {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-consent label {
+            font-size: 0.9rem;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .footer-consent input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        #modal-accept-all:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+       
+        #cookie-widget {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 997;
+            transition: transform 0.2s ease;
+        }
+
+        #cookie-widget:hover {
+            transform: scale(1.1);
+        }
+
+        #cookie-widget img {
+            width: 28px;
+            height: 28px;
+        }
+
+     
+        .widget-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            width: max-content;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 1001;
+            left: 110%;
+            bottom: 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .widget-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: 100%;
+           
+            margin-top: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent #333 transparent transparent;
+        }
+
+        #cookie-widget:hover .widget-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+
+       
+        .mobile-menu-icon {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-color);
+        
+            z-index: 1002;
+            
+        }
+
+        @media (max-width: 992px) {
+
+           
+            header .container nav {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+            }
+
+            header .container nav .menu,
+            header .container nav .acessar-btn {
+                display: none;
+            }
+
+            .mobile-menu-icon {
+                display: block;
+            }
+
+            header .container nav.active {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: var(--background-color);
+
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2rem;
+            }
+
+            header .container nav.active .mobile-menu-icon {
+                position: absolute;
+                top: 2rem;
+                right: 2rem;
+                font-size: 2rem;
+            }
+
+            header .container nav.active .menu,
+            header .container nav.active .acessar-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+            }
+
+            header .container nav.active .menu {
+                padding: 0;
+                list-style: none;
+            }
+
+            header .container nav.active .menu li a {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: var(--text-color);
+            }
+
+            header .container nav.active .acessar-btn {
+                font-size: 1.2rem;
+                padding: 12px 24px;
+            }
+
+            header .container nav.active .theme-toggle {
+                margin-top: 1rem;
+                font-size: 1.5rem;
+            }
+        }
+
+      
+        @media (max-width: 768px) {
+
+            
+            .banner-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .banner-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .banner-buttons .btn {
+                flex: 1;
+            }
+
+            
+            #preferences-modal {
+                flex-direction: column;
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .modal-sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                flex-shrink: 0;
+            }
+
+            .modal-sidebar h3 {
+                text-align: center;
+            }
+
+            .modal-sidebar ul {
+                display: flex;
+                justify-content: center;
+            }
+
+            .modal-sidebar li {
+                flex: 1;
+                text-align: center;
+                border-bottom: none;
+                padding: 14px 10px;
+                font-size: 0.9rem;
+            }
+
+            .modal-sidebar li:first-child {
+                border-right: 1px solid #eee;
+            }
+
+            .modal-header h4 {
+                font-size: 1.1rem;
+            }
+
+            .modal-header,
+            .modal-policy-content,
+            .modal-footer {
+                padding: 16px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .footer-consent label {
+                font-size: 0.8rem;
+            }
+
+            #modal-accept-all {
+                width: 100%;
+            }
+
+           
+            .widget-tooltip {
+                left: 50%;
+                bottom: 120%;
+                transform: translateX(-50%);
+            }
+
+            .widget-tooltip::after {
+                right: 50%;
+                top: 100%;
+                margin-top: 0;
+                margin-left: -5px;
+                border-color: #333 transparent transparent transparent;
+            }
+        }
+    </style>
+    </head>
+
+<body>
+    <div class="splash">
+        <div class="splash-logo">
+            <svg id="elomaterno-logo-splash" width="200" height="250" viewBox="0 0 213 266"
+                xmlns="http://www.w3.org/2000/svg">
+                <path class="logo-path"
+                    d="m 108,250.54263 c -3.025,-0.77427 -7.17305,-2.11312 -9.217881,-2.9752 -2.044835,-0.86209 -5.644835,-1.57058 -8,-1.57444 C 85.57568,245.98448 71.502787,242.74572 64,239.82933 44.51711,232.25616 23.973953,213.76872 14.748834,195.50665 4.3009619,174.824 2.6271837,153.45203 9.5794246,129.5 17.064461,103.71237 54.101096,37.546308 69.555999,22.351665 82.949475,9.183734 103.00334,3.245181 119.53544,7.551246 c 19.02395,4.95511 33.47362,20.723771 38.55514,42.074527 1.83427,7.706978 2.06587,11.22829 1.76075,26.771428 L 159.5,94.2944 l 6,1.67357 c 15.38986,4.29266 28.53367,15.20225 35.88975,29.78911 4.15384,8.23693 6.80926,21.14547 6.83841,33.24292 0.0885,36.73862 -27.09053,74.72809 -63.82457,89.21071 -6.93306,2.7334 -9.31575,3.15433 -19.40359,3.42787 -7.58469,0.20566 -13.37254,-0.16747 -17,-1.09595 z m 23.56634,-9.63416 c 12.55499,-2.30955 27.30198,-10.97661 39.20264,-23.04006 17.36643,-17.60399 26.20778,-37.8019 26.22401,-59.90831 0.02,-27.25559 -13.84056,-46.42983 -37.99299,-52.55817 -9.17527,-2.32809 -26.94247,-1.46829 -41.24177,1.99581 -5.90798,1.43124 -12.43298,2.59692 -14.5,2.59039 -6.442941,-0.0203 -14.505836,-2.76903 -20.478939,-6.98138 l -5.738878,-4.04716 -5.986054,5.98605 c -6.265885,6.26589 -10.887552,9.02257 -23.57904,14.06416 -8.626307,3.42674 -16.680516,8.34293 -20.66035,12.61083 -1.476766,1.58365 -4.176766,5.80437 -6,9.37937 -3.260282,6.39277 -3.314216,6.71446 -3.269338,19.5 0.04295,12.23669 0.234231,13.47451 3.257675,21.08142 10.458854,26.31422 30.976343,44.73586 57.137084,51.30057 15.859664,3.97978 31.67793,2.53132 44.93864,-4.115 C 129.51869,225.43916 144,212.84692 144,210.40122 c 0,-2.31978 -3.55934,-1.59518 -9.69642,1.97397 -3.19197,1.85635 -9.25417,4.55635 -13.47155,6 -6.53115,2.23567 -9.34801,2.62168 -19,2.60372 -9.358439,-0.0174 -12.512166,-0.43759 -18.108172,-2.41253 -9.071217,-3.20142 -15.509589,-7.48751 -22.356435,-14.88292 -21.156891,-22.85197 -17.454932,-57.25925 7.418595,-68.95096 5.14706,-2.41936 7.593112,-2.9546 13.5,-2.95405 7.623837,7.1e-4 16.542173,2.82683 22.653932,7.17879 l 2.95278,2.10257 3.94563,-5.27991 c 10.7719,-14.41459 21.50812,-20.3485 35.48725,-19.6138 22.0636,1.15959 35.55178,21.94954 30.29757,46.69899 -2.40932,11.34887 -7.7372,21.06603 -16.79981,30.64006 -6.68404,7.06122 -7.59889,8.43626 -6.31942,9.49813 6.18468,5.13283 -8.27517,24.87997 -24.89935,34.00385 -4.18253,2.2955 -7.6046,4.35797 -7.6046,4.58326 0,0.69718 3.37865,0.45634 9.56634,-0.68192 z m -10.92516,-33.42539 c 3.67776,-1.38431 10.55054,-5.09681 15.27283,-8.25 L 144.5,193.5 l -7,-0.65115 c -8.58593,-0.79866 -10.74861,-1.61983 -21.28782,-8.08297 -6.58302,-4.03702 -9.45644,-5.20452 -13.66898,-5.55385 -7.038652,-0.5837 -14.83227,1.98082 -17.528965,5.76798 -2.736902,3.84362 -2.698398,11.17692 0.08231,15.6762 5.496066,8.89282 21.757965,12.01616 35.544635,6.82687 z m -48.057182,-13.7332 c 0.14455,-10.7552 7.049175,-19.93461 17.207863,-22.87714 7.304207,-2.11571 17.874639,-1.67179 22.958139,0.96415 3.85656,1.99975 4.66768,1.99949 4.39693,-0.001 -0.29434,-2.17516 3.30334,-11.21718 5.50352,-13.83194 5.1057,-6.06778 15.19972,-9.2434 22.75239,-7.15801 9.02149,2.49095 14.56672,9.12615 15.59007,18.65444 l 0.64442,6 2.23804,-4.9652 c 8.58526,-19.04678 3.02605,-38.50052 -12.30687,-43.06631 -6.51816,-1.94096 -8.44652,-1.86021 -15.10949,0.63273 -7.2046,2.69559 -14.88323,10.37152 -19.87182,19.86481 -4.48814,8.54095 -6.38262,8.98493 -13.40778,3.14213 -7.66825,-6.37763 -12.752913,-8.52897 -20.25783,-8.57117 -5.612699,-0.0316 -7.296374,0.40689 -11.469073,2.98667 -6.229439,3.85136 -9.985604,9.28223 -12.035722,17.4019 -1.901753,7.53205 -1.046761,13.83435 3.107978,22.9095 1.972223,4.3079 8.786798,14.16548 9.792187,14.16482 0.100677,-7e-5 0.220849,-2.81257 0.267048,-6.25 z m 69.100902,-10.8135 c 7.47946,-2.82593 11.24588,-11.30197 7.89854,-17.77502 C 147.56629,161.26062 145.22953,160 140.01608,160 c -7.59353,0 -13.02145,4.88063 -13.01234,11.70034 0.005,3.98911 3.48877,9.17502 7.26595,10.81707 3.97031,1.726 3.95774,1.72529 7.41521,0.41897 z M 51.590607,106.20886 c 5.745126,-2.93095 14.165448,-10.81036 16.552334,-15.489047 1.879732,-3.68458 1.940036,-4.471055 0.753066,-9.821395 C 67.326664,73.824501 67.862622,73.501712 55.444163,89 50.376071,95.325 43.477824,103.18591 40.114725,106.4687 36.751626,109.75148 34,112.73986 34,113.10953 c 0,0.74256 11.290761,-3.68673 17.590607,-6.90067 z m 59.977893,-8.7142 c 10.83856,-3.30847 20.79425,-14.110263 26.51491,-28.768333 2.777,-7.115517 3.22443,-9.531465 3.31355,-17.891786 0.0567,-5.316002 -0.21384,-9.982878 -0.60113,-10.370835 -0.38729,-0.387957 -3.18328,1.504225 -6.21332,4.204849 -9.28282,8.273644 -19.90462,12.46384 -38.936363,15.360014 -3.76962,0.573646 -9.015263,2.138261 -11.656985,3.476923 -4.205079,2.130875 -4.885545,2.921732 -5.465017,6.351597 -1.1884,7.034076 2.651917,17.099501 8.762991,22.967691 6.170833,5.92558 14.757574,7.57702 24.281364,4.66988 z M 48.263156,81.25823 C 53.632892,74.588846 60.355108,67.094903 63.201416,64.605023 72.275153,56.667538 85.077814,50.936995 98.331448,48.880624 112.5405,46.676014 123.19457,41.682899 130.94617,33.595469 132.84156,31.617961 135.06325,30 135.88326,30 138.71362,30 131.67674,23.966186 125.03055,20.694275 118.92091,17.686508 117.89733,17.5 107.5,17.5 97.073718,17.5 96.091503,17.680399 89.8869,20.734915 80.1852,25.511046 74.811733,30.851838 65.581805,44.892216 54.451249,61.823791 32.389262,100.73613 37.205157,94.94219 37.917321,94.0854 42.89342,87.927613 48.263156,81.25823 Z M 148.89902,92.37768 c 0.65592,-0.56283 2.221,-21.514863 1.89274,-25.338542 -0.29389,-3.423359 -0.36377,-3.344252 -2.13599,2.418151 -2.07797,6.756554 -5.8292,14.616333 -9.08848,19.042711 -4.14934,5.63515 -4.20445,5.53352 2.62975,4.85024 3.46663,-0.34659 6.48252,-0.78424 6.70198,-0.97256 z"
+                    stroke="#7c69a9" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            </svg>
+            <div class="logo-text">elomaterno</div>
+        </div>
+        <a href="#" id="skip-splash" class="skip-splash-button">Pular Animação</a>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="./img/iconelogo.png" alt="Logo EloMaterno">
+                <h1>elomaterno</h1>
+            </div>
+
+            <nav>
+                <ul class="menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#o-que-e">O que é</a></li>
+                    <li><a href="#como-funciona">Como funciona</a></li>
+                    <li><a href="#depoimentos">Depoimentos</a></li>
+                </ul>
+
+                <a href="formPerfil.html" class="btn acessar-btn">Acessar agora</a>
+
+                <div class="theme-toggle">
+                    <i class="fas fa-moon" id="theme-toggle-icon" aria-label="Alternar tema claro e escuro"></i>
+                </div>
+                <div class="mobile-menu-icon">
+                    <i class="fas fa-bars" aria-label="Abrir menu de navegação"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content" data-aos="fade-right">
+                    <h2>Sua jornada, nossa comunidade. Você não está sozinha.</h2>
+                    <p>Um espaço seguro para compartilhar suas vitórias, desabafar sobre os desafios e se conectar com
+                        outras mães que entendem você de verdade.</p>
+                    <a href="#o-que-e" class="btn btn-primary">Saiba mais</a>
+                </div>
+                <div class="hero-image" data-aos="fade-left" data-aos-delay="200">
+                    <img src="./img/paraqueméaelo (2).png"
+                        alt="Ilustração de mães e filhos de diversas etnias se apoiando mutuamente.">
+                </div>
+            </div>
+        </section>
+
+        <section class="partners-section" aria-label="Parceiros">
+            <div class="partners-wrapper">
+                <div id="partners-carousel" class="partners-carousel" tabindex="0" aria-roledescription="carousel">
+                    <a class="partner" href="https://www.justiceiras.org.br/" target="_blank" rel="noopener">
+                        <img src="./img/justiceiras.svg" data-dark-src="./img/justiceiras_dark.svg" alt="Justiceiras">
+                    </a>
+
+                    <a class="partner" href="https://amparomaternal.org/pt_br/" target="_blank" rel="noopener">
+                        <img src="./img/amparo.svg" alt="Amparo Maternal" />
+                    </a>
+
+                    <a class="partner" href="https://www.justiceiras.org.br/" target="_blank" rel="noopener">
+                        <img src="./img/justiceiras.svg" data-dark-src="./img/justiceiras_dark.svg" alt="Justiceiras">
+                    </a>
+
+                    <a class="partner" href="https://amparomaternal.org/pt_br/" target="_blank" rel="noopener">
+                        <img src="./img/amparo.svg" alt="Amparo Maternal" />
+                    </a>
+
+                    <a class="partner" href="https://www.justiceiras.org.br/" target="_blank" rel="noopener">
+                        <img src="./img/justiceiras.svg" data-dark-src="./img/justiceiras_dark.svg" alt="Justiceiras">
+                    </a>
+
+                    <a class="partner" href="https://amparomaternal.org/pt_br/" target="_blank" rel="noopener">
+                        <img src="./img/amparo.svg" alt="Amparo Maternal" />
+                    </a>
+                    <a class="partner" href="https://www.justiceiras.org.br/" target="_blank" rel="noopener">
+                        <img src="./img/justiceiras.svg" data-dark-src="./img/justiceiras_dark.svg" alt="Justiceiras">
+                    </a>
+
+                    <a class="partner" href="https://amparomaternal.org/pt_br/" target="_blank" rel="noopener">
+                        <img src="./img/amparo.svg" alt="Amparo Maternal" />
+                    </a>
+                    <a class="partner" href="https://www.justiceiras.org.br/" target="_blank" rel="noopener">
+                        <img src="./img/justiceiras.svg" data-dark-src="./img/justiceiras_dark.svg" alt="Justiceiras">
+                    </a>
+
+                    <a class="partner" href="https://amparomaternal.org/pt_br/" target="_blank" rel="noopener">
+                        <img src="./img/amparo.svg" alt="Amparo Maternal" />
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="o-que-e" class="section">
+            <div class="container">
+                <h2 class="section-title">O que é o EloMaterno?</h2>
+                <div class="content-wrapper-reverse">
+                    <div class="image-content" data-aos="fade-left">
+                        <img src="./img/oqueéaelo (2).png"
+                            alt="Ilustração de mulheres conversando e trocando experiências em um ambiente acolhedor.">
+                    </div>
+                    <div class="text-content" data-aos="fade-right">
+                        <p>O EloMaterno é uma plataforma dedicada a conectar, apoiar e empoderar mães solo em sua
+                            jornada materna. Criamos um espaço seguro onde você pode encontrar recursos, compartilhar
+                            experiências e construir uma rede de apoio sólida.</p>
+                        <p>Nossa missão é garantir que nenhuma mãe solo se sinta sozinha nos desafios da maternidade,
+                            oferecendo ferramentas práticas e uma comunidade acolhedora.</p>
+                        <div class="stats-container">
+                            <div class="stat-item" data-aos="fade-up">
+                                <span class="stat-number">+5.000</span>
+                                <span class="stat-text">Mães Conectadas</span>
+                            </div>
+                            <div class="stat-item" data-aos="fade-up" data-aos-delay="150">
+                                <span class="stat-number">+100</span>
+                                <span class="stat-text">Grupos de Apoio</span>
+                            </div>
+                            <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+                                <span class="stat-number">+20</span>
+                                <span class="stat-text">Empresas Parceiras</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="como-funciona" class="section bg-light">
+            <div class="container">
+                <h2 class="section-title">Como funciona</h2>
+                <div class="process-steps">
+                    <div class="step-card" data-aos="fade-up">
+                        <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+                        <h3>1. Cadastre-se</h3>
+                        <p>Crie seu perfil e junte-se à nossa comunidade de forma rápida e segura.</p>
+                    </div>
+                    <div class="step-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="step-icon"><i class="fas fa-handshake"></i></div>
+                        <h3>2. Conecte-se e explore</h3>
+                        <p>Navegue por grupos de apoio, acesse recursos e encontre o suporte que precisa.</p>
+                    </div>
+                    <div class="step-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="step-icon"><i class="fas fa-heart"></i></div>
+                        <h3>3. Fortaleça sua rede</h3>
+                        <p>Participe de eventos, troque experiências e se sinta mais forte a cada passo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="depoimentos" class="section">
+            <div class="container">
+                <h2 class="section-title">O que nossas mães dizem</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card" data-aos="fade-up">
+                        <img src="./img/mae1.png" alt="Foto de perfil da Mariana S.">
+                        <p>"O EloMaterno foi um abraço quando eu mais precisei. Encontrei forças que eu não sabia que
+                            tinha."</p>
+                        <h4>Paty B.<span>mãe da Ana</span></h4>
+                    </div>
+                    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+                        <img src="./img/mae3.png" alt="Foto de perfil da Juliana P.">
+                        <p>"Eu me sentia tão isolada. Aqui, encontrei um espaço sem julgamentos para ser eu mesma.
+                            Recomendo para todas as mães solo!"</p>
+                        <h4>Juliana P.<span>mãe da Sofia</span></h4>
+                    </div>
+                    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="400">
+                        <img src="./img/mae2.png" alt="Foto de perfil da Carla F.">
+                        <p>"Além do apoio emocional, as dicas práticas sobre direitos na maternidade solo foram um
+                            divisor de águas para mim. Sou muito grata."</p>
+                        <h4>Renata R.<span>mãe da Emily</span></h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="quem-pode-usar" class="section bg-light">
+            <div class="container">
+                <h2 class="section-title">Para quem é o EloMaterno?</h2>
+                <div class="content-wrapper">
+                    <div class="image-content" data-aos="fade-right">
+                        <img src="./img/paraqueméaelo (2).png"
+                            alt="Ilustração de diversas mulheres, representando a diversidade de mães na plataforma.">
+                    </div>
+                    <div class="text-content" data-aos="fade-left">
+                        <div class="user-categories">
+                            <div class="user-category">
+                                <h3><i class="fas fa-user-friends"></i> Mães solo em geral</h3>
+                                <p>Seja você mãe solo por escolha, divórcio, viuvez ou qualquer outra circunstância.
+                                    Todas são bem-vindas.</p>
+                            </div>
+                            <div class="user-category">
+                                <h3><i class="fas fa-baby"></i> Mães de primeira viagem</h3>
+                                <p>Oferecemos um ambiente de apoio para ajudar mães de primeira viagem a se adaptarem à
+                                    jornada e encontrarem o suporte necessário.</p>
+                            </div>
+                            <div class="user-category">
+                                <h3><i class="fas fa-network-wired"></i> Mulheres que buscam conexão</h3>
+                                <p>Se você busca uma comunidade, troca de experiências e conselhos práticos, aqui é o
+                                    seu lugar.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cadastro" class="section bg-primary">
+            <div class="container">
+                <div class="signup-wrapper">
+                    <div class="signup-content" data-aos="zoom-in">
+                        <h2 class="section-title light">Pronta para começar?</h2>
+                        <p class="section-subtitle light">Escolha a melhor opção para você e comece sua jornada com o
+                            EloMaterno.</p>
+                        <div class="options-container">
+                            <div class="option-card" data-aos="fade-up" data-aos-delay="200">
+                                <i class="fas fa-laptop-code"></i>
+                                <h3>Acessar o sistema web</h3>
+                                <p>Use a plataforma diretamente no seu navegador, de qualquer dispositivo, sem a
+                                    necessidade de instalação.</p>
+                                <a href="formPerfil.html" class="btn btn-light">Acessar agora</a>
+                            </div>
+                            <div class="option-card" data-aos="fade-up" data-aos-delay="400">
+                                <i class="fas fa-mobile-alt"></i>
+                                <h3>Baixar o aplicativo</h3>
+                                <p>Tenha acesso offline, notificações em tempo real e todos os recursos na palma da sua
+                                    mão.</p>
+                                <a href="#" class="btn btn-light">Baixar para Android/iOS</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo-footer">
+                        <h3>EloMaterno</h3>
+                    </div>
+                    <p>Uma plataforma dedicada a fortalecer e conectar mães solo em toda sua jornada materna, oferecendo
+                        recursos, apoio e uma rede de solidariedade.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Navegação</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#o-que-e">O que é</a></li>
+                        <li><a href="#como-funciona">Como funciona</a></li>
+                        <li><a href="#depoimentos">Depoimentos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> contato@elomaterno.com.br</li>
+                        <li><i class="fas fa-phone"></i> (11) 99999-9999</li>
+                        <li><i class="fas fa-map-marker-alt"></i> São Paulo, SP</li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>Siga-nos</h4>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 EloMaterno. Todos os direitos reservados.</p>
+                <div class="footer-legal">
+                    <a href="#">Termos de Uso</a>
+                    <a href="#">Política de Privacidade</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="page-overlay" class="hidden"></div>
+
+    <div id="cookie-banner" class="hidden">
+        <div class="banner-content">
+            <p>O <b>EloMaterno</b> usa cookies para melhorar sua experiência. Para continuar, você precisa aceitar nossos
+                <a id="banner-link-prefs">Termos de Uso e Política de Privacidade</a>.</p>
+            <div class="banner-buttons">
+                <button id="banner-btn-prefs" class="btn btn-secondary">Ver Termos</button>
+                <button id="banner-btn-accept" class="btn btn-primary">Aceitar Tudo</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="preferences-modal" class="hidden">
+        <div class="modal-sidebar">
+            <h3>Central de Privacidade</h3>
+            <ul>
+                <li id="tab-necessarios" class="modal-tab active">Necessários</li>
+                <li id="tab-politicas" class="modal-tab">Nossas Políticas</li>
+            </ul>
+        </div>
+
+        <div class="modal-main-content">
+            <div class="modal-header">
+                <h4 id="modal-title">Cookies Estritamente Necessários</h4>
+                <span id="close-modal">&times;</span>
+            </div>
+
+            <div class="modal-policy-content">
+
+                <div id="content-necessarios" class="tab-content">
+                    <p>Estes cookies são essenciais para o funcionamento do site e não podem ser desativados. Eles são
+                        usados para funções básicas como manter seu login, garantir a segurança e permitir a navegação.
+                    </p>
+                    <div class="toggle-container">
+                        <strong>Sempre Ativo</strong>
+                        <label class="switch">
+                            <input type="checkbox" checked disabled>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="content-politicas" class="tab-content hidden">
+                    <p>Para usar o EloMaterno, você deve ler e concordar com nossas políticas. Clique em cada documento
+                        para ler.</p>
+
+                    <ul class="policy-links">
+                      <li><a href="termos_de_uso.html">1. Termos de Uso</a></li>
+                      <li><a href="politica_privacidade.html">2. Política de Privacidade</a></li>
+                      <li><a href="politica_cookies.html">3. Política de Cookies</a></li>
+                    </ul>
+
+                    <p style="margin-top: 20px;">Após ler os documentos, marque a caixa abaixo para confirmar seu
+                        aceite.</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="footer-consent">
+                    <input type="checkbox" id="consent-checkbox">
+                    <label for="consent-checkbox">Li e aceito todas as políticas</label>
+                </div>
+                <button id="modal-accept-all" class="btn btn-primary" disabled>Confirmar e Aceitar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cookie-widget" class="hidden">
+        <img src="./img/icone-cookie.png" alt="Preferências de Cookies">
+        <span class="widget-tooltip">
+            Gerenciar Preferências
+        </span>
+    </div>
+    <script src="./js/index.js"></script>
+    <script type="module" src="./js/modeloelo.js"></script>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
+
+    <script>
+        (function () {
+            const carousel = document.getElementById('partners-carousel');
+            if (!carousel) return;
+
+            const SPEED_PX_PER_SEC = 18;
+            const originalItems = Array.from(carousel.querySelectorAll('a.partner'));
+
+            function initMarquee() {
+                carousel.innerHTML = '';
+
+                const marquee = document.createElement('div');
+                marquee.className = 'marquee';
+
+                const wrap1 = document.createElement('div');
+                wrap1.className = 'marquee__wrap';
+                originalItems.forEach(it => wrap1.appendChild(it.cloneNode(true)));
+
+                const wrap2 = wrap1.cloneNode(true);
+                wrap2.className = 'marquee__wrap';
+
+                marquee.appendChild(wrap1);
+                marquee.appendChild(wrap2);
+                carousel.appendChild(marquee);
+
+                requestAnimationFrame(() => {
+                    const wrapW = wrap1.getBoundingClientRect().width;
+                    if (!wrapW || wrapW < 2) {
+                        setTimeout(() => {
+                            const wrapW2 = wrap1.getBoundingClientRect().width;
+                            startAnimation(marquee, wrapW2);
+                        }, 120);
+                    } else {
+                        startAnimation(marquee, wrapW);
+                    }
+                });
+
+                marquee.addEventListener('mouseenter', () => {
+                    marquee.classList.add('paused');
+                });
+                marquee.addEventListener('mouseleave', () => {
+                    marquee.classList.remove('paused');
+                });
+                marquee.addEventListener('focusin', () => marquee.classList.add('paused'));
+                marquee.addEventListener('focusout', () => marquee.classList.remove('paused'));
+                marquee.addEventListener('touchstart', () => marquee.classList.add('paused'));
+                marquee.addEventListener('touchend', () => marquee.classList.remove('paused'));
+            }
+
+            function startAnimation(marquee, wrapWidth) {
+                if (!wrapWidth || wrapWidth < 2) wrapWidth = 800;
+                const duration = wrapWidth / SPEED_PX_PER_SEC;
+                marquee.style.animationDuration = duration + 's';
+                requestAnimationFrame(() => marquee.classList.add('animate'));
+            }
+
+            const imgs = originalItems.map(a => a.querySelector('img')).filter(Boolean);
+            if (imgs.length === 0) {
+                initMarquee();
+            } else {
+                let loaded = 0;
+                imgs.forEach(img => {
+                    if (img.complete && img.naturalWidth !== 0) {
+                        loaded++;
+                    } else {
+                        img.addEventListener('load', () => { loaded++; if (loaded === imgs.length) initMarquee(); });
+                        img.addEventListener('error', () => { loaded++; if (loaded === imgs.length) initMarquee(); });
+                    }
+                });
+                if (loaded === imgs.length) initMarquee();
+                setTimeout(() => { if (!carousel.querySelector('.marquee')) initMarquee(); }, 1000);
+            }
+
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    const marquee = carousel.querySelector('.marquee');
+                    const wrap1 = carousel.querySelector('.marquee__wrap');
+                    if (!marquee || !wrap1) return;
+                    marquee.classList.remove('animate');
+                    setTimeout(() => {
+                        const w = wrap1.getBoundingClientRect().width;
+                        startAnimation(marquee, w);
+                    }, 80);
+                }, 120);
+            });
+        })();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+           
+            const pageBody = document.querySelector('body');
+            const pageOverlay = document.getElementById('page-overlay');
+            const cookieBanner = document.getElementById('cookie-banner');
+            const preferencesModal = document.getElementById('preferences-modal');
+            const cookieWidget = document.getElementById('cookie-widget');
+
+            const acceptBannerBtn = document.getElementById('banner-btn-accept');
+            const prefsBannerBtn = document.getElementById('banner-btn-prefs');
+            const bannerLinkPrefs = document.getElementById('banner-link-prefs');
+
+            const closeModalBtn = document.getElementById('close-modal');
+            const acceptModalBtn = document.getElementById('modal-accept-all');
+            const consentCheckbox = document.getElementById('consent-checkbox');
+
+            const modalTitle = document.getElementById('modal-title');
+            const tabNecessarios = document.getElementById('tab-necessarios');
+            const tabPoliticas = document.getElementById('tab-politicas');
+            const contentNecessarios = document.getElementById('content-necessarios');
+            const contentPoliticas = document.getElementById('content-politicas');
+
+
+       
+            const mobileMenuIcon = document.querySelector('.mobile-menu-icon');
+            const nav = document.querySelector('header .container nav');
+            const menuIcon = document.querySelector('.mobile-menu-icon i');
+
+
+            
+            function acceptPolicies() {
+                sessionStorage.setItem('policiesAccepted_EloMaterno', 'true'); // Correção para sessionStorage
+
+                pageBody.classList.remove('blocked');
+                if (pageOverlay) pageOverlay.classList.add('hidden');
+                if (cookieBanner) cookieBanner.classList.add('hidden');
+                if (preferencesModal) preferencesModal.classList.add('hidden');
+                if (cookieWidget) cookieWidget.classList.remove('hidden');
+            }
+
+            function showPreferences() {
+                if (cookieBanner) cookieBanner.classList.add('hidden');
+                if (preferencesModal) preferencesModal.classList.remove('hidden');
+                if (pageOverlay) pageOverlay.classList.remove('hidden');
+            }
+
+            function showPreferencesFromWidget() {
+                if (preferencesModal) preferencesModal.classList.remove('hidden');
+                if (pageOverlay) pageOverlay.classList.remove('hidden');
+            }
+
+            function closeModal() {
+                if (preferencesModal) preferencesModal.classList.add('hidden');
+                if (pageOverlay) pageOverlay.classList.add('hidden');
+
+                if (sessionStorage.getItem('policiesAccepted_EloMaterno') !== 'true') {
+                    if (cookieBanner) cookieBanner.classList.remove('hidden');
+                    if (pageOverlay) pageOverlay.classList.remove('hidden');
+                } else {
+                    if (pageOverlay) pageOverlay.classList.add('hidden');
+                }
+            }
+
+            function checkInitialConsent() {
+                const policiesAccepted = sessionStorage.getItem('policiesAccepted_EloMaterno') === 'true';
+                const path = window.location.pathname;
+
+                const isLandingPage = path.endsWith('/') || path.endsWith('/index.html');
+
+                if (policiesAccepted) {
+                    pageBody.classList.remove('blocked');
+                    if (cookieWidget) cookieWidget.classList.remove('hidden');
+                } else {
+                    pageBody.classList.add('blocked');
+
+                    if (!isLandingPage) {
+                        alert("Você precisa aceitar os Termos de Uso para navegar no EloMaterno.");
+                        window.location.href = 'index.html';
+                        return;
+                    }
+
+                    if (pageOverlay) pageOverlay.classList.remove('hidden');
+                    if (cookieBanner) cookieBanner.classList.remove('hidden');
+                }
+            }
+
+
+            
+            if (acceptBannerBtn) acceptBannerBtn.addEventListener('click', acceptPolicies);
+            if (prefsBannerBtn) prefsBannerBtn.addEventListener('click', showPreferences);
+            if (bannerLinkPrefs) bannerLinkPrefs.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPreferences();
+            });
+
+            if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+            if (acceptModalBtn) acceptModalBtn.addEventListener('click', acceptPolicies);
+
+            if (cookieWidget) cookieWidget.addEventListener('click', showPreferencesFromWidget);
+
+            if (pageOverlay) pageOverlay.addEventListener('click', closeModal);
+
+            if (consentCheckbox) consentCheckbox.addEventListener('change', () => {
+                acceptModalBtn.disabled = !consentCheckbox.checked;
+                acceptModalBtn.innerText = consentCheckbox.checked ? "Confirmar e Aceitar" : "Confirme o aceite";
+            });
+
+            if (tabNecessarios) tabNecessarios.addEventListener('click', () => {
+                if(modalTitle) modalTitle.innerText = "Cookies Estritamente Necessários";
+                tabNecessarios.classList.add('active');
+                tabPoliticas.classList.remove('active');
+                contentNecessarios.classList.remove('hidden');
+                contentPoliticas.classList.add('hidden');
+            });
+
+            if (tabPoliticas) tabPoliticas.addEventListener('click', () => {
+                if(modalTitle) modalTitle.innerText = "Nossas Políticas";
+                tabPoliticas.classList.add('active');
+                tabNecessarios.classList.remove('active');
+                contentPoliticas.classList.remove('hidden');
+                contentNecessarios.classList.add('hidden');
+            });
+
+
+            if (mobileMenuIcon && nav && menuIcon) {
+                mobileMenuIcon.addEventListener('click', () => {
+                    nav.classList.toggle('active');
+
+                    if (nav.classList.contains('active')) {
+                        menuIcon.classList.remove('fa-bars');
+                        menuIcon.classList.add('fa-times');
+                        pageBody.classList.add('blocked'); 
+                    } else {
+                        menuIcon.classList.remove('fa-times');
+                        menuIcon.classList.add('fa-bars');
+                        if (sessionStorage.getItem('policiesAccepted_EloMaterno') === 'true') {
+                            pageBody.classList.remove('blocked');
+                        }
+                    }
+                });
+            }
+
+
+            
+            checkInitialConsent();
+        });
+    </script>
+    </body>
+
+</html>

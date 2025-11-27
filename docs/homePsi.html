@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EloMaterno - Home Psicólogo</title>
+  <link rel="stylesheet" href="./css/homePsi.css">
+  <link rel="stylesheet" href="./css/globals.css">
+  <link rel="stylesheet" href="./css/calendario.css">
+  <link rel="stylesheet" href="./css/chat.css">
+
+  <link rel="stylesheet" href="./css/forum.css">
+  <link rel="stylesheet" href="./css/artigos.css">
+  <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+  <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <header class="header">
+    <h1>Bem vindo(a) Dr. Psicólogo</h1>
+    <div class="header-actions">
+      <button id="infoBtn" class="info-btn">
+        <i class="fa-solid fa-circle-info"></i>
+      </button>
+      <button id="logoutBtn" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <aside class="sidebar">
+      <button class="menu-btn active" data-target="dashboard">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Painel de controle</span>
+      </button>
+
+      <button class="menu-btn" data-target="agenda">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span>Agenda</span>
+      </button>
+
+      <button class="menu-btn" data-target="artigos">
+        <i class="fa-solid fa-newspaper"></i>
+        <span>Artigos</span>
+      </button>
+
+      <button class="menu-btn" data-target="consultas">
+        <i class="fa-solid fa-hands-helping"></i>
+        <span>Consultas</span>
+      </button>
+
+      <button class="menu-btn" data-target="forum">
+        <i class="fa-solid fa-comments"></i>
+        <span>Fórum</span>
+      </button>
+
+      <button class="menu-btn" data-target="pacientes">
+        <i class="fa-solid fa-user-group"></i>
+        <span>Pacientes</span>
+      </button>
+
+      <button class="menu-btn" data-target="chats">
+        <i class="fa-solid fa-message"></i>
+        <span>Chats</span>
+      </button>
+
+      <div class="last-activities">
+        <h3>Últimas Atividades</h3>
+        <ul>
+          <li>Consulta concluída - 09:00</li>
+          <li>Nova consulta - 16:00</li>
+        </ul>
+      </div>
+    </aside>
+
+    <section class="content" id="dashboard">
+      <h2>Consultas Agendadas</h2>
+      <div id="todayAppointments"></div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <span>3</span>
+          <p>Consultas agendadas hoje</p>
+        </div>
+        <div class="stat-card">
+          <span>8</span>
+          <p>Sessões agendadas no total</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content hidden" id="agenda">
+      <div class="container">
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <button onclick="prevMonth()">&lt;</button>
+            <div class="month-year-select">
+              <select id="month-select" onchange="onMonthChange()"></select>
+              <select id="year-select" onchange="onYearChange()"></select>
+            </div>
+            <button onclick="nextMonth()">&gt;</button>
+          </div>
+
+          <div class="calendar-days">
+            <div>D</div>
+            <div>S</div>
+            <div>T</div>
+            <div>Q</div>
+            <div>Q</div>
+            <div>S</div>
+            <div>S</div>
+          </div>
+          <div class="calendar-dates" id="calendarDates"></div>
+        </div>
+
+        <div class="events-container">
+          <h3>Consultas do mês</h3>
+          <div class="event-list"></div>
+          <button class="add-consult-btn">Adicionar consulta</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="content hidden" id="artigos">
+      <p>Carregando artigos...</p>
+    </section>
+
+    <section class="content hidden" id="forum">
+      <div class="forum-container">
+        <div class="forum-search">
+          <input type="text" id="forum-search-input" placeholder="Pesquisar no fórum">
+          <button class="add-for-btn" id="nova-post-btn">+</button>
+        </div>
+        <div id="posts-list">
+          <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content hidden" id="pacientes">
+      <h2>Histórico de Pacientes</h2>
+      <div class="patients-grid">
+        <div class="patient-card" data-id="1">
+          <div class="patient-header">
+            <span>Maria da Silva | 09:00</span>
+            <button class="note-btn"><img src="./img/edit_icon.png" alt="Editar"></button>
+          </div>
+          <div class="patient-body">
+            <p class="patient-notes">Nenhuma anotação adicionada.</p>
+            <button class="contact-btn">Entrar em contato</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="chats" class="content hidden">
+      <main class="chat-wrapper">
+        <aside class="chat-sidebar">
+          <div class="sidebar-header">Usuários</div>
+          <ul id="chatUsersList" class="user-list"></ul>
+        </aside>
+
+        <section class="chat-main">
+          <header class="chat-header" id="chatHeaderPsi">
+            <button class="back-btn hidden" id="backBtnPsi"><i class="fa fa-arrow-left"></i></button>
+            <img id="chatAvatarPsi" class="chat-avatar hidden" src="" alt="Avatar do usuário">
+            <span id="chatTitlePsi">Selecione um usuário</span>
+          </header>
+
+          <div id="messagesPsi" class="chat-messages"></div>
+
+          <form id="messageFormPsi" class="chat-input hidden">
+            <button type="button" id="voiceBtnPsi" class="voice-btn">
+              <i class="fa fa-microphone"></i>
+            </button>
+            <input type="text" id="messageInputPsi" placeholder="Digite sua mensagem..." required>
+            <button type="submit"><i class="fa fa-paper-plane"></i></button>
+          </form>
+        </section>
+      </main>
+    </section>
+
+    <section class="content hidden" id="consultas">
+      <div class="consultas-container">
+        <div class="section-header">
+          <div class="consultas-tabs">
+            <button class="tab-btn active" data-status="pendente">Pendentes</button>
+            <button class="tab-btn" data-status="aceito">Agendadas</button>
+            <button class="tab-btn" data-status="realizado">Realizadas</button>
+            <button class="tab-btn" data-status="negado">Negadas</button>
+          </div>
+
+          <h2 id="titulo-consultas"></h2>
+        </div>
+
+        <div class="consultas-list" id="consultas-list"></div>
+      </div>
+
+    </section>
+
+    <div class="popup hidden" id="notesPopup">
+      <div class="popup-content">
+        <h3>Anotações do Paciente</h3>
+        <textarea id="notesArea" placeholder="Escreva suas anotações aqui..."></textarea>
+        <div class="popup-actions">
+          <button id="saveNote" class="contact-btn">Salvar</button>
+          <button id="closePopup" class="add-consult-btn" type="button">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="content hidden" id="informacoes">
+      <h2>Editar Informações do Psicólogo</h2>
+      <form id="psiForm" class="info-form">
+        <div class="input-edit">
+          <label>Nome:</label>
+          <div class="field-group">
+            <input type="text" id="psiNome" placeholder="Nome completo" disabled>
+            <button type="button" class="edit-btn" data-field="nome"><i class="fa-solid fa-pen"></i></button>
+          </div>
+        </div>
+
+        <div class="input-edit">
+          <label>Email:</label>
+          <div class="field-group">
+            <input type="email" id="psiEmail" placeholder="Email" disabled>
+            <button type="button" class="edit-btn" data-field="email"><i class="fa-solid fa-pen"></i></button>
+          </div>
+        </div>
+
+        <div class="input-edit">
+          <label>CRP:</label>
+          <div class="field-group">
+            <input type="text" id="psiCRP" placeholder="CRP" disabled>
+            <button type="button" class="edit-btn" data-field="crp"><i class="fa-solid fa-pen"></i></button>
+          </div>
+        </div>
+
+        <div class="input-edit">
+          <label>Área:</label>
+          <div class="field-group">
+            <input type="text" id="psiArea" placeholder="Área de atuação" disabled>
+            <button type="button" class="edit-btn" data-field="area"><i class="fa-solid fa-pen"></i></button>
+          </div>
+        </div>
+
+        <div class="input-edit">
+          <label>Especializações (separadas por vírgula):</label>
+          <div class="field-group">
+            <input type="text" id="psiEspecializacoes" placeholder="Ansiedade, Conflitos Amorosos..." disabled>
+            <button type="button" class="edit-btn" data-field="especializacoes"><i class="fa-solid fa-pen"></i></button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+  </main>
+
+  <script type="module" src="./js/homePsi.js"></script>
+
+</body>
+
+</html>

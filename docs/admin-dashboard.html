@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EloMaterno - Painel Administrativo</title>
+  <link rel="stylesheet" href="./css/adminDashboard.css">
+  <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+</head>
+
+<body>
+  <header class="header">
+    <h1>Painel Administrativo - EloMaterno</h1>
+    <img src="./img/logo_icon.png" alt="Foto do administrador" class="profile-img">
+  </header>
+
+  <main class="main-container">
+    <aside class="sidebar">
+      <button class="menu-btn active" data-target="dashboard">
+        <img src="./img/painel_icon.png" alt="ícone painel">
+        <span>Painel Geral</span>
+      </button>
+
+      <button class="menu-btn" data-target="usuarios">
+        <img src="./img/pacientes_icon.png" alt="ícone usuários">
+        <span>Usuários</span>
+      </button>
+
+      <button class="menu-btn" data-target="consultas">
+        <img src="./img/agenda_icon.png" alt="ícone consultas">
+        <span>Consultas</span>
+      </button>
+
+      <button class="menu-btn" data-target="autorizacoes">
+        <img src="./img/count_icon.png" alt="ícone autorizações">
+        <span>Autorizações</span>
+      </button>
+
+      <!-- Atividades Recentes removido por pedido -->
+    </aside>
+
+    <section class="content" id="dashboard">
+      <h2>Visão Geral do Sistema</h2>
+      <div class="stats-grid">
+        <div class="stat-card"><span>0</span><p>Psicólogos Ativos</p></div>
+        <div class="stat-card"><span>0</span><p>Advogados Ativos</p></div>
+        <div class="stat-card"><span>0</span><p>Mães Ativas</p></div>
+        <div class="stat-card"><span>0</span><p>Consultas Hoje</p></div>
+      </div>
+<br>
+      <div class="chart-card">
+        <h3>Uso por categoria (últimos dados)</h3>
+        <canvas id="usageChart" width="800" height="400"></canvas>
+      </div>
+    </section>
+
+    <section class="content hidden" id="usuarios">
+      <h2>Usuários do Sistema</h2>
+      <br>
+      <div class="user-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Função</th>
+              <th>Email / Documento</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populado dinamicamente -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="content hidden" id="consultas">
+      <h2>Consultas Agendadas</h2>
+      <div class="user-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Paciente (mãe)</th>
+              <th>Profissional</th>
+              <th>Data</th>
+              <th>Horário</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populado dinamicamente -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="content hidden" id="autorizacoes">
+      <h2>Solicitações de Profissionais</h2>
+      <div class="request-list">
+        <!-- Populado dinamicamente -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Chart.js (global) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- seu módulo JS -->
+  <script type="module" src="./js/adminDashboard.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EloMaterno - Cadastro</title>
+  <link rel="stylesheet" href="./css/cad.css">
+  <link rel="stylesheet" href="./css/globals.css">
+  <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+  <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+  <script type="module" src="./js/cad-parc.js"></script>
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content h3 {
+      font-weight: 600;
+      color: #3d265a;
+      margin-bottom: 20px;
+    }
+
+    .modal-content p {
+      color: #4a4a4a;
+      font-size: 0.95rem;
+      margin: 6px 0;
+    }
+
+    .modal-content p strong {
+      color: #3d265a;
+    }
+
+    #confirmarCNPJ {
+      background-color: #5b3c91;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      margin-top: 15px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #confirmarCNPJ:hover {
+      background-color: #472f75;
+    }
+
+    .close {
+      position: absolute;
+      right: 15px;
+      top: 12px;
+      font-size: 20px;
+      color: #999;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .close:hover {
+      color: #333;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="cadastro-container">
+    <div class="cadastro-box">
+
+      <a href="formPerfil.html">
+        <img src="./img/logo_icon.png" alt="Logo mãe" class="logo">
+      </a>
+
+      <h2>Cadastre-se como um parceiro</h2>
+      <p class="subtexto">Junte-se a nós para transformar vidas</p>
+
+      <form action="homeParc.html" method="post" class="cadastro-form">
+        <div class="input-group">
+          <img src="./img/count_icon.png" alt="icone" class="icon">
+          <input type="text" placeholder="CNPJ:" name="CNPJ">
+        </div>
+
+        <div class="senha-linha">
+          <div class="input-group">
+            <img src="./img/email_icon.png" alt="icone" class="icon">
+            <input type="email" placeholder="Email corporativo:" name="email_corp">
+          </div>
+          <div class="input-group">
+            <img src="./img/crp_icon.png" alt="icone" class="icon">
+            <input type="text" placeholder="Área de atuação:" name="atuacao">
+          </div>
+        </div>
+
+
+        <div class="senha-linha">
+          <div class="input-group">
+            <img src="./img/pass_icon.png" alt="icone" class="icon">
+            <input type="password" placeholder="Senha:" name="senha">
+          </div>
+          <div class="input-group">
+            <img src="./img/pass_icon.png" alt="icone" class="icon">
+            <input type="password" placeholder="Repita a senha:" name="senha2">
+          </div>
+        </div>
+
+        <div class="aceite-termos">
+          <input type="checkbox" id="termos" name="termos">
+          <label for="termos"> Li e aceito os termos de parceria</label>
+          <p>Receba apoio, visibilidade e participe de nossa rede de impacto social.</p>
+        </div>
+        <br>
+        <a type="button" class="btn-cadastrar" id="btnCadastrar">Cadastrar</a>
+        <div id="msgCNPJ" style="margin-top:10px; color:#444;"></div>
+
+      </form>
+
+      <br>
+      <p class="login-link">Já possui conta? <a href="logParc.html">Entrar</a></p>
+
+    </div>
+  </div>
+
+  <div id="modalCNPJ" class="modal hidden">
+    <div class="modal-content">
+      <span id="fecharModal" class="close">&times;</span>
+      <h3>Confirme os dados da empresa</h3>
+      <p id="nomeEmpresaModal"></p>
+      <button id="confirmarCNPJ" class="btn-cadastrar">Confirmar</button>
+    </div>
+  </div>
+</body>
+
+</html>

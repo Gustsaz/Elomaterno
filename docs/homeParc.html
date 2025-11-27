@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EloMaterno - Home</title>
+    <link rel="stylesheet" href="./css/homeParc.css">
+    <link rel="stylesheet" href="./css/globals.css">
+    <link rel="stylesheet" href="./css/calendario.css">
+    <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+    <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f7f5fc;
+            padding: 15px 25px;
+            border-bottom: 2px solid #e3dcf9;
+        }
+
+        #boasVindas {
+            color: #3d265a;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background-color: #5b3c91;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #472f75;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h2 id="boasVindas">Olá, parceiro!</h2>
+        <button id="logoutBtn" class="logout-btn">Sair</button>
+    </header>
+
+    <div id="postModal" class="modal hidden">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <h2>Criar novo post</h2>
+
+            <form id="postForm">
+                <label>Título</label>
+                <input type="text" id="titulo" required>
+
+                <label>Descrição</label>
+                <input type="text" id="descricao" required>
+
+                <label>Resumo</label>
+                <textarea id="resumo" rows="3"></textarea>
+
+                <label>Imagem (URL)</label>
+                <input type="text" id="img" placeholder="img/post_img.png" required>
+
+                <label>Link</label>
+                <input type="url" id="link" placeholder="https://..." required>
+
+                <label>Categoria</label>
+                <select id="categoria" required>
+                    <option value="posts">Posts</option>
+                    <option value="legislativos">Legislativos</option>
+                    <option value="educacionais">Educacionais</option>
+                    <option value="dicas">Dicas</option>
+                </select>
+
+
+                <button type="submit">Publicar</button>
+                <div id="postMsg"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="eventModal" class="modal hidden">
+        <div class="modal-content">
+            <span id="closeEventModal" class="close">&times;</span>
+            <h2>Criar novo evento</h2>
+
+            <form id="eventForm">
+                <label>Título</label>
+                <input type="text" id="tituloEvento" required>
+
+                <label>Descrição</label>
+                <textarea id="descricaoEvento" rows="3"></textarea>
+
+                <label>Data do evento</label>
+                <input type="datetime-local" id="dataEvento" required>
+
+                <label>Local</label>
+                <input type="text" id="localEvento" placeholder="Ex: Online, Auditório Central..." required>
+
+                <label>Imagem de capa (URL)</label>
+                <input type="text" id="capaEvento" placeholder="img/palestra_img.png" required>
+
+                <button type="submit">Publicar Evento</button>
+                <div id="eventMsg"></div>
+            </form>
+        </div>
+    </div>
+
+
+    <main class="main-container">
+        <aside class="sidebar">
+            <button class="menu-btn active" data-target="dashboard">
+                <img src="./img/painel_icon.png" alt="ícone painel">
+                <span>Painel de controle</span>
+            </button>
+            <button class="menu-btn" data-target="calendario">
+                <img src="./img/calend_icon.png" alt="ícone calendário">
+                <span>Calendário</span>
+            </button>
+            <button class="menu-btn" data-target="forum">
+                <img src="./img/forum_icon.png" alt="ícone fórum">
+                <span>Fórum</span>
+            </button>
+            <button class="menu-btn" data-target="artigos">
+                <img src="./img/artigo_icon.png" alt="ícone artigos">
+                <span>Artigos</span>
+            </button>
+
+            <div class="last-activities">
+                <h3>Próximos Eventos</h3>
+                <ul>
+                    <li>Palestra Mulheres - 13/06</li>
+                    <li>Paternidade Ativa - 15/07</li>
+                </ul>
+            </div>
+        </aside>
+
+        <section class="content" id="dashboard">
+            <div class="section-header">
+                <h2>Post publicados</h2>
+                <button class="add-post-btn" title="Adicionar publicação">
+                    <img src="./img/add_icon.png" alt="Adicionar post">
+                </button>
+            </div>
+
+            <div class="articles-grid">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>Eventos Divulgados</h2>
+                <button class="add-event-btn" title="Adicionar evento">
+                    <img src="./img/add_icon.png" alt="Adicionar evento">
+                </button>
+            </div>
+
+            <div class="event-list horizontal">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content hidden" id="calendario">
+            <div class="container">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button onclick="prevMonth()">&lt;</button>
+                        <div class="month-year-select">
+                            <select id="month-select" onchange="onMonthChange()"></select>
+                            <select id="year-select" onchange="onYearChange()"></select>
+                        </div>
+                        <button onclick="nextMonth()">&gt;</button>
+                    </div>
+
+                    <div class="calendar-days">
+                        <div>D</div>
+                        <div>S</div>
+                        <div>T</div>
+                        <div>Q</div>
+                        <div>Q</div>
+                        <div>S</div>
+                        <div>S</div>
+                    </div>
+                    <div class="calendar-dates" id="calendarDates"></div>
+                </div>
+
+                <div class="events-container">
+                    <h3>Últimos eventos</h3>
+                    <div class="event-list">
+
+                    </div>
+                    <button class="add-consult-btn">Adicionar evento</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="content hidden" id="forum">
+            <div class="forum-container">
+                <div class="forum-search">
+                    <input type="text" id="forum-search-input" placeholder="Pesquisar no fórum">
+                    <button class="add-for-btn" id="nova-post-btn">+</button>
+                </div>
+
+                <div id="posts-list">
+                    <div class="loader">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <div class="modal hidden" id="modal-post">
+            <div class="modal-content">
+                <span class="close" id="close-post-modal">&times;</span>
+                <h2>Nova Publicação</h2>
+
+                <form id="form-post">
+                    <label for="titulo">Título</label>
+                    <input type="text" id="titulo" placeholder="Digite o título" required>
+
+                    <label for="conteudo">Conteúdo</label>
+                    <textarea id="conteudo" rows="4" placeholder="Escreva sua mensagem..." required></textarea>
+
+                    <label for="anonimo-checkbox" class="anonimo-check">
+                        <input type="checkbox" id="anonimo-checkbox">
+                        <span>Postar como anônimo</span>
+                    </label>
+
+                    <div class="modal-actions">
+                        <button type="button" id="cancelar-post">Cancelar</button>
+                        <button type="submit">Publicar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <section class="content hidden" id="artigos">
+
+            <div class="section-header">
+                <h2>Seus Artigos</h2>
+                <button class="add-post-btn-artigos" title="Adicionar artigo">
+                    <img src="./img/add_icon.png" alt="Adicionar artigo">
+                </button>
+            </div>
+            <div class="filtros-categorias">
+                <button class="filtro-btn active" data-cat="todas"hidden >Todos</button>
+                <button class="filtro-btn" data-cat="legislativos" hidden>Legislativos</button>
+                <button class="filtro-btn" data-cat="educacionais" hidden>Educacionais</button>
+                <button class="filtro-btn" data-cat="dicas" hidden>Dicas</button>
+                <button class="filtro-btn" data-cat="posts" hidden>Posts</button>
+            </div>
+
+            <div class="articles-grid" id="articlesGridArtigos">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="./js/globals.js"></script>
+    <script src="./js/calendario.js"></script>
+    <script type="module" src="./js/home-parc.js"></script>
+
+</body>
+
+</html>

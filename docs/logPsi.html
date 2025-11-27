@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EloMaterno - Login</title>
+  <link rel="stylesheet" href="./css/log.css">
+  <link rel="stylesheet" href="./css/globals.css">
+
+  <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
+  <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
+</head>
+
+<body>
+
+  <div class="login-container">
+    <div class="login-box">
+
+      <a href="formPerfil.html">
+        <img src="./img/logo_icon.png" alt="Logo mãe" class="logo">
+      </a>
+
+      <h2>Faça seu login</h2>
+      <p class="subtexto">Sua rede de acolhimento e suporte já começou</p>
+
+      <form action="#" method="post" class="login-form">
+
+        <div class="input-group">
+          <img src="./img/crp_icon.png" alt="icone" class="icon">
+          <input type="text" placeholder="CRP: (identificação psicól.)" name="crp">
+        </div>
+
+        <div class="input-group">
+          <img src="./img/pass_icon.png" alt="icone" class="icon">
+          <input type="password" placeholder="Senha:" name="senha">
+        </div>
+
+        <p class="forgot-pass"><a href="#">Esqueci minha senha</a></p>
+
+        <button type="submit" class="btn-entrar">Fazer Login</button>
+      </form>
+
+      <p class="cad-link">Não possui conta? <a href="cadPsi.html">Cadastrar</a></p>
+    </div>
+  </div>
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/login-psi.js"></script>
+  <script type="module" src="./js/globals.js"></script>
+</body>
+
+</html>
