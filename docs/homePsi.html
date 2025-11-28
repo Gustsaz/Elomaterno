@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="./css/globals.css">
   <link rel="stylesheet" href="./css/calendario.css">
   <link rel="stylesheet" href="./css/chat.css">
+  <link rel="stylesheet" href="./css/header.css">
 
   <link rel="stylesheet" href="./css/forum.css">
   <link rel="stylesheet" href="./css/artigos.css">
@@ -20,13 +21,64 @@
 <body>
   <header class="header">
     <h1>Bem-vindo(a), Dr.</h1>
-    <div class="header-actions">
+    <div class="right-section">
+
+      <div class="accessibility-selector">
+        <button id="accessibility-toggle" aria-label="Opções de acessibilidade">
+          <i class="fa fa-universal-access" aria-hidden="true"></i>
+        </button>
+        <ul id="accessibility-menu" class="hidden">
+          <li id="increase-font">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> Aumentar Fonte
+          </li>
+          <li id="decrease-font">
+            <i class="fa fa-minus-circle" aria-hidden="true"></i> Diminuir Fonte
+          </li>
+          <li id="colorblind-filter">
+            <i class="fa fa-low-vision" aria-hidden="true"></i> Filtros Daltonismo
+          </li>
+          <li id="screen-reader">
+            <i class="fa fa-assistive-listening-systems" aria-hidden="true"></i> Leitura em Voz
+          </li>
+          <li id="reading-mask">
+            <i class="fa fa-highlighter" aria-hidden="true"></i> Máscara de leitura
+          </li>
+          <li id="bold-text">
+            <i class="fa fa-bold" aria-hidden="true"></i> Letras destacadas
+          </li>
+          <li id="high-contrast">
+            <i class="fa fa-adjust" aria-hidden="true"></i> Alto contraste
+          </li>
+          <li id="increase-line">
+            <i class="fa fa-arrows-alt-v" aria-hidden="true"></i> Aumentar Espaçamento Linhas
+          </li>
+          <li id="decrease-line">
+            <i class="fa fa-compress-arrows-alt" aria-hidden="true"></i> Diminuir Espaçamento Linhas
+          </li>
+          <li id="reset-accessibility">
+            <i class="fa fa-undo" aria-hidden="true"></i> Redefinir
+          </li>
+        </ul>
+      </div>
+
+      <div id="reading-mask-overlay">
+        <div class="highlight-window"></div>
+      </div>
+
+      <div class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon" id="theme-toggle" aria-label="Alternar tema claro e escuro"></i>
+      </div>
+
       <button id="infoBtn" class="info-btn">
         <i class="fa-solid fa-circle-info"></i>
       </button>
+
       <button id="logoutBtn" class="logout-btn">
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
+
+    </div>
+
     </div>
   </header>
 

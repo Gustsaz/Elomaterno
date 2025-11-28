@@ -11,47 +11,72 @@
   <link rel="stylesheet" href="./css/globals.css">
   <link rel="stylesheet" href="./css/calendario.css">
   <link rel="stylesheet" href="./css/chat.css">
+  <link rel="stylesheet" href="./css/header.css">
+
   <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
   <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <style>
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #f7f5fc;
-      padding: 15px 25px;
-      border-bottom: 2px solid #e3dcf9;
-    }
-
-    #boasVindas {
-      color: #3d265a;
-      font-size: 1.2rem;
-      font-weight: 500;
-    }
-
-    .logout-btn {
-      background-color: #5b3c91;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 18px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .logout-btn:hover {
-      background-color: #472f75;
-    }
-  </style>
 </head>
 
 <body>
   <header class="header">
-    <h1 id="boasVindas">Bem vindo(a) Dr. Advogado</h1>
-    <button id="logoutBtn" class="logout-btn">Sair</button>
+    <h1 id="boasVindas">Bem vindo(a) Dr. </h1>
+    <div class="right-section">
+
+      <div class="accessibility-selector">
+        <button id="accessibility-toggle" aria-label="Opções de acessibilidade">
+          <i class="fa fa-universal-access" aria-hidden="true"></i>
+        </button>
+        <ul id="accessibility-menu" class="hidden">
+          <li id="increase-font">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> Aumentar Fonte
+          </li>
+          <li id="decrease-font">
+            <i class="fa fa-minus-circle" aria-hidden="true"></i> Diminuir Fonte
+          </li>
+          <li id="colorblind-filter">
+            <i class="fa fa-low-vision" aria-hidden="true"></i> Filtros Daltonismo
+          </li>
+          <li id="screen-reader">
+            <i class="fa fa-assistive-listening-systems" aria-hidden="true"></i> Leitura em Voz
+          </li>
+          <li id="reading-mask">
+            <i class="fa fa-highlighter" aria-hidden="true"></i> Máscara de leitura
+          </li>
+          <li id="bold-text">
+            <i class="fa fa-bold" aria-hidden="true"></i> Letras destacadas
+          </li>
+          <li id="high-contrast">
+            <i class="fa fa-adjust" aria-hidden="true"></i> Alto contraste
+          </li>
+          <li id="increase-line">
+            <i class="fa fa-arrows-alt-v" aria-hidden="true"></i> Aumentar Espaçamento Linhas
+          </li>
+          <li id="decrease-line">
+            <i class="fa fa-compress-arrows-alt" aria-hidden="true"></i> Diminuir Espaçamento Linhas
+          </li>
+          <li id="reset-accessibility">
+            <i class="fa fa-undo" aria-hidden="true"></i> Redefinir
+          </li>
+        </ul>
+      </div>
+
+      <div id="reading-mask-overlay">
+        <div class="highlight-window"></div>
+      </div>
+
+      <div class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon" id="theme-toggle" aria-label="Alternar tema claro e escuro"></i>
+      </div>
+
+      <button id="infoBtn" class="info-btn">
+        <i class="fa-solid fa-circle-info"></i>
+      </button>
+
+      <button id="logoutBtn" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
   </header>
 
   <div id="eventModal" class="modal hidden">

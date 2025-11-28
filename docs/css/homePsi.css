@@ -622,19 +622,6 @@ header .profile-img {
   gap: 10px;
 }
 
-.info-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #583e8e;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.info-btn:hover {
-  color: #826faf;
-}
-
 .info-form {
   display: flex;
   flex-direction: column;
