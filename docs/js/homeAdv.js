@@ -922,7 +922,123 @@ onAuthStateChanged(auth, async (user) => {
   await carregarPacientesVinculados();
 
   // filtrar e já renderiza a sidebar (carregarConsultas já chama renderConsultasSidebar e filtrar)
+
+  // Render dashboard appointments and stats
+  renderDashboardAppointments();
+  renderStats();
+
+  // Load and render last activities (proximas consultas aceitas)
+  renderLastActivities();
 });
+
+/* -----------------------
+   DASHBOARD: Appointments and Stats
+   ----------------------- */
+
+function renderDashboardAppointments() {
+  const container = document.getElementById("dashboard-appointments");
+  if (!container) return;
+
+  container.innerHTML = ""; // Remove loader
+
+  // Get upcoming accepted consultations, sort by date, limit to 2
+  const now = new Date();
+  const upcoming = consultas
+    .filter(c => c.status === "aceito" && c.Datahora?.toDate() > now)
+    .sort((a, b) => a.Datahora?.toDate() - b.Datahora?.toDate())
+    .slice(0, 2);
+
+  if (upcoming.length === 0) {
+    container.innerHTML = "<p>Nenhuma consulta agendada.</p>";
+    return;
+  }
+
+  upcoming.forEach(c => {
+    const mae = c.maeInfo || {};
+    const nome = mae.nome || "Mãe";
+    const data = c.Datahora.toDate();
+    const dataStr = `${data.getDate()} de ${data.toLocaleString("pt-BR", { month: "long" })} de ${data.getFullYear()} às ${data.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+    const card = document.createElement("div");
+    card.className = "appointment-card";
+    card.innerHTML = `
+      <div>
+        <strong>${nome}</strong>
+        <p>${dataStr}</p>
+      </div>
+      <button class="contact-btn">Entrar em contato</button>
+    `;
+    // Optionally add click handler for contact
+
+    container.appendChild(card);
+  });
+}
+
+function renderStats() {
+  const dashboardSection = document.getElementById("dashboard");
+  if (!dashboardSection) return;
+
+  const statsDiv = dashboardSection.querySelector(".stats");
+  if (!statsDiv) return;
+
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfWeek = new Date(now.getTime() - now.getDay() * 24 * 60 * 60 * 1000);
+
+  const hojeAgendadas = consultas.filter(c =>
+    c.status === "aceito" &&
+    c.Datahora?.toDate() >= startOfDay
+  ).length;
+
+  const semanaRealizadas = consultas.filter(c =>
+    c.status === "realizado" &&
+    c.Datahora?.toDate() >= startOfWeek
+  ).length;
+
+  const cards = statsDiv.querySelectorAll(".stat-card");
+  if (cards[0]) {
+    cards[0].innerHTML = `<span>${hojeAgendadas}</span><p>Consultas agendadas hoje</p>`;
+  }
+  if (cards[1]) {
+    cards[1].innerHTML = `<span>${semanaRealizadas}</span><p>Sessões realizadas essa semana</p>`;
+  }
+}
+
+/* -----------------------
+   LAST ACTIVITIES: Próximas Consultas
+   ----------------------- */
+
+function renderLastActivities() {
+  const lastActivities = document.querySelector(".last-activities");
+  if (!lastActivities) return;
+
+  lastActivities.querySelector("h3").textContent = "Próximas Consultas";
+
+  const list = lastActivities.querySelector(".last-activities-list");
+  if (!list) return;
+
+  list.innerHTML = ""; // clear loader
+
+  const now = new Date();
+  const futureAccepted = consultas
+    .filter(c => c.status === "aceito" && c.Datahora?.toDate() > now)
+    .sort((a, b) => a.Datahora?.toDate() - b.Datahora?.toDate())
+    .slice(0, 3); // limit 3
+
+  if (futureAccepted.length === 0) {
+    list.innerHTML = "<p>Nenhuma consulta aceita futura.</p>";
+    return;
+  }
+
+  const ul = document.createElement("ul");
+  futureAccepted.forEach(c => {
+    const date = c.Datahora.toDate();
+    const li = document.createElement("li");
+    li.textContent = `${date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    ul.appendChild(li);
+  });
+  list.appendChild(ul);
+}
 
 /* -----------------------
    PACIENTES VINCULADOS (advogado) — renderiza .patients-grid
@@ -1395,4 +1511,3 @@ if (backBtnAdv) {
     });
   });
 })();
-
