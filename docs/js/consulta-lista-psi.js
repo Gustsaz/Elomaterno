@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const area = tipo === "psicologo" ? (data.area || "Área não informada") : (data.atuacao || "Atuação não informada");
       const especializacoes = (data.especializacoes || []).slice(0, 3);
       const extras = (data.especializacoes || []).length > 3 ? `<span>+${data.especializacoes.length - 3}</span>` : "";
-      const foto = tipo === "psicologo" ? "./img/psi1.png" : "./img/adv1.png"; // você pode trocar adv1.png depois
+      const foto = tipo === "psicologo" ? (data.avatar || "./img/account_icon.png") : "./img/adv1.png";
       const nota = data.notas?.length ? (data.notas.reduce((a, b) => a + b, 0) / data.notas.length).toFixed(2) : "5.00";
       const avaliacoes = data.notas?.length || 0;
       const atendimentos = data.atendimentos || Math.floor(Math.random() * 300 + 100);

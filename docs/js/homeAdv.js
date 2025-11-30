@@ -111,12 +111,33 @@ document.addEventListener("DOMContentLoaded", () => {
 function initMenuButtons() {
   const buttons = document.querySelectorAll(".menu-btn");
   const contents = document.querySelectorAll(".content");
+  const lastSection = localStorage.getItem('homeadv_lastSection') || 'dashboard';
+
+  // Clear all active classes and hide all contents
+  buttons.forEach(button => button.classList.remove('active'));
+  contents.forEach(content => content.classList.add('hidden'));
+
+  // Set initial active based on lastSection
+  buttons.forEach(btn => {
+    const target = btn.getAttribute("data-target");
+    if (target === lastSection) {
+      btn.classList.add("active");
+    }
+  });
+  contents.forEach(c => {
+    if (c.id === lastSection) {
+      c.classList.remove("hidden");
+    }
+  });
+
+  // Event listeners
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
       buttons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       const target = btn.getAttribute("data-target");
       contents.forEach(c => c.classList.toggle("hidden", c.id !== target));
+      localStorage.setItem('homeadv_lastSection', target);
     });
   });
 }
@@ -513,23 +534,11 @@ function initForum() {
             <div><span class="author-name">${post.autorNome}</span><span class="post-date">${data}</span></div>
           </div>
           <p class="post-content">${post.conteudo}</p>
-          <div class="like-wrap" data-id="${id}">
-            <img src="./img/like_icon.png" class="like-icon">
-            <span class="like-count">${post.likes || 0}</span>
-          </div>
         `;
         postsList.appendChild(div);
       });
 
-      document.querySelectorAll(".like-wrap").forEach(btn => {
-        if (btn._bound) return;
-        btn._bound = true;
-        btn.addEventListener("click", async () => {
-          const postId = btn.dataset.id;
-          const ref = doc(db, "posts", postId);
-          await updateDoc(ref, { likes: increment(1) });
-        });
-      });
+      // Likes functionality removed as per requirements
     }, (err) => console.error("Erro snapshot posts:", err));
   });
 
@@ -568,24 +577,28 @@ async function carregarConsultas() {
   showConsultasLoader(); // mostra loader imediatamente
 
   try {
-    const snap = await getDocs(collection(db, "Consultas"));
+    // Otimizado: query direta por Advogado para reduzir dados transferidos
+    const q = query(collection(db, "Consultas"), where("Advogado", "==", usuarioAtual));
+    const snap = await getDocs(q);
+
+    // Extrair UIDs únicos das mães para busca batch
+    const maeUids = [...new Set(snap.docs.filter(doc => doc.data().Mae).map(doc => doc.data().Mae))];
+
+    // Busca batch de usuarios para eficiência
+    const maePromises = maeUids.map(uid => getDoc(doc(db, "usuarios", uid)));
+    const maeSnaps = await Promise.all(maePromises);
+
+    // Mapeamento UID -> dados para acesso rápido
+    const maeMap = Object.fromEntries(
+      maeSnaps
+        .filter(snap => snap.exists())
+        .map(snap => [snap.id, snap.data()])
+    );
+
     for (const docu of snap.docs) {
       const dados = docu.data();
-      const advField = dados.Advogado || dados.advogado;
-      if (!advField) continue;
-      if (!usuarioAtual) continue;
-      if (advField !== usuarioAtual) continue;
 
-      let maeInfo = null;
-      if (dados.Mae) {
-        try {
-          const maeRef = doc(db, "usuarios", dados.Mae);
-          const maeSnap = await getDoc(maeRef);
-          maeInfo = maeSnap.exists() ? maeSnap.data() : null;
-        } catch (err) {
-          console.warn("Erro lendo maeInfo:", err);
-        }
-      }
+      let maeInfo = maeMap[dados.Mae] || null;
 
       const item = { id: docu.id, ...dados, maeInfo };
       consultas.push(item);
@@ -1069,17 +1082,21 @@ async function carregarPacientesVinculados() {
       return;
     }
 
+    // Busca batch de usuarios para eficiência
+    const maePromises = maesUids.map(uid => getDoc(doc(db, "usuarios", uid)));
+    const maeSnaps = await Promise.all(maePromises);
+    const maeMap = Object.fromEntries(
+      maeSnaps
+        .filter(snap => snap.exists())
+        .map(snap => [snap.id, snap.data()])
+    );
+
     grid.innerHTML = ""; // limpa para renderizar
 
-    // para cada mãe UID, busca dados e renderiza card
+    // para cada mãe UID, usa dados em cache e renderiza card
     for (const uidMae of maesUids) {
       try {
-        // busca dados do usuário diretamente na coleção "usuarios"
-        const maeRef = doc(db, "usuarios", uidMae);
-        const maeSnap = await getDoc(maeRef);
-        const mae = maeSnap.exists()
-          ? maeSnap.data()
-          : { nome: "Usuário", avatar: "./img/avatar_usuario.png", telefone: "", cidade: "", emprego: "" };
+        const mae = maeMap[uidMae] || { nome: "Usuário", avatar: "./img/avatar_usuario.png", telefone: "", cidade: "", emprego: "" };
         console.log("MAE →", uidMae, mae);
 
         // busca última consulta dessa mãe com este advogado (para mostrar data/hora)

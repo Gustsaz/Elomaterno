@@ -20,6 +20,23 @@ import {
   arrayRemove,
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
+/* ========== HELPERS DE MODAL ========== */
+function showModal(modalEl) {
+  if (!modalEl) return;
+  modalEl.classList.remove("hidden");
+  modalEl.style.display = "flex";
+  modalEl.style.position = "fixed";
+  modalEl.style.top = "0";
+  modalEl.style.left = "0";
+  modalEl.style.width = "100vw";
+  modalEl.style.height = "100vh";
+  modalEl.style.zIndex = "99999";
+}
+function hideModal(modalEl) {
+  if (!modalEl) return;
+  modalEl.classList.add("hidden");
+  modalEl.style.display = "none";
+}
 
 let eventosPsi = [];
 let currentMonth = new Date().getMonth();
@@ -35,6 +52,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll(".menu-btn");
   const contents = document.querySelectorAll(".content");
 
+  const lastSection = localStorage.getItem('homepsi_lastSection') || 'dashboard';
+
+  // Clear all active classes and hide all contents
+  buttons.forEach(button => button.classList.remove('active'));
+  contents.forEach(content => content.classList.add('hidden'));
+
+  // Set initial active based on lastSection
+  buttons.forEach(btn => {
+    const target2 = btn.getAttribute("data-target");
+    if (target2 === lastSection) {
+      btn.classList.add("active");
+    }
+  });
+
+  contents.forEach(c => {
+    if (c.id === lastSection) {
+      c.classList.remove("hidden");
+    }
+  });
+
+  // Load if needed
+  if (lastSection === "agenda") carregarEventos();
+  if (lastSection === "chats") carregarChatsPsi();
+  if (lastSection === "pacientes") carregarPacientes();
+
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
       buttons.forEach((b) => b.classList.remove("active"));
@@ -42,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const target = btn.getAttribute("data-target");
       contents.forEach((c) => c.classList.toggle("hidden", c.id !== target));
+      localStorage.setItem('homepsi_lastSection', target);
 
       if (target === "agenda") carregarEventos();
       if (target === "chats") carregarChatsPsi();
@@ -329,6 +372,101 @@ onAuthStateChanged(auth, () => {
   carregarUltimasAtividades();
 });
 
+// ========== AVATAR LOGIC ==========
+let selectedAvatar = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+
+  try {
+    const q = query(collection(db, "psicologos"), where("uid", "==", user.uid));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      const data = snap.docs[0].data();
+      const currentAvatar = document.getElementById("currentAvatar");
+
+      // Load current avatar
+      if (data.avatar) {
+        currentAvatar.src = data.avatar;
+      } else {
+        currentAvatar.src = "./img/account_icon.png";
+      }
+
+      // Check if first time (no avatar set)
+      if (!data.avatar || data.avatar === "") {
+        showModal(document.getElementById("firstAvatarModal"));
+      }
+    }
+  } catch (err) {
+    console.error("Erro ao carregar avatar do psicólogo:", err);
+  }
+});
+
+// Avatar button to open change modal
+document.getElementById("avatarBtn")?.addEventListener("click", () => {
+  showModal(document.getElementById("changeAvatarModal"));
+  selectedAvatar = null;
+});
+
+// Function to handle avatar selection
+function setupAvatarSelection(modalId, confirmBtnId) {
+  const modal = document.getElementById(modalId);
+  const options = modal?.querySelectorAll(".avatar-option");
+  const confirmBtn = document.getElementById(confirmBtnId);
+
+  options?.forEach(option => {
+    option.addEventListener("click", () => {
+      // Deselect previous
+      options.forEach(opt => opt.classList.remove("selected"));
+      // Select this
+      option.classList.add("selected");
+      selectedAvatar = option.getAttribute("data-avatar");
+      confirmBtn.disabled = false;
+    });
+  });
+
+  confirmBtn?.addEventListener("click", async () => {
+    if (!selectedAvatar) return;
+
+    const user = auth.currentUser;
+    if (!user) return alert("Usuário não autenticado.");
+
+    const q = query(collection(db, "psicologos"), where("uid", "==", user.uid));
+    const snap = await getDocs(q);
+    if (snap.empty) return alert("Psicólogo não encontrado.");
+
+    const ref = snap.docs[0].ref;
+    const avatarPath = `./img/psicologosavatar/${selectedAvatar}.png`;
+
+    try {
+      await updateDoc(ref, { avatar: avatarPath });
+      const currentAvatar = document.getElementById("currentAvatar");
+      currentAvatar.src = avatarPath;
+      hideModal(modal);
+      selectedAvatar = null;
+    } catch (err) {
+      console.error("Erro ao salvar avatar:", err);
+      alert("Erro ao salvar avatar.");
+    }
+  });
+}
+
+// Setup for both modals
+document.addEventListener("DOMContentLoaded", () => {
+  setupAvatarSelection("firstAvatarModal", "confirmFirstAvatar");
+  setupAvatarSelection("changeAvatarModal", "confirmChangeAvatar");
+
+  // Disable confirm buttons initially
+  document.getElementById("confirmFirstAvatar").disabled = true;
+  document.getElementById("confirmChangeAvatar").disabled = true;
+
+  // Cancel for change modal
+  document.getElementById("cancelChangeAvatar")?.addEventListener("click", () => {
+    hideModal(document.getElementById("changeAvatarModal"));
+    selectedAvatar = null;
+  });
+});
+
 async function atualizarStatsPainel() {
   const user = auth.currentUser;
   if (!user) return;
@@ -520,26 +658,16 @@ function initForum() {
           <div><span class="author-name">${post.autorNome
         }</span><span class="post-date">${data}</span></div>
         </div>
-        <p class="post-content">${post.conteudo}</p>
-        <div class="like-wrap" data-id="${id}">
-          <img src="./img/like_icon.png" class="like-icon">
-          <span class="like-count">${post.likes || 0}</span>
-        </div>`;
+        <p class="post-content">${post.conteudo}</p>`;
       postsList.appendChild(div);
     });
 
-    document.querySelectorAll(".like-wrap").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const postId = btn.dataset.id;
-        const ref = doc(db, "posts", postId);
-        await updateDoc(ref, { likes: increment(1) });
-      });
-    });
+    // Likes functionality removed as per requirements
   });
 
-  addBtn?.addEventListener("click", () => modal.classList.remove("hidden"));
-  cancelar?.addEventListener("click", () => modal.classList.add("hidden"));
-  closeModal?.addEventListener("click", () => modal.classList.add("hidden"));
+  addBtn?.addEventListener("click", () => showModal(modal));
+  cancelar?.addEventListener("click", () => hideModal(modal));
+  closeModal?.addEventListener("click", () => hideModal(modal));
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -563,7 +691,7 @@ function initForum() {
     };
     await addDoc(collection(db, "posts"), newPost);
     form.reset();
-    modal.classList.add("hidden");
+    hideModal(modal);
   });
 }
 
@@ -1566,6 +1694,7 @@ onAuthStateChanged(auth, () => {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' || e.key === 'Esc') {
       document.querySelectorAll('.modal:not(.hidden), .popup:not(.hidden)').forEach(m => {
+        if (m.id === 'firstAvatarModal') return; // Don't close first avatar modal with Escape
         m.classList.add('hidden');
         m.style.display = 'none';
       });
@@ -1576,6 +1705,7 @@ onAuthStateChanged(auth, () => {
     const target = ev.target;
     const modalEl = target.closest ? target.closest('.modal, .popup') : null;
     if (modalEl) {
+      if (modalEl.id === 'firstAvatarModal') return; // Don't close first avatar modal by outside click
       const inner = modalEl.querySelector('.modal-content, .popup-content, .detalhes-consulta-card');
       if (inner && !inner.contains(target)) {
         modalEl.classList.add('hidden');

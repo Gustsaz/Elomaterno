@@ -77,7 +77,9 @@
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
 
-    </div>
+      <button id="avatarBtn" class="avatar-btn">
+        <img id="currentAvatar" src="./img/account_icon.png" alt="Avatar">
+      </button>
 
     </div>
   </header>
@@ -280,7 +282,7 @@
     </div>
 
     <section class="content hidden" id="informacoes">
-      <h2>Editar Informações do Psicólogo</h2>
+      <h2>Editar minhas Informações</h2>
       <form id="psiForm" class="info-form">
         <div class="input-edit">
           <label>Nome:</label>
@@ -325,6 +327,68 @@
     </section>
 
   </main>
+
+  <div id="firstAvatarModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Escolha seu Avatar</h3>
+      <p>Você deve escolher um avatar para continuar usando a plataforma.</p>
+      <div class="avatars-grid">
+        <img src="./img/psicologosavatar/1.png" data-avatar="1" class="avatar-option">
+        <img src="./img/psicologosavatar/2.png" data-avatar="2" class="avatar-option">
+        <img src="./img/psicologosavatar/3.png" data-avatar="3" class="avatar-option">
+        <img src="./img/psicologosavatar/4.png" data-avatar="4" class="avatar-option">
+        <img src="./img/psicologosavatar/5.png" data-avatar="5" class="avatar-option">
+        <img src="./img/psicologosavatar/6.png" data-avatar="6" class="avatar-option">
+        <img src="./img/psicologosavatar/7.png" data-avatar="7" class="avatar-option">
+        <img src="./img/psicologosavatar/8.png" data-avatar="8" class="avatar-option">
+        <img src="./img/psicologosavatar/9.png" data-avatar="9" class="avatar-option">
+        <img src="./img/psicologosavatar/10.png" data-avatar="10" class="avatar-option">
+        <img src="./img/psicologosavatar/11.png" data-avatar="11" class="avatar-option">
+        <img src="./img/psicologosavatar/12.png" data-avatar="12" class="avatar-option">
+        <img src="./img/psicologosavatar/13.png" data-avatar="13" class="avatar-option">
+        <img src="./img/psicologosavatar/14.png" data-avatar="14" class="avatar-option">
+        <img src="./img/psicologosavatar/15.png" data-avatar="15" class="avatar-option">
+        <img src="./img/psicologosavatar/16.png" data-avatar="16" class="avatar-option">
+        <img src="./img/psicologosavatar/17.png" data-avatar="17" class="avatar-option">
+        <img src="./img/psicologosavatar/18.png" data-avatar="18" class="avatar-option">
+        <img src="./img/psicologosavatar/19.png" data-avatar="19" class="avatar-option">
+
+      </div>
+      <button id="confirmFirstAvatar" class="contact-btn" disabled>Confirmar</button>
+    </div>
+  </div>
+
+  <!-- Modal para mudar avatar -->
+  <div id="changeAvatarModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Mudar Avatar</h3>
+      <div class="avatars-grid">
+        <img src="./img/psicologosavatar/1.png" data-avatar="1" class="avatar-option">
+        <img src="./img/psicologosavatar/2.png" data-avatar="2" class="avatar-option">
+        <img src="./img/psicologosavatar/3.png" data-avatar="3" class="avatar-option">
+        <img src="./img/psicologosavatar/4.png" data-avatar="4" class="avatar-option">
+        <img src="./img/psicologosavatar/5.png" data-avatar="5" class="avatar-option">
+        <img src="./img/psicologosavatar/6.png" data-avatar="6" class="avatar-option">
+        <img src="./img/psicologosavatar/7.png" data-avatar="7" class="avatar-option">
+        <img src="./img/psicologosavatar/8.png" data-avatar="8" class="avatar-option">
+        <img src="./img/psicologosavatar/9.png" data-avatar="9" class="avatar-option">
+        <img src="./img/psicologosavatar/10.png" data-avatar="10" class="avatar-option">
+        <img src="./img/psicologosavatar/11.png" data-avatar="11" class="avatar-option">
+        <img src="./img/psicologosavatar/12.png" data-avatar="12" class="avatar-option">
+        <img src="./img/psicologosavatar/13.png" data-avatar="13" class="avatar-option">
+        <img src="./img/psicologosavatar/14.png" data-avatar="14" class="avatar-option">
+        <img src="./img/psicologosavatar/15.png" data-avatar="15" class="avatar-option">
+        <img src="./img/psicologosavatar/16.png" data-avatar="16" class="avatar-option">
+        <img src="./img/psicologosavatar/17.png" data-avatar="17" class="avatar-option">
+        <img src="./img/psicologosavatar/18.png" data-avatar="18" class="avatar-option">
+        <img src="./img/psicologosavatar/19.png" data-avatar="19" class="avatar-option">
+      </div>
+      <div class="modal-actions">
+        <button id="confirmChangeAvatar" class="contact-btn" disabled>Confirmar</button>
+        <button id="cancelChangeAvatar" class="add-consult-btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="./js/homePsi.js"></script>
   <script type="module" src="./js/globals.js"></script>

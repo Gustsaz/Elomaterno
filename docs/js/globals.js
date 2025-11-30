@@ -14,26 +14,26 @@ onAuthStateChanged(auth, async (user) => {
       const snap = await getDoc(doc(db, "usuarios", user.uid));
       if (snap.exists()) {
         const dados = snap.data();
-        nomeEl.textContent = dados.nome || user.displayName || "Usuário";
-        emailEl.textContent = dados.email || user.email || "";
-        if (dados.fotoURL || dados.avatar) {
+        if (nomeEl) nomeEl.textContent = dados.nome || user.displayName || "Usuário";
+        if (emailEl) emailEl.textContent = dados.email || user.email || "";
+        if ((dados.fotoURL || dados.avatar) && avatarEl) {
           // prioriza foto do documento, fallback para campo 'avatar'
           avatarEl.src = dados.fotoURL || dados.avatar;
         }
       } else {
-        nomeEl.textContent = user.displayName || "Usuário";
-        emailEl.textContent = user.email || "";
+        if (nomeEl) nomeEl.textContent = user.displayName || "Usuário";
+        if (emailEl) emailEl.textContent = user.email || "";
       }
     } catch (err) {
       console.error("Erro ao obter dados do usuário:", err);
-      nomeEl.textContent = user.displayName || "Usuário";
-      emailEl.textContent = user.email || "";
+      if (nomeEl) nomeEl.textContent = user.displayName || "Usuário";
+      if (emailEl) emailEl.textContent = user.email || "";
     }
   } else {
     // usuário deslogado — limpa placeholders (opcional)
-    nomeEl.textContent = "";
-    emailEl.textContent = "";
-    avatarEl.src = "./img/avatar_usuario.png";
+    if (nomeEl) nomeEl.textContent = "";
+    if (emailEl) emailEl.textContent = "";
+    if (avatarEl) avatarEl.src = "./img/avatar_usuario.png";
   }
 });
 
@@ -62,6 +62,8 @@ if (menuToggle && botoesMenu) {
 document.addEventListener("click", (event) => {
   const menu = document.querySelector(".botoes");
   const toggle = document.querySelector("#menuToggle");
+
+  if (!menu) return;
 
   if (menu.classList.contains("aberto")) {
     if (!menu.contains(event.target) && !toggle.contains(event.target)) {
