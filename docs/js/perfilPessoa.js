@@ -1,5 +1,5 @@
 import { db } from "./firebase.js";
-import { doc, getDoc, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { doc, getDoc, collection, query, where, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const params = new URLSearchParams(window.location.search);
 const uid = params.get("uid");
@@ -26,26 +26,76 @@ function normalizePath(url) {
 }
 
 async function carregarPerfil() {
-  if (!uid) return;
+  console.log("Iniciando carregamento do perfil, uid:", uid);
+  if (!uid) {
+    console.log("Uid não encontrado na URL");
+    return;
+  }
 
   try {
-    const snap = await getDoc(doc(db, "usuarios", uid));
-    if (snap.exists()) {
-      const dados = snap.data();
-
-      nomeEl.textContent = dados.nome || "Usuário sem nome";
-      tipoEl.textContent = dados.tipo || "Usuário";
-      emailEl.textContent = `Email: ${dados.email || "Não informado"}`;
-      cidadeEl.textContent = `Cidade: ${dados.cidade || "Não informada"}`;
-      filhosEl.textContent = `Filhos: ${dados.filhos || "Não informado"}`;
-      empregoEl.textContent = `Emprego: ${dados.emprego || "Não informado"}`;
-
-      const preferido = dados.fotoURL || dados.avatar || "";
-      fotoEl.src = normalizePath(preferido);
-      fotoEl.onerror = () => { fotoEl.src = "./img/avatar_usuario.png"; };
+    let dados;
+    // Carrega dados do perfil dos 'usuarios'
+    console.log("Carregando dados do perfil dos usuarios");
+    const snapUser = await getDoc(doc(db, "usuarios", uid));
+    console.log("snapUser.exists():", snapUser.exists());
+    if (snapUser.exists()) {
+      dados = snapUser.data();
+      console.log("Dados do usuário carregados:", dados);
     } else {
-      console.log("Usuário não encontrado");
+      console.log("Perfil não encontrado em usuarios");
+      // tenta advogados
+      console.log("Tentando carregando de advogados");
+      const snapAdv = await getDoc(doc(db, "advogados", uid));
+      if (snapAdv.exists()) {
+        dados = snapAdv.data();
+        console.log("Dados do advogado carregados:", dados);
+      } else {
+        console.log("Perfil não encontrado");
+        return;
+      }
     }
+
+    nomeEl.textContent = dados.nome || "Usuário sem nome";
+    tipoEl.textContent = dados.tipo || "Usuário";
+    emailEl.textContent = `Email: ${dados.email || "Não informado"}`;
+    cidadeEl.textContent = `Cidade: ${dados.cidade || "Não informada"}`;
+    filhosEl.textContent = `Filhos: ${dados.filhos || "Não informado"}`;
+    empregoEl.textContent = `Emprego: ${dados.emprego || "Não informado"}`;
+
+    // Para advogados, usa o avatar específico da coleção 'advogados'
+    if (dados.tipo === "advogado") {
+      console.log("Usuario é advogado, tentando carregar avatar de advogados");
+      let dadosAdv = null;
+      // Primeiro, tenta buscar pelo documento com ID = uid
+      const snapAdv = await getDoc(doc(db, "advogados", uid));
+      if (snapAdv.exists()) {
+        dadosAdv = snapAdv.data();
+        console.log("Dados do advogado para avatar (por ID):", dadosAdv);
+      } else {
+        // Se não encontrou, busca pela query where uid == uid
+        console.log("Documento com ID não encontrado, tentando query por uid");
+        const q = query(collection(db, "advogados"), where("uid", "==", uid));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          dadosAdv = querySnapshot.docs[0].data();
+          console.log("Dados do advogado para avatar (por query):", dadosAdv);
+        } else {
+          console.log("Nenhum documento encontrado para avatar");
+        }
+      }
+      if (dadosAdv && dadosAdv.avatar) {
+        console.log("Definindo avatar de advogado:", dadosAdv.avatar);
+        fotoEl.src = normalizePath(dadosAdv.avatar);
+      } else {
+        console.log("Avatar de advogado não encontrado, usando padrão");
+        fotoEl.src = "./img/avatar_usuario.png";
+      }
+    } else {
+      const preferido = dados.fotoURL || dados.avatar || "";
+      console.log("Definindo avatar padrão:", preferido);
+      fotoEl.src = normalizePath(preferido);
+    }
+    fotoEl.onerror = () => { fotoEl.src = "./img/avatar_usuario.png"; };
   } catch (e) {
     console.error("Erro ao carregar perfil:", e);
   }

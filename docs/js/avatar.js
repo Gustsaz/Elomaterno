@@ -146,6 +146,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* ==========================
+     SELEÇÃO DE AVATAR PRÉ-DEFINIDO
+  =========================== */
+  let selectedAvatarUrl = null;
+
+  const avatarBtns = document.querySelectorAll('.avatar-btn');
+  const confirmarBtn = document.querySelector('.confirmar-btn');
+
+  avatarBtns.forEach(btn => {
+    if (btn.id === 'criar-avatar-btn') return; // Ignorar o botão de criar avatar, tratado separadamente
+
+    btn.addEventListener('click', () => {
+      // Remove seleção de todos
+      avatarBtns.forEach(b => b.classList.remove('selecionado'));
+      // Adiciona seleção ao clicado
+      btn.classList.add('selecionado');
+      // Habilita botão confirmar
+      confirmarBtn.disabled = false;
+      // Armazena a URL
+      selectedAvatarUrl = btn.dataset.url;
+    });
+  });
+
+  if (confirmarBtn) {
+    confirmarBtn.addEventListener('click', async () => {
+      if (!selectedAvatarUrl) return;
+
+      try {
+        const user = fb.auth?.currentUser;
+        if (!user) {
+          alert("É necessário estar logado para salvar o avatar.");
+          return;
+        }
+
+        // Salvar no Firestore
+        await setDoc(doc(fb.db, "usuarios", user.uid), { avatar: selectedAvatarUrl }, { merge: true });
+
+        // Exibe modal de sucesso
+        const successModal = document.getElementById("successModal");
+        if (successModal) {
+          successModal.style.display = "flex";
+
+          const closeBtn = successModal.querySelector(".close-btn");
+          const okBtn = successModal.querySelector("#modalOkBtn");
+
+          if (closeBtn) closeBtn.onclick = () => (successModal.style.display = "none");
+          if (okBtn) okBtn.onclick = () => (successModal.style.display = "none");
+
+          window.onclick = (e) => {
+            if (e.target === successModal) successModal.style.display = "none";
+          };
+        }
+
+        console.log("Avatar selecionado salvo com sucesso! Link:", selectedAvatarUrl);
+
+      } catch (err) {
+        console.error("Erro ao salvar avatar:", err);
+        alert("Erro ao salvar avatar. Veja o console.");
+      }
+    });
+  }
+
+  /* ==========================
      ABRIR E FECHAR MODAL
   =========================== */
   const criarAvatarBtn = document.getElementById("criar-avatar-btn");
@@ -156,6 +218,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     criarAvatarBtn.addEventListener("click", () => {
       avatarModal.style.display = "flex";
+      // Reseta seleção ao abrir modal (opcional)
+      avatarBtns.forEach(b => b.classList.remove('selecionado'));
+      confirmarBtn.disabled = true;
+      selectedAvatarUrl = null;
     });
 
     if (closeAvatarModalBtn) {

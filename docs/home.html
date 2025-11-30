@@ -325,12 +325,106 @@
         </section>
     </main>
 
+    <!-- Modal de perfil incompleto -->
+    <div id="first-time-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Complete seu perfil</h2>
+            <p>Para uma melhor experiência, preencha as informações adicionais:</p>
+            <form id="profile-form">
+                <label for="cidade">Cidade:</label>
+                <input type="text" id="cidade" name="cidade" placeholder="Ex: São Paulo">
+
+                <label for="emprego">Emprego:</label>
+                <input type="text" id="emprego" name="emprego" placeholder="Ex: Atendente">
+
+                <label for="filhos">Número de filhos:</label>
+                <input type="text" id="filhos" name="filhos" placeholder="Ex: 2">
+
+                <label for="telefone">Telefone:</label>
+                <input type="text" id="telefone" name="telefone" required placeholder="Ex: (11) 99999-9999">
+
+                <button type="submit">Salvar e Continuar</button>
+            </form>
+        </div>
+    </div>
+
     <script type="module" src="./js/globals.js"></script>
     <script type="module" src="./js/home-forum.js"></script>
     <script type="module" src="./js/home-eventos.js"></script>
     <script type="module" src="./js/home-artigos.js"></script>
     <script type="module" src="./js/pesquisa.js"></script>
     <script type="module" src="./js/carregar-avatar.js"></script>
+
+    <script type="module">
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+        import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+        import { auth, db } from "./js/firebase.js";
+
+        const modal = document.getElementById("first-time-modal");
+        const form = document.getElementById("profile-form");
+        const closeBtn = modal.querySelector(".close");
+
+        // Close modal function
+        function closeModal() {
+            modal.classList.add("hidden");
+        }
+
+        // Close on X click
+        closeBtn.addEventListener("click", closeModal);
+
+        // Close on outside click
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Form submit
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const updates = {};
+            const cidade = document.getElementById("cidade").value.trim();
+            if (cidade) updates.cidade = cidade;
+            const emprego = document.getElementById("emprego").value.trim();
+            if (emprego) updates.emprego = emprego;
+            const filhos = document.getElementById("filhos").value.trim();
+            if (filhos) updates.filhos = filhos;
+            const telefone = document.getElementById("telefone").value.trim();
+            if (telefone) updates.telefone = telefone;
+
+            try {
+                await updateDoc(doc(db, "usuarios", user.uid), updates);
+                closeModal();
+                alert("Perfil atualizado com sucesso!");
+            } catch (err) {
+                console.error("Erro ao salvar:", err);
+                alert("Erro ao salvar. Tente novamente.");
+            }
+        });
+
+        // Check if first time (telefone empty and modal not shown yet)
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const snap = await getDoc(doc(db, "usuarios", user.uid));
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        if ((!data.telefone || data.telefone === "") && !data.welcomeModalShown) {
+                            modal.classList.remove("hidden");
+                            // Mark modal as shown
+                            await updateDoc(doc(db, "usuarios", user.uid), { welcomeModalShown: true });
+                        }
+                    }
+                } catch (err) {
+                    console.error("Erro ao verificar perfil:", err);
+                }
+            }
+        });
+    </script>
 
 </body>
 

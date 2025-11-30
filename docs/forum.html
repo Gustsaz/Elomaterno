@@ -338,7 +338,7 @@ async function getUserData(uid) {
   let snap = await getDoc(doc(db, "usuarios", uid));
   if (snap.exists()) return snap.data();
 
-  snap = await getDoc(doc(db, "advogado", uid));
+  snap = await getDoc(doc(db, "advogados", uid));
   if (snap.exists()) return snap.data();
 
   snap = await getDoc(doc(db, "psicologos", uid));
@@ -451,7 +451,16 @@ async function getUserData(uid) {
               const data = await getUserData(uid);
               if (data) {
                 const nome = data.nome || "Usuário";
-                const foto = data.fotoURL || data.avatar || "./img/account_icon.png";
+                let foto;
+                if (data.fotoURL) {
+                  foto = data.fotoURL;
+                } else if (data.avatar) {
+                  foto = data.avatar;
+                } else if (data.tipo === 'advogado') {
+                  foto = "./img/advogadossavatar/11.png";
+                } else {
+                  foto = "./img/account_icon.png";
+                }
                 userCache.set(uid, {
                   nome,
                   foto
