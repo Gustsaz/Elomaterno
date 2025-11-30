@@ -43,12 +43,12 @@ function hideModal(modalEl) {
 /* FECHAR MODAIS AO CLICAR NO BACKDROP OU ESCAPE (global) */
 document.addEventListener("click", (e) => {
   const modal = e.target.closest(".modal");
-  if (!modal) return;
+  if (!modal || modal.id === "firstAvatarModal") return; // Don't close first avatar modal by click
   const inner = modal.querySelector(".modal-content, .popup-content, .detalhes-consulta-card");
   if (inner && !inner.contains(e.target)) hideModal(modal);
 });
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") document.querySelectorAll(".modal:not(.hidden), .popup:not(.hidden)").forEach(m => hideModal(m));
+  if (e.key === "Escape") document.querySelectorAll(".modal:not(.hidden):not(#firstAvatarModal), .popup:not(.hidden)").forEach(m => hideModal(m)); // Don't close first avatar modal with Escape
 });
 
 /* -----------------------
@@ -913,6 +913,97 @@ async function fetchAndSetProfileName(uid) {
 }
 
 /* -----------------------
+   AVATAR LOGIC
+   ----------------------- */
+async function loadAdvAvatar(uid) {
+  try {
+    const q = query(collection(db, "advogados"), where("uid", "==", uid));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      console.error("Documento do advogado não encontrado.");
+      return;
+    }
+    const docAdv = snap.docs[0];
+    const docRef = docAdv.ref;
+    const data = docAdv.data();
+
+    // Load current avatar
+    if (data.avatar) {
+      const currentAvatar = document.getElementById("currentAvatar");
+      currentAvatar.src = data.avatar;
+    }
+
+    // Check if first time (no avatar set)
+    if (!data.avatar || data.avatar === "") {
+      await setupAvatarModal("firstAvatarModal", "confirmFirstAvatar", "firstAvatarGrid", docRef);
+      showModal(document.getElementById("firstAvatarModal"));
+    }
+  } catch (err) {
+    console.error("Erro ao carregar avatar do advogado:", err);
+  }
+}
+
+// Avatar button to open change modal
+document.getElementById("avatarBtn")?.addEventListener("click", async () => {
+  const q = query(collection(db, "advogados"), where("uid", "==", auth.currentUser.uid));
+  const snap = await getDocs(q);
+  if (snap.empty) return;
+  const docAdv = snap.docs[0];
+  const docRef = docAdv.ref;
+
+  await setupAvatarModal("changeAvatarModal", "confirmChangeAvatar", "changeAvatarGrid", docRef);
+  showModal(document.getElementById("changeAvatarModal"));
+});
+
+document.getElementById("closeChangeAvatar")?.addEventListener("click", () => {
+  hideModal(document.getElementById("changeAvatarModal"));
+});
+
+// Function to setup avatar selection
+async function setupAvatarModal(modalId, confirmBtnId, gridId, docRef) {
+  const modal = document.getElementById(modalId);
+  const grid = document.getElementById(gridId);
+  const options = grid.querySelectorAll(".avatar-option");
+  const confirmBtn = document.getElementById(confirmBtnId);
+
+  function selectAvatar(img, num) {
+    options.forEach(o => o.classList.remove("selected"));
+    img.classList.add("selected");
+    confirmBtn.disabled = false;
+    window.selectedAvatar = num;
+  }
+
+  // Add listeners to existing images
+  options.forEach(img => {
+    const num = img.getAttribute("data-avatar");
+    img.addEventListener("click", () => selectAvatar(img, num));
+  });
+
+  confirmBtn.disabled = true;
+
+  const handleConfirm = async () => {
+    if (!window.selectedAvatar) return;
+    const avatarPath = `./img/advogadossavatar/${window.selectedAvatar}.png`;
+    try {
+      await updateDoc(docRef, { avatar: avatarPath });
+      const currentAvatar = document.getElementById("currentAvatar");
+      currentAvatar.src = avatarPath;
+      hideModal(modal);
+      window.selectedAvatar = null;
+      confirmBtn.disabled = true;
+      if (modalId === "firstAvatarModal") {
+        // Optionally handle first time logic
+      }
+    } catch (err) {
+      console.error("Erro ao salvar avatar:", err);
+      alert("Erro ao salvar avatar.");
+    }
+  };
+
+  confirmBtn.addEventListener("click", handleConfirm, { once: true });
+}
+
+/* -----------------------
    AUTH STATE (ponto único)
    ----------------------- */
 onAuthStateChanged(auth, async (user) => {
@@ -923,6 +1014,7 @@ onAuthStateChanged(auth, async (user) => {
 
   usuarioAtual = user.uid;
   await fetchAndSetProfileName(usuarioAtual);
+  await loadAdvAvatar(usuarioAtual); // load avatar before other things
 
   // carrega dados
   await carregarEventos();

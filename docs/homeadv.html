@@ -74,6 +74,10 @@
         <i class="fa-solid fa-circle-info"></i>
       </button>
 
+      <button id="avatarBtn" class="avatar-btn">
+        <img id="currentAvatar" src="./img/avatar_usuario.png" alt="Avatar">
+      </button>
+
       <button id="logoutBtn" class="logout-btn">
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
@@ -387,6 +391,66 @@
           <h3>Sobre</h3>
           <p id="perfilPacienteSobre">Nenhuma informação disponível.</p>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal Primeiro Avatar -->
+    <div id="firstAvatarModal" class="modal hidden">
+      <div class="modal-content avatar-modal-content">
+        <h2>Escolher Avatar</h2>
+        <p>Escolha seu avatar para começar. Você poderá alterar depois.</p>
+        <div class="avatar-grid" id="firstAvatarGrid">
+          <img src="./img/advogadossavatar/1.png" data-avatar="1" class="avatar-option">
+          <img src="./img/advogadossavatar/2.png" data-avatar="2" class="avatar-option">
+          <img src="./img/advogadossavatar/3.png" data-avatar="3" class="avatar-option">
+          <img src="./img/advogadossavatar/4.png" data-avatar="4" class="avatar-option">
+          <img src="./img/advogadossavatar/5.png" data-avatar="5" class="avatar-option">
+          <img src="./img/advogadossavatar/6.png" data-avatar="6" class="avatar-option">
+          <img src="./img/advogadossavatar/7.png" data-avatar="7" class="avatar-option">
+          <img src="./img/advogadossavatar/8.png" data-avatar="8" class="avatar-option">
+          <img src="./img/advogadossavatar/9.png" data-avatar="9" class="avatar-option">
+          <img src="./img/advogadossavatar/10.png" data-avatar="10" class="avatar-option">
+          <img src="./img/advogadossavatar/11.png" data-avatar="11" class="avatar-option">
+          <img src="./img/advogadossavatar/12.png" data-avatar="12" class="avatar-option">
+          <img src="./img/advogadossavatar/13.png" data-avatar="13" class="avatar-option">
+          <img src="./img/advogadossavatar/14.png" data-avatar="14" class="avatar-option">
+          <img src="./img/advogadossavatar/15.png" data-avatar="15" class="avatar-option">
+          <img src="./img/advogadossavatar/16.png" data-avatar="16" class="avatar-option">
+          <img src="./img/advogadossavatar/17.png" data-avatar="17" class="avatar-option">
+          <img src="./img/advogadossavatar/18.png" data-avatar="18" class="avatar-option">
+          <img src="./img/advogadossavatar/19.png" data-avatar="19" class="avatar-option">
+        </div>
+        <button id="confirmFirstAvatar" disabled>Confirmar</button>
+      </div>
+    </div>
+
+    <!-- Modal Alterar Avatar -->
+    <div id="changeAvatarModal" class="modal hidden">
+      <div class="modal-content avatar-modal-content">
+        <span class="close" id="closeChangeAvatar">&times;</span>
+        <h2>Mudar Avatar</h2>
+        <div class="avatar-grid" id="changeAvatarGrid">
+          <img src="./img/advogadossavatar/1.png" data-avatar="1" class="avatar-option">
+          <img src="./img/advogadossavatar/2.png" data-avatar="2" class="avatar-option">
+          <img src="./img/advogadossavatar/3.png" data-avatar="3" class="avatar-option">
+          <img src="./img/advogadossavatar/4.png" data-avatar="4" class="avatar-option">
+          <img src="./img/advogadossavatar/5.png" data-avatar="5" class="avatar-option">
+          <img src="./img/advogadossavatar/6.png" data-avatar="6" class="avatar-option">
+          <img src="./img/advogadossavatar/7.png" data-avatar="7" class="avatar-option">
+          <img src="./img/advogadossavatar/8.png" data-avatar="8" class="avatar-option">
+          <img src="./img/advogadossavatar/9.png" data-avatar="9" class="avatar-option">
+          <img src="./img/advogadossavatar/10.png" data-avatar="10" class="avatar-option">
+          <img src="./img/advogadossavatar/11.png" data-avatar="11" class="avatar-option">
+          <img src="./img/advogadossavatar/12.png" data-avatar="12" class="avatar-option">
+          <img src="./img/advogadossavatar/13.png" data-avatar="13" class="avatar-option">
+          <img src="./img/advogadossavatar/14.png" data-avatar="14" class="avatar-option">
+          <img src="./img/advogadossavatar/15.png" data-avatar="15" class="avatar-option">
+          <img src="./img/advogadossavatar/16.png" data-avatar="16" class="avatar-option">
+          <img src="./img/advogadossavatar/17.png" data-avatar="17" class="avatar-option">
+          <img src="./img/advogadossavatar/18.png" data-avatar="18" class="avatar-option">
+          <img src="./img/advogadossavatar/19.png" data-avatar="19" class="avatar-option">
+        </div>
+        <button id="confirmChangeAvatar" disabled>Confirmar</button>
       </div>
     </div>
 
