@@ -334,6 +334,19 @@
     let editandoId = null;
     let postParaExcluir = null;
 
+async function getUserData(uid) {
+  let snap = await getDoc(doc(db, "usuarios", uid));
+  if (snap.exists()) return snap.data();
+
+  snap = await getDoc(doc(db, "advogado", uid));
+  if (snap.exists()) return snap.data();
+
+  snap = await getDoc(doc(db, "psicologos", uid));
+  if (snap.exists()) return snap.data();
+
+  return null;
+}
+
     async function criarPost(titulo, conteudo) {
       const user = auth.currentUser;
       if (!user) {
@@ -350,11 +363,10 @@
         autorNome = "Anônimo";
         autorFoto = "./img/account_icon.png";
       } else {
-        const usuarioSnap = await getDoc(doc(db, "usuarios", user.uid));
-        const dadosUsuario = usuarioSnap.exists() ? usuarioSnap.data() : {};
+        const dadosUsuario = await getUserData(user.uid);
         autorId = user.uid;
-        autorNome = dadosUsuario.nome || "Usuário";
-        autorFoto = dadosUsuario.fotoURL || dadosUsuario.avatar || "./img/account_icon.png";
+        autorNome = dadosUsuario?.nome || "Usuário";
+        autorFoto = dadosUsuario?.fotoURL || dadosUsuario?.avatar || "./img/account_icon.png";
       }
 
       await addDoc(collection(db, "posts"), {
@@ -436,16 +448,26 @@
 
           await Promise.all(autorIds.map(async (uid) => {
             try {
-              const snap = await getDoc(doc(db, "usuarios", uid));
-              if (snap.exists()) {
-                const data = snap.data();
+              const data = await getUserData(uid);
+              if (data) {
+                const nome = data.nome || "Usuário";
+                const foto = data.fotoURL || data.avatar || "./img/account_icon.png";
                 userCache.set(uid, {
-                  nome: data.nome || "Usuário",
-                  foto: data.fotoURL || data.avatar || "./img/account_icon.png"
+                  nome,
+                  foto
+                });
+              } else {
+                userCache.set(uid, {
+                  nome: "Usuário",
+                  foto: "./img/account_icon.png"
                 });
               }
             } catch (err) {
               console.error("Erro ao buscar usuário:", uid, err);
+              userCache.set(uid, {
+                nome: "Usuário",
+                foto: "./img/account_icon.png"
+              });
             }
           }));
 

@@ -3,6 +3,19 @@ import { collection, query, orderBy, limit, getDocs, doc, getDoc } from "https:/
 
 const forumPreview = document.getElementById("forum-preview");
 
+async function getUserData(uid) {
+  let snap = await getDoc(doc(db, "usuarios", uid));
+  if (snap.exists()) return snap.data();
+
+  snap = await getDoc(doc(db, "advogado", uid));
+  if (snap.exists()) return snap.data();
+
+  snap = await getDoc(doc(db, "psicologos", uid));
+  if (snap.exists()) return snap.data();
+
+  return null;
+}
+
 async function carregarUltimosPosts() {
   try {
     const q = query(collection(db, "posts"), orderBy("data", "desc"), limit(2));
@@ -18,11 +31,10 @@ async function carregarUltimosPosts() {
       let autorNome = p.autorNome || "Usuário";
       if (p.autorId) {
         try {
-          const userSnap = await getDoc(doc(db, "usuarios", p.autorId));
-          if (userSnap.exists()) {
-            const dadosAutor = userSnap.data();
-            autorFoto = dadosAutor.avatar || autorFoto;
-            autorNome = dadosAutor.nome || autorNome;
+          const data = await getUserData(p.autorId);
+          if (data) {
+            autorFoto = data.avatar || data.fotoURL || autorFoto;
+            autorNome = data.nome || autorNome;
           }
         } catch (err) {
           console.error("Erro ao buscar avatar do autor:", err);

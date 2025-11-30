@@ -85,7 +85,7 @@ async function abrirModalProfissionalByUidAndType(uid, tipo) {
         document.getElementById("prof-email-modal").textContent = data.email ? `Email: ${data.email}` : "";
         document.getElementById("prof-id-modal").textContent = tipo === "psicologo" ? (data.crp ? `CRP: ${data.crp}` : "") : (data.oab ? `OAB: ${data.oab}` : "");
         document.getElementById("prof-area-modal").textContent = data.area ? `Área: ${data.area}` : (data.atuacao ? `Atuação: ${data.atuacao}` : "");
-        document.getElementById("prof-foto-modal").src = data.foto || "./img/avatar_usuario.png";
+        document.getElementById("prof-foto-modal").src = data.avatar || "./img/avatar_usuario.png";
         document.getElementById("prof-espec-modal").textContent =
             Array.isArray(data.especializacoes) && data.especializacoes.length
                 ? "Especializações: " + data.especializacoes.join(", ")

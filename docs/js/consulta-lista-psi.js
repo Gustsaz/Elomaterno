@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const area = tipo === "psicologo" ? (data.area || "Área não informada") : (data.atuacao || "Atuação não informada");
       const especializacoes = (data.especializacoes || []).slice(0, 3);
       const extras = (data.especializacoes || []).length > 3 ? `<span>+${data.especializacoes.length - 3}</span>` : "";
-      const foto = tipo === "psicologo" ? (data.avatar || "./img/account_icon.png") : "./img/adv1.png";
+      const foto = data.avatar || (tipo === "psicologo" ? "./img/account_icon.png" : "./img/account_icon.png");
       const nota = data.notas?.length ? (data.notas.reduce((a, b) => a + b, 0) / data.notas.length).toFixed(2) : "5.00";
       const avaliacoes = data.notas?.length || 0;
       const atendimentos = data.atendimentos || Math.floor(Math.random() * 300 + 100);
@@ -130,6 +130,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Guardar snapGlobal como lista de docs (usado ao agendar)
     snapGlobal = docsAll;
+
+    // Funcionalidade de busca
+    const buscaPsi = document.getElementById('busca-psi');
+    buscaPsi.addEventListener('input', (e) => {
+      const termo = e.target.value.toLowerCase().trim();
+      document.querySelectorAll('.psi-card').forEach(card => {
+        if (!termo) {
+          card.style.display = 'block';
+          return;
+        }
+        const uid = card.dataset.uid;
+        const doc = snapGlobal.find(d => d.data().uid === uid);
+        if (!doc) {
+          card.style.display = 'none';
+          return;
+        }
+        const data = doc.data();
+        const nome = (data.nome || '').toLowerCase();
+        const identificacao = (doc._tipo === 'psicologo' ? (data.crp || '').toLowerCase() : (data.oab || '').toLowerCase()) || '';
+        if (nome.includes(termo) || identificacao.includes(termo)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
 
     /* === EVENTOS GLOBAIS === */
 
