@@ -27,11 +27,6 @@
         <span>Usuários</span>
       </button>
 
-      <button class="menu-btn" data-target="consultas">
-        <img src="./img/agenda_icon.png" alt="ícone consultas">
-        <span>Consultas</span>
-      </button>
-
       <button class="menu-btn" data-target="autorizacoes">
         <img src="./img/count_icon.png" alt="ícone autorizações">
         <span>Autorizações</span>
@@ -42,25 +37,27 @@
 
     <section class="content" id="dashboard">
       <h2>Visão Geral do Sistema</h2>
-      <div class="stats-grid">
-        <div class="stat-card"><span>0</span>
-          <p>Psicólogos Ativos</p>
-        </div>
-        <div class="stat-card"><span>0</span>
-          <p>Advogados Ativos</p>
-        </div>
-        <div class="stat-card"><span>0</span>
-          <p>Mães Ativas</p>
-        </div>
-        <div class="stat-card"><span>0</span>
-          <p>Consultas Hoje</p>
-        </div>
-      </div>
+     <div class="stats-grid">
+    <div class="stat-card"><span id="psicoCount">0</span><p>Psicólogos Ativos</p></div>
+    <div class="stat-card"><span id="advCount">0</span><p>Advogados Ativos</p></div>
+  </div>
+
+
       <br>
-      <div class="chart-card">
-        <h3>Uso por categoria (últimos dados)</h3>
-        <canvas id="usageChart" width="800" height="400"></canvas>
+      <div style="display:flex; gap:20px; width:100%; justify-content:center; flex-wrap:wrap;">
+
+        <div class="chart-card" style="flex:1; min-width:380px; max-width:500px;">
+          <h3>Uso por Categoria</h3>
+          <canvas id="usageChart"></canvas>
+        </div>
+
+        <div class="chart-card" style="flex:1; min-width:380px; max-width:500px;">
+          <h3>Distribuição de Usuários</h3>
+          <canvas id="pieChart"></canvas>
+        </div>
+
       </div>
+
     </section>
 
     <section class="content hidden" id="usuarios">
@@ -75,26 +72,6 @@
               <th>Email / Documento</th>
               <th>Status</th>
               <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Populado dinamicamente -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="content hidden" id="consultas">
-      <h2>Consultas Agendadas</h2>
-      <div class="user-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Paciente (mãe)</th>
-              <th>Profissional</th>
-              <th>Data</th>
-              <th>Horário</th>
-              <th>Status</th>
             </tr>
           </thead>
           <tbody>

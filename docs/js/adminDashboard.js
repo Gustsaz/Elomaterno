@@ -51,60 +51,33 @@ function extractDateString(field) {
   return null;
 }
 
-/* ----- atualizar cards e chamar gráfico ----- */
 async function atualizarDashboard() {
-  // buscar coleções
-  const [psicologosSnap, advogadosSnap, maesSnap, consultasSnap] = await Promise.all([
-    getDocs(collection(db, "psicologos")),
-    getDocs(collection(db, "advogados")),
-    getDocs(collection(db, "maes")),
-    getDocs(collection(db, "consultas"))
-  ]);
+  try {
+    const psicologosSnap = await getDocs(collection(db, "psicologos"));
+    const advogadosSnap = await getDocs(collection(db, "advogados"));
 
-  const psicologosAtivos = psicologosSnap.docs.filter(d => (d.data().status === "aprovado")).length;
-  const advogadosAtivos = advogadosSnap.docs.filter(d => (d.data().status === "aprovado")).length;
-  const maesAtivas = maesSnap.docs.filter(d => (d.data().status === "aprovado")).length;
+    const psicologosAtivos = psicologosSnap.docs.filter(d => d.data().status === "aprovado").length;
+    const advogadosAtivos = advogadosSnap.docs.filter(d => d.data().status === "aprovado").length;
 
-  // calcular consultas de hoje
-  const hojeStr = formatDateToDDMMYYYY(new Date());
-  let consultasHoje = 0;
-  consultasSnap.docs.forEach(d => {
-    const dataField = d.data().data || d.data().date || d.data().dia || null;
-    const docDateStr = extractDateString(dataField);
-    if (docDateStr === hojeStr) consultasHoje++;
-  });
+    document.getElementById("psicoCount").textContent = psicologosAtivos;
+    document.getElementById("advCount").textContent = advogadosAtivos;
 
-  // atualizar os stat-cards (mesma ordem do HTML)
-  const statCards = document.querySelectorAll(".stat-card");
-  if (statCards[0]) statCards[0].querySelector("span").textContent = psicologosAtivos;
-  if (statCards[1]) statCards[1].querySelector("span").textContent = advogadosAtivos;
-  if (statCards[2]) statCards[2].querySelector("span").textContent = maesAtivas;
-  if (statCards[3]) statCards[3].querySelector("span").textContent = consultasHoje;
+    criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos });
 
-  // atualizar título de autorizações (pendentes)
-  const pendentes = [
-    ...psicologosSnap.docs,
-    ...advogadosSnap.docs
-  ].filter(d => d.data().status === "pendente").length;
-
-  const tituloAutorizacoes = document.querySelector("#autorizacoes h2");
-  if (tituloAutorizacoes) tituloAutorizacoes.textContent = `Solicitações de Profissionais (${pendentes})`;
-
-  // criar/atualizar gráfico com esses dados
-  criarOuAtualizarGrafico({
-    psicologosAtivos,
-    advogadosAtivos,
-    maesAtivas,
-    consultasHoje
-  });
+  } catch (e) {
+    console.error("Erro dashboard:", e);
+  }
 }
 
+
+
+
 /* ----- criar/atualizar gráfico ----- */
-function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos, maesAtivas, consultasHoje }) {
+function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos, }) {
   const ctx = document.getElementById('usageChart').getContext('2d');
 
-  const labels = ['Psicólogos', 'Advogados', 'Mães', 'Consultas Hoje'];
-  const values = [psicologosAtivos, advogadosAtivos, maesAtivas, consultasHoje];
+  const labels = ['Psicólogos', 'Advogados'];
+  const values = [psicologosAtivos, advogadosAtivos,];
 
   const purpleColors = [
     'rgba(124,105,169,0.9)',
@@ -146,6 +119,29 @@ function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos, maesAtivas
       }
     }
   });
+  /* ==== GRÁFICO PIZZA (NOVO, SEM ALTERAR O ORIGINAL) ==== */
+  const pie = document.getElementById('pieChart');
+  if (pie) {
+    new Chart(pie, {
+      type: 'doughnut',
+      data: {
+        labels: ['Psicólogos', 'Advogados'],
+        datasets: [{
+          data: [psicologosAtivos, advogadosAtivos],
+          backgroundColor: [
+            'rgba(124,105,169,0.9)',
+            'rgba(108,75,191,0.85)',
+            'rgba(88,62,142,0.9)'
+          ]
+        }]
+      },
+      options: {
+        cutout: '55%',
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  }
+
 }
 
 /* ----- carregar solicitações (autorizacoes) ----- */
@@ -177,17 +173,16 @@ async function carregarSolicitacoes() {
         <div>
           <strong>${data.nome}</strong>
           <p>${col.tipo === "psicologo"
-            ? "Psicólogo(a) | CRP: " + (data.crp || "-")
-            : "Advogado(a) | OAB: " + (data.oab || "-")}</p>
+          ? "Psicólogo(a) | CRP: " + (data.crp || "-")
+          : "Advogado(a) | OAB: " + (data.oab || "-")}</p>
           <p>Status: <span class="status ${corStatus}">${status}</span></p>
         </div>
         <div class="actions">
-          ${
-            status === "pendente"
-              ? `<button class="approve-btn" data-id="${docSnap.id}" data-col="${col.tipo}">Aprovar</button>
+          ${status === "pendente"
+          ? `<button class="approve-btn" data-id="${docSnap.id}" data-col="${col.tipo}">Aprovar</button>
                  <button class="deny-btn" data-id="${docSnap.id}" data-col="${col.tipo}">Recusar</button>`
-              : ""
-          }
+          : ""
+        }
         </div>
       `;
       requestList.appendChild(card);
@@ -225,9 +220,9 @@ async function carregarSolicitacoes() {
 async function carregarUsuarios() {
   const tbody = document.querySelector("#usuarios tbody");
   if (!tbody) return;
-  
+
   // 1. Garante a limpeza do container ANTES de iniciar qualquer busca de dados.
-  tbody.innerHTML = ""; 
+  tbody.innerHTML = "";
 
   const colecoesConfig = [
     { tipoLabel: "Psicólogo", nomeColecao: "psicologos", ref: collection(db, "psicologos") },
@@ -256,26 +251,26 @@ async function carregarUsuarios() {
 
   // 4. Renderiza todos os documentos de uma vez.
   todosOsDocs.forEach(({ docSnap, colName, colLabel }) => {
-      const data = docSnap.data();
-      const status = data.status || "pendente";
-      const corStatus =
-        status === "aprovado"
-          ? "ativo"
-          : status === "recusado"
+    const data = docSnap.data();
+    const status = data.status || "pendente";
+    const corStatus =
+      status === "aprovado"
+        ? "ativo"
+        : status === "recusado"
           ? "recusado"
           : "pendente";
 
-      // ID de linha exclusivo combinando coleção e documento ID.
-      const uniqueId = `${colName}-${docSnap.id}`;
+    // ID de linha exclusivo combinando coleção e documento ID.
+    const uniqueId = `${colName}-${docSnap.id}`;
 
-      const emailOrDoc = data.email || data.crp || data.oab || "-";
+    const emailOrDoc = data.email || data.crp || data.oab || "-";
 
-      const tr = document.createElement("tr");
-      tr.dataset.uniqueId = uniqueId; 
-      tr.dataset.id = docSnap.id; 
-      tr.dataset.col = colName; 
-      
-      tr.innerHTML = `
+    const tr = document.createElement("tr");
+    tr.dataset.uniqueId = uniqueId;
+    tr.dataset.id = docSnap.id;
+    tr.dataset.col = colName;
+
+    tr.innerHTML = `
         <td>${data.nome}</td>
         <td>${colLabel}</td>
         <td>${emailOrDoc}</td>
@@ -284,7 +279,7 @@ async function carregarUsuarios() {
           <button class="remove-btn" data-id="${docSnap.id}" data-col="${colName}">Remover</button>
         </td>
       `;
-      tbody.appendChild(tr);
+    tbody.appendChild(tr);
   });
 
   // evento remover (precisa ser reanexado, pois o DOM foi reconstruído)
@@ -305,54 +300,18 @@ async function carregarUsuarios() {
 }
 // O restante do código pode permanecer o mesmo que na última atualização.
 
-/* ----- carregar consultas (histórico / tabela) ----- */
-async function carregarConsultas() {
-  const tbody = document.querySelector("#consultas tbody");
-  if (!tbody) return;
-  tbody.innerHTML = ""; // Garante que a lista seja limpa antes de renderizar
-
-  const snap = await getDocs(collection(db, "consultas"));
-  snap.forEach(docSnap => {
-    const data = docSnap.data();
-    // tentar mapear campos comuns
-    const paciente = data.mae || data.paciente || data.nomePaciente || data.usuario || "-";
-    const profissional = data.profissional || data.provider || data.nomeProfissional || "-";
-    const horario = data.hora || data.horario || data.time || "-";
-    const dataStr = extractDateString(data.data || data.date || data.dia) || "-";
-    const status = data.status || "pendente";
-    const corStatus =
-      status === "aprovado" || status === "concluida" || status === "concluída"
-        ? "concluido"
-        : status === "cancelado" || status === "recusado"
-        ? "recusado"
-        : "pendente";
-
-    const tr = document.createElement("tr");
-    tr.dataset.id = docSnap.id;
-    tr.innerHTML = `
-      <td>${paciente}</td>
-      <td>${profissional}</td>
-      <td>${dataStr}</td>
-      <td>${horario}</td>
-      <td><span class="status ${corStatus}">${status}</span></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
 /* ----- escutar mudanças realtime (APENAS para a dashboard e tabelas) ----- */
 function escutarMudancas() {
-  const colNames = ["psicologos", "advogados", "maes", "consultas"];
+  const colNames = ["psicologos", "advogados", "maes"];
   colNames.forEach(colName => {
     onSnapshot(collection(db, colName), () => {
       // Apenas atualiza o Dashboard com os novos contadores
       atualizarDashboard();
 
-      // Para que as tabelas de Usuários/Consultas/Solicitações sejam atualizadas,
+      // Para que as tabelas de Usuários/Solicitações sejam atualizadas,
       // você precisa chamar a função. O importante é que cada uma destas
       // FUNÇÕES LIMPAM A SI MESMAS antes de renderizar (`innerHTML = ""`).
       carregarUsuarios();
-      carregarConsultas();
       if (colName !== "maes") carregarSolicitacoes();
     });
   });
@@ -362,6 +321,5 @@ function escutarMudancas() {
 // 1. Carregamento inicial de todas as seções
 carregarSolicitacoes();
 carregarUsuarios();
-carregarConsultas();
 atualizarDashboard();
 

@@ -247,3 +247,175 @@ button {
     width: 100%;
   }
 }
+
+/* estilo do gráfico donut */
+#pieChart {
+  max-width: 480px;
+  margin-top: 10px;
+}
+
+/* nova melhoria opcional nos stat cards (baseado no modelo que você gostou) */
+.stat-card {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
+  border-radius: 14px;
+  transition: .2s;
+}
+
+.stat-card:hover {
+  transform: scale(1.03);
+}
+
+.stat-card span {
+  font-size: 32px;
+  font-weight: 900;
+}
+
+#usageChart,
+#pieChart {
+  width: 100% !important;
+  max-height: 350px;
+}
+
+/* ======== MELHORIA VISUAL DO DASHBOARD ======== */
+
+/* título central mais forte e com respiro */
+#dashboard h2 {
+  font-weight: 800;
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #4b2c82;
+}
+
+/* deixa a área dos gráficos mais alinhada e com presença */
+#usageChart,
+#pieChart {
+  max-width: 95%;
+  height: 350px !important;
+}
+
+/* container mais equilibrado visualmente */
+.chart-card {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .08);
+  text-align: center;
+  transition: .2s;
+}
+
+.chart-card:hover {
+  transform: scale(1.02);
+}
+
+/* deixei os títulos dos gráficos destacados */
+.chart-card h3 {
+  color: #4b2c82;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+/* ======== GRID AJUSTADO PARA FICAR PROPORCIONAL ======== */
+
+#dashboard>div[style*="display:flex"] {
+  width: 88%;
+  margin: auto;
+  gap: 28px !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ======== CARDS ESTATÍSTICOS AINDA MAIS BONITOS ======== */
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .07);
+  transition: .3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+}
+
+.stat-card span {
+  font-size: 34px;
+  font-weight: 900;
+  color: #5a3cb1;
+}
+
+.stat-card p {
+  font-size: 14px;
+  margin-top: 6px;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+/* ======== PÁGINA GANHANDO VIDA 🔥 ======== */
+
+.main-container {
+  animation: fade .6s ease-in-out;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ===== CARDS DA VISÃO GERAL — ESTILIZAÇÃO UPGRADE 💜 ===== */
+
+.stats-grid {
+  width: 95%;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 24px;
+  width: 200px;
+  height: 110px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+  border: 2px solid transparent;
+  transition: .25s ease;
+}
+
+/* animação e realce no hover */
+.stat-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  border-color: #b38cff;
+  box-shadow: 0 10px 26px rgba(110, 71, 173, .25);
+}
+
+/* NÚMERO */
+.stat-card span {
+  font-size: 34px;
+  font-weight: 900;
+  color: #5d35b0;
+}
+
+/* TEXTO */
+.stat-card p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4f3a86;
+  opacity: .9;
+}
