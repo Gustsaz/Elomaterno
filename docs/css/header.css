@@ -12,12 +12,6 @@ body {
   font-family: "Nunito", sans-serif;
 }
 
-.botao-link {
-  text-decoration: none;
-  color: inherit;
-  transition: all 0.3s ease;
-
-}
 
 .btn-filter,
 .btn-search {

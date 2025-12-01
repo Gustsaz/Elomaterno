@@ -161,6 +161,9 @@
           </div>
         </div>
       </a>
+
+      <br>
+
       <h3 id="menu-nome">
         <div class="loader">
           <div class="dot"></div>
@@ -179,7 +182,7 @@
 
     <a href="chat.html" class="botao-link">
       <div class="botao-item">
-        <i class="fa-solid fa-message"></i> 
+        <i class="fa-solid fa-message"></i>
         <span>Chats</span>
       </div>
     </a>
@@ -334,18 +337,18 @@
     let editandoId = null;
     let postParaExcluir = null;
 
-async function getUserData(uid) {
-  let snap = await getDoc(doc(db, "usuarios", uid));
-  if (snap.exists()) return snap.data();
+    async function getUserData(uid) {
+      let snap = await getDoc(doc(db, "usuarios", uid));
+      if (snap.exists()) return snap.data();
 
-  snap = await getDoc(doc(db, "advogados", uid));
-  if (snap.exists()) return snap.data();
+      snap = await getDoc(doc(db, "advogados", uid));
+      if (snap.exists()) return snap.data();
 
-  snap = await getDoc(doc(db, "psicologos", uid));
-  if (snap.exists()) return snap.data();
+      snap = await getDoc(doc(db, "psicologos", uid));
+      if (snap.exists()) return snap.data();
 
-  return null;
-}
+      return null;
+    }
 
     async function criarPost(titulo, conteudo) {
       const user = auth.currentUser;

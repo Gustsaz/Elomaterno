@@ -15,12 +15,12 @@ header.header {
   justify-content: space-between;
   align-items: center;
   padding: 24px;
-  border-bottom: 2px solid #d3cbe2;
+  border-bottom: 2px solid var(--border-light);
 }
 
 header h1 {
   font-size: 24px;
-  color: #583E8E;
+  color: var(--accent-color);
 }
 
 header .profile-img {
@@ -58,16 +58,16 @@ header .profile-img {
   cursor: pointer;
   text-align: left;
   font-size: 16px;
-  color: #583E8E;
+  color: var(--accent-color);
   transition: background 0.3s;
 }
 
 .menu-btn.active {
-  background: #d3cbe2;
+  background: var(--menu-btn-active);
 }
 
 .menu-btn:hover {
-  background: #e8e2f3;
+  background: var(--menu-btn-hover);
 }
 
 .menu-btn img {
@@ -76,7 +76,7 @@ header .profile-img {
 }
 
 .last-activities {
-  background: #fff;
+  background: var(--card-bg);
   padding: 12px;
   border-radius: 8px;
   margin-top: 20px;
@@ -86,7 +86,7 @@ header .profile-img {
 .last-activities h3 {
   font-size: 16px;
   margin-bottom: 8px;
-  color: #583E8E;
+  color: var(--accent-color);
 }
 
 .last-activities ul {
@@ -104,7 +104,7 @@ header .profile-img {
 .content h2 {
   font-size: 20px;
   margin-bottom: 20px;
-  color: #583E8E;
+  color: var(--accent-color);
   width: 75%;
   text-align: left;
 }
@@ -115,7 +115,7 @@ header .profile-img {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
+  background: var(--card-bg);
   padding: 18px 22px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
@@ -131,9 +131,9 @@ header .profile-img {
 }
 
 .contact-btn {
-  background: #826faf;
+  background: var(--botaoconsultoria);
   border: none;
-  color: #fff;
+  color: var(--card-bg);
   padding: 8px 16px;
   border-radius: 12px;
   cursor: pointer;
@@ -147,7 +147,7 @@ header .profile-img {
 
 .stat-card {
   width: 160px;
-  background: #fff;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 12px;
   text-align: center;
@@ -159,7 +159,7 @@ header .profile-img {
   display: block;
   font-size: 28px;
   font-weight: bold;
-  color: #583E8E;
+  color: var(--accent-color);
 }
 
 .hidden {
@@ -176,7 +176,7 @@ header .profile-img {
 .add-consult-form input,
 .add-consult-form button {
   padding: 8px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-neutral);
   border-radius: 8px;
   font-size: 14px;
 }
@@ -184,9 +184,9 @@ header .profile-img {
 .add-consult-btn {
   margin-top: 15px;
   padding: 10px 14px;
-  border: 1px solid #826faf;
-  background: #fff;
-  color: #583E8E;
+  border: 1px solid var(--botaoconsultoria);
+  background: var(--card-bg);
+  color: var(--accent-color);
   border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
@@ -194,7 +194,7 @@ header .profile-img {
 }
 
 .add-consult-btn:hover {
-  background: #f1eaff;
+  background: var(add-consult-btn);
 }
 
 .patients-grid {
@@ -206,7 +206,7 @@ header .profile-img {
 }
 
 .patient-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
@@ -225,7 +225,7 @@ header .profile-img {
   width: 90%;
   text-align: left;
   margin: 0 auto 20px;
-  color: #583E8E;
+  color: var(--accent-color);
 }
 
 .patient-body {
@@ -237,7 +237,7 @@ header .profile-img {
 
 .patient-notes {
   font-size: 13px;
-  color: #555;
+  color: var(--text-color2);
   max-width: 70%;
   line-height: 1.4;
   margin-right: 10px;
@@ -287,7 +287,7 @@ header .profile-img {
 }
 
 .popup-content {
-  background: #fff;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 12px;
   width: 400px;
@@ -299,14 +299,14 @@ header .profile-img {
 }
 
 .popup-content h3 {
-  color: #583E8E;
+  color: var(--accent-color);
   margin-bottom: 10px;
 }
 
 .popup-content textarea {
   width: 100%;
   min-height: 120px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-neutral);
   border-radius: 8px;
   padding: 10px;
   resize: none;
@@ -539,7 +539,7 @@ header .profile-img {
 
 .consulta-actions .btn-aceitar {
   background: var(--accent-color);
-  color: #fff;
+  color: var(--text-color);
 }
 
 .consulta-actions .btn-aceitar:hover {
@@ -548,7 +548,7 @@ header .profile-img {
 
 .consulta-actions .btn-recusar {
   background: #d9534f;
-  color: #fff;
+  color: var(--text-color);
 }
 
 .consulta-actions .btn-recusar:hover {
@@ -631,7 +631,7 @@ header .profile-img {
   padding: 10px 16px;
   border-radius: 8px;
   border: 1px solid var(--accent-color);
-  background: #fff;
+  background: var(--card-bg);
   color: var(--accent-color);
   cursor: pointer;
   font-weight: 600;
@@ -640,14 +640,14 @@ header .profile-img {
 
 .tab-btn.active {
   background: var(--accent-color);
-  color: #fff;
+  color: var(--text-color);
 }
 
 /* fallback para abas de consulta (caso variáveis CSS falhem) */
 .tab-btn {
-  border: 1px solid #826faf;
-  background: #fff;
-  color: #583E8E;
+  border: 1px solid var(--botaoconsultoria);
+  background: var(--card-bg);
+  color: var(--accent-color);
   padding: 10px 16px;
   border-radius: 8px;
   cursor: pointer;
@@ -655,36 +655,36 @@ header .profile-img {
 }
 
 .tab-btn.active {
-  background: #826faf;
-  color: #fff;
+  background: var(--botaoconsultoria);
+  color: var(--text-color);
 }
 
 .horario-btn {
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid var(--border-neutral);
+  background: var(--card-bg);
   cursor: pointer;
   font-weight: 600;
 }
 
 .horario-btn.selecionado {
-  background: #826faf;
-  color: #fff;
+  background: var(--botaoconsultoria);
+  color: var(--text-color);
   border-color: #6b2f9a;
 }
 
 .horario-btn.ocupado {
-  background: #e6e6e6;
-  color: #777;
-  border-color: #d0d0d0;
+  background: var(--card-bg);
+  color: var(--text-color2);
+  border-color: var(--card-bg-border);
   cursor: not-allowed;
 }
 
 #advDisponModal .horario-btn.ocupado[title] {
   background: #6f49a8;
   /* roxo para agendados se quiser diferenciá-los */
-  color: #fff;
+  color: var(--text-color);
 }
 
 .date.date-past {
@@ -716,7 +716,7 @@ header .profile-img {
 #calendario .events-container {
   width: 360px !important;
   max-width: 36% !important;
-  background: #fff !important;
+  background: var(--card-bg) !important;
   border-radius: 12px !important;
   padding: 12px !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
@@ -725,7 +725,7 @@ header .profile-img {
 /* Título */
 #calendario .events-container h3 {
   margin: 0 0 10px 0 !important;
-  color: #583E8E !important;
+  color: var(--accent-color) !important;
   font-size: 1.05rem !important;
 }
 
@@ -740,8 +740,8 @@ header .profile-img {
 
 /* CARD DE CONSULTA NA LISTA */
 #calendario .event-list .event {
-  border: 1px solid #e6dafb !important;
-  background: #ffffff !important;
+  border: 1px solid var(--card-bg-border) !important;
+  background: var(--card-bg) !important;
   padding: 12px !important;
   border-radius: 12px !important;
   cursor: pointer !important;
@@ -749,7 +749,7 @@ header .profile-img {
 }
 
 #calendario .event-list .event:hover {
-  background: #f8f2ff !important;
+  background: var(--card-bg) !important;
   transform: translateY(-2px) !important;
 }
 
@@ -758,23 +758,23 @@ header .profile-img {
   display: flex !important;
   justify-content: space-between !important;
   font-weight: 700 !important;
-  color: #44286a !important;
+  color: var(--event-title) !important;
 }
 
 /* STATUS */
 #calendario .event-status {
-  background: #f0eef8 !important;
+  background: var(--card-bg) !important;
   padding: 4px 8px !important;
   border-radius: 8px !important;
   font-size: 0.8rem !important;
   font-weight: 600 !important;
-  color: #583E8E !important;
+  color: var(--accent-color) !important;
 }
 
 /* META - horário e motivo */
 #calendario .event .meta {
   font-size: 0.9rem !important;
-  color: #666 !important;
+  color: var(--datapost) !important;
 }
 
 /* RESPONSIVO */
@@ -849,8 +849,8 @@ header .profile-img {
 #calendario .events-container .event-list-consultas .event,
 #calendario .events-container .event-list .event {
   margin-bottom: 14px !important;
-  border: 1px solid #e6dafb !important;
-  background: #ffffff !important;
+  border: 1px solid var(--has-event) !important;
+  background: var(--card-bg) !important;
   padding: 12px !important;
   border-radius: 12px !important;
   cursor: pointer !important;
@@ -860,9 +860,10 @@ header .profile-img {
 /* HOVER — seletor mais forte que o calendário.css */
 #calendario .events-container .event-list-consultas .event:hover,
 #calendario .events-container .event-list .event:hover {
-  background: #f6f0ff !important;
+  background: var(--event) !important;
   transform: translateY(-4px) !important;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15) !important;
+  cursor: pointer !important;
 }
 
 
@@ -907,7 +908,7 @@ section[id="chats"] {
   padding: 0 15px;
   font-weight: bold;
   background: var(--accent-color);
-  color: #fff;
+  color: var(--text-color);
 }
 
 /* Área principal do chat */
@@ -915,7 +916,7 @@ section[id="chats"] {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: var(--card-bg);
 }
 
 .chat-header {
@@ -937,7 +938,7 @@ section[id="chats"] {
 .chat-header .chat-title {
   flex: 1;
   font-weight: 600;
-  color: #333;
+  color: var(--text-color);
 }
 
 /* Lista de mensagens */
@@ -955,7 +956,7 @@ section[id="chats"] {
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
+  background-color: var(--border-neutral);
   border-radius: 3px;
 }
 
@@ -970,18 +971,23 @@ section[id="chats"] {
   font-size: 14px;
 }
 
+.msg .meta{
+  font-size: 10px;
+}
+
 /* Mensagem enviada */
 .msg-enviada {
   align-self: flex-end;
   background: var(--accent-color);
-  color: #fff;
+  color: var(--text-color);
 }
+
 
 /* Mensagem recebida */
 .msg-recebida {
   align-self: flex-start;
   background: #e5e5e5;
-  color: #333;
+  color: var(--text-color);
 }
 
 .msg audio {
@@ -1005,7 +1011,7 @@ section[id="chats"] {
   padding: 12px 16px;
   border: 1px solid #e0e0e0;
   border-radius: 24px;
-  background: #fff;
+  background: var(--card-bg);
   font-size: 14px;
 }
 
@@ -1068,8 +1074,8 @@ section[id="chats"] {
 
 .audio-wrapper {
   width: 100%;
-  background: #fff;
-  border: 1px solid #d3cbe2;
+  background: var(--card-bg);
+  border: 1px solid var(--menu-btn-active);
   padding: 12px 16px;
   border-radius: 12px;
   display: flex;
@@ -1083,8 +1089,8 @@ section[id="chats"] {
   height: 38px;
   border-radius: 50%;
   border: none;
-  background: #826faf;
-  color: #fff;
+  background: var(--botaoconsultoria);
+  color: var(--text-color);
   font-size: 18px;
   cursor: pointer;
 }
@@ -1099,7 +1105,7 @@ section[id="chats"] {
 
 .audio-time {
   font-size: 12px;
-  color: #583e8e;
+  color: var(--accent-color);
   font-weight: 600;
 }
 
@@ -1115,7 +1121,7 @@ section[id="chats"] {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fff;
+  background: var(--card-bg);
   padding: 12px 16px;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
@@ -1141,7 +1147,7 @@ section[id="chats"] {
   background: none;
   border: none;
   cursor: pointer;
-  color: #333;
+  color: var(--text-color);
 }
 
 /* Responsivo */
@@ -1167,7 +1173,7 @@ section[id="chats"] {
 }
 
 #pacientes .patient-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 10px;
   box-shadow: 0 6px 18px rgba(12, 18, 33, 0.06);
   padding: 12px;
@@ -1201,9 +1207,9 @@ section[id="chats"] {
   font-size: 0.8rem;
   padding: 4px 8px;
   margin-right: 6px;
-  background: #f3f4f6;
+  background: var(--patient);
   border-radius: 999px;
-  color: #333;
+  color: var(--text-color);
 }
 
 #pacientes .patient-last {
@@ -1212,17 +1218,17 @@ section[id="chats"] {
   gap: 10px;
   margin: 8px 0 0 0;
   font-size: 0.9rem;
-  color: #222;
+  color: var(--text-color);
 }
 
 #pacientes .last-value {
   display: inline-block;
-  background: #f8fafc;
-  border: 1px solid #e6eef8;
+  background: var(--patient);
+  border: 1px solid var(--bg-color-border);
   padding: 6px 10px;
   border-radius: 8px;
   font-weight: 600;
-  color: #111;
+  color: var(--text-color);
 }
 
 #pacientes .patient-actions {
@@ -1236,7 +1242,7 @@ section[id="chats"] {
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  background: #826faf;
+  background: var(--botaoconsultoria);
   color: white;
   font-weight: 600;
 }
@@ -1293,7 +1299,7 @@ section[id="chats"] {
 }
 
 .avatar-option.selected {
-  border-color: #583e8e;
+  border-color: var(--accent-color);
   transform: scale(1.1);
 }
 
@@ -1305,13 +1311,13 @@ section[id="chats"] {
 
 .modal-content p {
   margin-bottom: 10px;
-  color: #666;
+  color: var(--datapost);
 }
 
 .avatar-modal-content button {
   padding: 10px 20px;
-  background: #583E8E;
-  color: #fff;
+  background: var(--accent-color);
+  color: var(--card-bg);
   border: none;
   border-radius: 8px;
   cursor: pointer;

@@ -11,74 +11,6 @@
     <link rel="icon" type="image/svg+xml" href="img/iconelogo.svg">
     <link rel="alternate icon" type="image/png" href="img/iconelogo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <style>
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-
-        }
-
-        .modal-content {
-            background-color: var(--bg-color);
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 700px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        .modal-content h2 {
-            color: #3E2A72;
-            ;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-content p {
-            text-align: justify;
-            color: #444;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .modal-content img {
-            width: 100%;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 24px;
-            color: #555;
-            cursor: pointer;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-    </style>
     <script type="importmap">
 {
   "imports": {
@@ -238,6 +170,9 @@
                     </div>
                 </div>
             </a>
+
+            <br>
+
             <h3 id="menu-nome">
                 <div class="loader">
                     <div class="dot"></div>
@@ -341,7 +276,7 @@
             <div class="consultoria-text">
                 <h2>Sessões rápidas de escuta com<br>psicólogas voluntárias</h2>
                 <div class="consultoria-buttons">
-                    <button class="agendar-btn"><a href="consultas.html">Agendar Consultoria</a></button>
+                    <a href="consultas.html"><button class="agendar-btn">Agendar Consultoria</button></a>
                     <button class="funciona-btn">Como Funciona</button>
                 </div>
             </div>

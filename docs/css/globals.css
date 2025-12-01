@@ -34,6 +34,15 @@
   --hovercalendariobotao: #e8defc;
   --icon-color: #ffffff;
   --blue-consult: #1a3d8f;
+  --purple-load: #644c9a;
+  --menu-btn-active: #d3cbe2;
+  --add-consult-btn: #f1eaff;
+  --menu-btn-hover: #e8e2f3;
+  --event-title: #44286a;
+  --has-event: #e6dafb;
+  --event: #f6f0ff;
+  --patient: #f8fafc;
+
 }
 
 [data-theme="dark"] {
@@ -63,6 +72,15 @@
   --selectcalendario: #383838;
   --icon-color: #ffffff;
   --blue-consult: #3a67d1;
+  --purple-load: #75649c;
+  --menu-btn-active: #b49ce25e;
+  --menu-btn-hover: #e8e2f34d;
+  --add-consult-btn: #2e2d31;
+  --white-color: #2e2d2d;
+  --event-title: #9777c5;
+  --has-event: #3b383fad;
+  --event: #38363b8c;
+  --patient: #2f2f3081;
 }
 
 @font-face {
@@ -529,17 +547,17 @@ a {
 
 .filter-menu input[type="checkbox"] {
   margin: 0;
-  accent-color: #644c9a;
+  accent-color: var(--purple-load);
   right: 2px;
 }
 
 .filter-menu input {
-  accent-color: #644c9a;
+  accent-color: var(--purple-load);
   transform: scale(1.1);
 }
 
 .filter-menu label:hover {
-  color: #644c9a;
+  color: var(--purple-load);
 }
 
 
@@ -566,7 +584,7 @@ a {
   width: 10px;
   height: 10px;
   margin: 0 4px;
-  background-color: #644c9a;
+  background-color: var(--purple-load);
   border-radius: 50%;
   animation: bounce 0.6s infinite alternate;
 }

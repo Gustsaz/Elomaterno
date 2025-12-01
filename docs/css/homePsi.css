@@ -6,8 +6,8 @@
 
 body {
   font-family: Nunito, sans-serif;
-  background-color: #f6f2fc;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 header.header {
@@ -15,12 +15,12 @@ header.header {
   justify-content: space-between;
   align-items: center;
   padding: 24px;
-  border-bottom: 2px solid #d3cbe2;
+  border-bottom: 2px solid var(--menu-btn-active);
 }
 
 header h1 {
   font-size: 24px;
-  color: #583e8e;
+  color: var(--accent-color);
 }
 
 header .profile-img {
@@ -54,16 +54,16 @@ header .profile-img {
   cursor: pointer;
   text-align: left;
   font-size: 16px;
-  color: #583e8e;
+  color: var(--accent-color);
   transition: background 0.3s;
 }
 
 .menu-btn.active {
-  background: #d3cbe2;
+  background: var(--menu-btn-active);
 }
 
 .menu-btn:hover {
-  background: #e8e2f3;
+  background: var(--menu-btn-hover);
 }
 
 .menu-btn img {
@@ -72,7 +72,7 @@ header .profile-img {
 }
 
 .last-activities {
-  background: #fff;
+  background: var(--card-bg);
   padding: 12px;
   border-radius: 8px;
   margin-top: 20px;
@@ -82,7 +82,7 @@ header .profile-img {
 .last-activities h3 {
   font-size: 16px;
   margin-bottom: 8px;
-  color: #583e8e;
+  color: var(--accent-color);
 }
 
 .last-activities ul {
@@ -100,7 +100,7 @@ header .profile-img {
 .content h2 {
   font-size: 20px;
   margin-bottom: 20px;
-  color: #583e8e;
+  color: var(--accent-color);
   width: 75%;
   text-align: left;
 }
@@ -111,7 +111,7 @@ header .profile-img {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
+  background: var(--card-bg);
   padding: 18px 22px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
@@ -127,9 +127,9 @@ header .profile-img {
 }
 
 .contact-btn {
-  background: #826faf;
+  background: var(--botaoconsultoria);
   border: none;
-  color: #fff;
+  color: white;
   padding: 8px 16px;
   border-radius: 12px;
   cursor: pointer;
@@ -143,7 +143,7 @@ header .profile-img {
 
 .stat-card {
   width: 160px;
-  background: #fff;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 12px;
   text-align: center;
@@ -155,7 +155,7 @@ header .profile-img {
   display: block;
   font-size: 28px;
   font-weight: bold;
-  color: #583e8e;
+  color: var(--accent-color);
 }
 
 .hidden {
@@ -172,7 +172,7 @@ header .profile-img {
 .add-consult-form input,
 .add-consult-form button {
   padding: 8px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-neutral);
   border-radius: 8px;
   font-size: 14px;
 }
@@ -180,9 +180,9 @@ header .profile-img {
 .add-consult-btn {
   margin-top: 15px;
   padding: 10px 14px;
-  border: 1px solid #826faf;
-  background: #fff;
-  color: #583e8e;
+  border: 1px solid var(--botaoconsultoria);
+  background: var(--card-bg);
+  color: var(--accent-color);
   border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
@@ -190,7 +190,7 @@ header .profile-img {
 }
 
 .add-consult-btn:hover {
-  background: #f1eaff;
+  background: var(--add-consult-btn);
 }
 
 .patients-grid {
@@ -202,7 +202,7 @@ header .profile-img {
 }
 
 .patient-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
@@ -221,7 +221,7 @@ header .profile-img {
   width: 90%;
   text-align: left;
   margin: 0 auto 20px;
-  color: #583e8e;
+  color: var(--accent-color);
 }
 
 .patient-body {
@@ -233,7 +233,7 @@ header .profile-img {
 
 .patient-notes {
   font-size: 13px;
-  color: #555;
+  color: var(--text-color2);
   max-width: 70%;
   line-height: 1.4;
   margin-right: 10px;
@@ -283,7 +283,7 @@ header .profile-img {
 }
 
 .popup-content {
-  background: #fff;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 12px;
   width: 400px;
@@ -295,14 +295,14 @@ header .profile-img {
 }
 
 .popup-content h3 {
-  color: #583e8e;
+  color: var(--accent-color);
   margin-bottom: 10px;
 }
 
 .popup-content textarea {
   width: 100%;
   min-height: 120px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-neutral);
   border-radius: 8px;
   padding: 10px;
   resize: none;
@@ -534,7 +534,7 @@ header .profile-img {
 
 .consulta-actions .btn-aceitar {
   background: var(--accent-color);
-  color: #fff;
+  color: var(--text-color);
 }
 
 .consulta-actions .btn-aceitar:hover {
@@ -543,7 +543,7 @@ header .profile-img {
 
 .consulta-actions .btn-recusar {
   background: #d9534f;
-  color: #fff;
+  color: var(--text-color);
 }
 
 .consulta-actions .btn-recusar:hover {
@@ -632,7 +632,7 @@ header .profile-img {
 .info-form input,
 .info-form textarea {
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-neutral);
   border-radius: 8px;
   font-size: 14px;
 }
@@ -644,14 +644,14 @@ header .profile-img {
 #informacoes {
   width: 80%;
   margin: 0 auto;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 20px 30px;
 }
 
 #informacoes h2 {
-  color: #583e8e;
+  color: var(--accent-color);
   text-align: center;
   margin-bottom: 20px;
 }
@@ -665,9 +665,9 @@ header .profile-img {
 }
 
 .horario-btn {
-  background: #fff;
-  border: 1px solid #826faf;
-  color: #583e8e;
+  background: var(--card-bg);
+  border: 1px solid var(--botaoconsultoria);
+  color: var(--accent-color);
   border-radius: 8px;
   padding: 6px 12px;
   cursor: pointer;
@@ -675,13 +675,13 @@ header .profile-img {
 }
 
 .horario-btn:hover {
-  background: #f1eaff;
+  background: var(--add-consult-btn);
 }
 
 .horario-btn.selecionado {
-  background: #826faf;
-  color: #fff;
-  border-color: #826faf;
+  background: var(--botaoconsultoria);
+  color: var(--text-color);
+  border-color: var(--botaoconsultoria);
 }
 
 .calendar-dates .date.has-event::before {
@@ -713,14 +713,14 @@ header .profile-img {
 .edit-btn {
   background: none;
   border: none;
-  color: #583e8e;
+  color: var(--accent-color);
   cursor: pointer;
   font-size: 16px;
   transition: color 0.3s ease;
 }
 
 .edit-btn:hover {
-  color: #826faf;
+  color: var(--botaoconsultoria);
 }
 
 .consultas-tabs {
@@ -733,7 +733,7 @@ header .profile-img {
   padding: 10px 16px;
   border-radius: 8px;
   border: 1px solid var(--accent-color);
-  background: #fff;
+  background: var(--card-bg);
   color: var(--accent-color);
   cursor: pointer;
   font-weight: 600;
@@ -742,7 +742,7 @@ header .profile-img {
 
 .tab-btn.active {
   background: var(--accent-color);
-  color: #fff;
+  color: var(--card-bg);
 }
 
 .chat-users-list {
@@ -756,7 +756,7 @@ header .profile-img {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fff;
+  background: var(--card-bg);
   padding: 12px 16px;
   border-radius: 12px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -783,7 +783,7 @@ header .profile-img {
 
 .chat-user-info span {
   font-size: 14px;
-  color: #666;
+  color: var(--datapost);
 }
 
 /* Chat Styles */
@@ -804,8 +804,8 @@ section[id="chats"] {
 
 .chat-sidebar {
   width: 300px;
-  background: #f8f9fa;
-  border-right: 1px solid #e9ecef;
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-bg-border);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -819,7 +819,7 @@ section[id="chats"] {
   padding: 0 15px;
   font-weight: bold;
   background: var(--accent-color);
-  color: #fff;
+  color: var(--text-color);
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -832,15 +832,15 @@ section[id="chats"] {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: var(--card-bg);
 }
 
 .chat-header {
   display: flex;
   align-items: center;
   padding: 16px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--bg-color-border);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -854,7 +854,7 @@ section[id="chats"] {
 .chat-header .chat-title {
   flex: 1;
   font-weight: 600;
-  color: #333;
+  color: var(--text-color);
 }
 
 .chat-messages {
@@ -871,7 +871,7 @@ section[id="chats"] {
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
+  background-color: var(--border-neutral);
   border-radius: 3px;
 }
 
@@ -889,20 +889,20 @@ section[id="chats"] {
 .msg-enviada {
   align-self: flex-end;
   background: var(--accent-color);
-  color: #fff;
+  color: var(--text-color);
 }
 
 .msg-recebida {
   align-self: flex-start;
-  background: #e5e5e5;
-  color: #333;
+  background: var(--bg-color);
+  color: var(--text-color);
 }
 
 .chat-input {
   display: flex;
   padding: 12px 16px;
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  background: var(--bg-color);
+  border-top: 1px solid var(--card-bg-border);
   gap: 8px;
   flex-shrink: 0;
 }
@@ -910,11 +910,11 @@ section[id="chats"] {
 .chat-input input {
   flex: 1;
   padding: 12px 16px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--bg-color-border);
   border-radius: 24px;
   outline: none;
   font-size: 14px;
-  background: #ffffff;
+  background: var(--card-bg);
 }
 
 .chat-input input:focus {
@@ -940,7 +940,7 @@ section[id="chats"] {
   background: none;
   border: none;
   cursor: pointer;
-  color: #333;
+  color: var(--text-color);
 }
 
 /* Responsive */
@@ -988,12 +988,12 @@ section[id="chats"] {
   border: none;
   cursor: pointer;
   font-size: 20px;
-  color: #583e8e;
+  color: var(--accent-color);
   transition: color 0.2s ease;
 }
 
 .logout-btn:hover {
-  color: #826faf;
+  color: var(--botaoconsultoria);
 }
 
 .appointment-info {
@@ -1007,18 +1007,18 @@ section[id="chats"] {
   height: 58px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #583e8e;
+  border: 2px solid var(--accent-color);
 }
 
 .appointment-text h3 {
   font-size: 16px;
-  color: #583e8e;
+  color: var(--accent-color);
   margin-bottom: 4px;
 }
 
 .appointment-text p {
   font-size: 14px;
-  color: #555;
+  color: var(--text-color2);
 }
 
 #todayAppointments {
@@ -1161,8 +1161,8 @@ section[id="chats"] {
 
 .audio-wrapper {
   width: 100%;
-  background: #fff;
-  border: 1px solid #d3cbe2;
+  background: var(--card-bg);
+  border: 1px solid var(--menu-btn-active);
   padding: 12px 16px;
   border-radius: 12px;
   display: flex;
@@ -1176,8 +1176,8 @@ section[id="chats"] {
   height: 38px;
   border-radius: 50%;
   border: none;
-  background: #826faf;
-  color: #fff;
+  background: var(--botaoconsultoria);
+  color: var(--card-bg);
   font-size: 18px;
   cursor: pointer;
   transition: 0.2s ease;
@@ -1200,20 +1200,20 @@ section[id="chats"] {
   appearance: none;
   width: 14px;
   height: 14px;
-  background: #583e8e;
+  background: var(--accent-color);
   border-radius: 50%;
   cursor: grab;
 }
 
 .audio-time {
   font-size: 12px;
-  color: #583e8e;
+  color: var(--accent-color);
   font-weight: 600;
 }
 
 /* Pacientes Section Styles */
 #pacientes .patient-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 10px;
   box-shadow: 0 6px 18px rgba(12, 18, 33, 0.06);
   padding: 12px;
@@ -1247,9 +1247,9 @@ section[id="chats"] {
   font-size: 0.8rem;
   padding: 4px 8px;
   margin-right: 6px;
-  background: #f3f4f6;
+  background: var(--patient);
   border-radius: 999px;
-  color: #333;
+  color: var(--text-color);
 }
 
 #pacientes .patient-last {
@@ -1258,23 +1258,27 @@ section[id="chats"] {
   gap: 10px;
   margin: 8px 0 0 0;
   font-size: 0.9rem;
-  color: #222;
+  color: var(--text-color2);
 }
 
 #pacientes .last-value {
   display: inline-block;
-  background: #f8fafc;
-  border: 1px solid #e6eef8;
+  background: var(--patient);
+  border: 1px solid var(--bg-color-border);
   padding: 6px 10px;
   border-radius: 8px;
   font-weight: 600;
-  color: #111;
+  color: var(--text-color);
 }
 
 #pacientes .patient-actions {
   display: flex;
   gap: 8px;
   margin-top: 6px;
+}
+
+.msg-time{
+  font-size: 10px;
 }
 
 .patient-header-info {
@@ -1296,7 +1300,7 @@ section[id="chats"] {
 
 #pacientes .patient-notes {
   font-size: 14px;
-  color: #555;
+  color: var(--text-color2);
   margin: 0;
 }
 
@@ -1352,7 +1356,7 @@ section[id="chats"] {
 }
 
 .avatar-option.selected {
-  border-color: #583e8e;
+  border-color: var(--accent-color);
   transform: scale(1.1);
 }
 
@@ -1364,5 +1368,5 @@ section[id="chats"] {
 
 .modal-content p {
   margin-bottom: 10px;
-  color: #666;
+  color: var(--datapost);
 }

@@ -160,6 +160,9 @@
           </div>
         </div>
       </a>
+
+      <br>
+
       <h3 id="menu-nome">
         <div class="loader">
           <div class="dot"></div>
@@ -301,13 +304,14 @@
     import { auth, db } from "./js/firebase.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import {
-      doc, getDoc, collection, addDoc, serverTimestamp,
-      query, orderBy, onSnapshot,
+      doc, getDoc, getDocs, collection, addDoc, serverTimestamp,
+      query, where, orderBy, onSnapshot,
       setDoc, deleteDoc, updateDoc, increment
     } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const params = new URLSearchParams(window.location.search);
     const postId = params.get("postId");
+    console.log("PostId do URL:", postId);
 
     const postContainer = document.getElementById("post-container");
     const respostasContainer = document.querySelector(".respostas");
@@ -324,6 +328,7 @@
     });
 
     async function carregarPost() {
+      console.log("Tentando carregar post, postId:", postId);
       if (!postId) return;
       const snap = await getDoc(doc(db, "posts", postId));
       if (!snap.exists()) {
@@ -344,6 +349,7 @@
 
       // buscar avatar atualizado do autor do post
       let autorFoto = p.autorFoto || "./img/account_icon.png";
+      let autorNomePost = p.autorNome;
       try {
         const autorSnap = await getDoc(doc(db, "usuarios", p.autorId));
         if (autorSnap.exists()) {
@@ -353,6 +359,28 @@
         }
       } catch (err) {
         console.error("Erro ao buscar avatar do autor do post:", err);
+      }
+
+      // verificar se o autor do post é advogado
+      try {
+        console.log("Buscando advogado para autor do post, uid:", p.autorId);
+        const q = query(collection(db, "advogados"), where("uid", "==", p.autorId));
+        const advSnapQuery = await getDocs(q);
+        // I need to import getDocs
+        console.log("Resultado da busca do advogado para post:", advSnapQuery.size > 0);
+        if (advSnapQuery.size > 0) {
+          const advDoc = advSnapQuery.docs[0];
+          const dadosAdv = advDoc.data();
+          console.log("Dados do advogado para post:", dadosAdv);
+          if (dadosAdv.avatar) autorFoto = dadosAdv.avatar;
+          if (dadosAdv.nome) autorNomePost = dadosAdv.nome;
+          console.log("Avatar do post atualizado para:", autorFoto);
+          console.log("Nome do post atualizado para:", autorNomePost);
+        } else {
+          console.log("Documento do advogado para post não existe");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar avatar do advogado para post:", err);
       }
 
       postContainer.innerHTML = `
@@ -367,7 +395,7 @@
           <h4>
           ${p.autorId === "anonimo"
           ? "Anônimo"
-          : `<a href="${linkPerfil}">${p.autorNome}</a>`}
+          : `<a href="${linkPerfil}">${autorNomePost}</a>`}
           </h4>
           <span class="post-date">${dataFormatada}</span>
         </div>
@@ -398,6 +426,7 @@
 
           // buscar avatar atualizado do autor do comentário
           let autorFoto = c.autorFoto || "./img/account_icon.png";
+          let autorNome = c.autorNome;
           try {
             const autorSnap = await getDoc(doc(db, "usuarios", c.autorId));
             if (autorSnap.exists()) {
@@ -409,12 +438,33 @@
             console.error("Erro ao buscar avatar do comentário:", err);
           }
 
+          // verificar se é advogado e sobrescrever com dados de advogados se existir
+          try {
+            console.log("Buscando advogado para comentario, uid:", c.autorId);
+            const q = query(collection(db, "advogados"), where("uid", "==", c.autorId));
+            const advSnapQuery = await getDocs(q);
+            console.log("Resultado da busca do advogado:", advSnapQuery.size > 0);
+            if (advSnapQuery.size > 0) {
+              const advDoc = advSnapQuery.docs[0];
+              const dadosAdv = advDoc.data();
+              console.log("Dados do advogado:", dadosAdv);
+              if (dadosAdv.avatar) autorFoto = dadosAdv.avatar;
+              if (dadosAdv.nome) autorNome = dadosAdv.nome;
+              console.log("Avatar atualizado para:", autorFoto);
+              console.log("Nome atualizado para:", autorNome);
+            } else {
+              console.log("Documento do advogado não existe");
+            }
+          } catch (err) {
+            console.error("Erro ao buscar avatar do advogado no comentário:", err);
+          }
+
           respostasContainer.innerHTML += `
           <div class="post-card resposta-card" data-id="${docSnap.id}">
             <div class="post-header">
               <a href="${linkPerfil}"><img src="${autorFoto}" alt="Avatar" class="post-avatar"></a>
               <div class="post-info">
-                <h4><a href="${linkPerfil}">${c.autorNome}</a></h4>
+                <h4><a href="${linkPerfil}">${autorNome}</a></h4>
                 <span class="post-date">${dataFormatada}</span>
               </div>
             </div>
@@ -448,13 +498,35 @@
       const usuarioSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
       const dadosUsuario = usuarioSnap.exists() ? usuarioSnap.data() : {};
 
+      let autorNome = dadosUsuario.nome || "Usuário";
       let autorFoto = "./img/account_icon.png";
       if (dadosUsuario.fotoURL) autorFoto = dadosUsuario.fotoURL;
       else if (dadosUsuario.avatar) autorFoto = dadosUsuario.avatar;
 
+      // verificar se é advogado e sobrescrever com dados de advogados se existir
+      try {
+        console.log("Buscando advogado para enviar comentario, uid:", usuarioLogado.uid);
+        const q = query(collection(db, "advogados"), where("uid", "==", usuarioLogado.uid));
+        const advSnapQuery = await getDocs(q);
+        console.log("Resultado da busca do advogado para enviar:", advSnapQuery.size > 0);
+        if (advSnapQuery.size > 0) {
+          const advDoc = advSnapQuery.docs[0];
+          const dadosAdv = advDoc.data();
+          console.log("Dados do advogado para enviar:", dadosAdv);
+          if (dadosAdv.avatar) autorFoto = dadosAdv.avatar;
+          if (dadosAdv.nome) autorNome = dadosAdv.nome;
+          console.log("Avatar definido para comentario:", autorFoto);
+          console.log("Nome definido para comentario:", autorNome);
+        } else {
+          console.log("Documento do advogado para enviar não existe");
+        }
+      } catch (err) {
+        console.error("Erro ao buscar dados do advogado para comentário:", err);
+      }
+
       await addDoc(collection(db, "posts", postId, "comentarios"), {
         autorId: usuarioLogado.uid,
-        autorNome: dadosUsuario.nome || "Usuário",
+        autorNome,
         autorFoto,
         conteudo,
         likes: 0,
