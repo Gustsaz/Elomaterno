@@ -42,7 +42,7 @@
   --has-event: #e6dafb;
   --event: #f6f0ff;
   --patient: #f8fafc;
-
+  --menu-btn-responsivo: #644c9a;
 }
 
 [data-theme="dark"] {
@@ -81,6 +81,7 @@
   --has-event: #3b383fad;
   --event: #38363b8c;
   --patient: #2f2f3081;
+  --menu-btn-responsivo: #ffffff;
 }
 
 @font-face {

@@ -202,12 +202,38 @@
           <input type="text" id="forum-search-input" placeholder="Pesquisar no fórum">
           <button class="add-for-btn" id="nova-post-btn">+</button>
         </div>
+
         <div id="posts-list">
           <div class="loader">
             <div class="dot"></div>
             <div class="dot"></div>
             <div class="dot"></div>
           </div>
+        </div>
+      </div>
+
+      <div class="modal hidden" id="modal-post">
+        <div class="modal-content">
+          <span class="close" id="close-post-modal">&times;</span>
+          <h2>Nova Publicação</h2>
+
+          <form id="form-post">
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" placeholder="Digite o título" required>
+
+            <label for="conteudo">Conteúdo</label>
+            <textarea id="conteudo" rows="4" placeholder="Escreva sua mensagem..." required></textarea>
+
+            <label for="anonimo-checkbox" class="anonimo-check">
+              <input type="checkbox" id="anonimo-checkbox">
+              <span>Postar como anônimo</span>
+            </label>
+
+            <div class="modal-actions">
+              <button type="button" id="cancelar-post">Cancelar</button>
+              <button type="submit">Publicar</button>
+            </div>
+          </form>
         </div>
       </div>
     </section>
@@ -271,6 +297,22 @@
         <div class="consultas-list" id="consultas-list"></div>
       </div>
 
+    </section>
+
+    <section class="content hidden" id="post-comments">
+      <div class="coment-container">
+        <button id="back-to-forum" class="back-btn-forum">Voltar ao Fórum</button>
+        <div class="post-card com-brilho" id="post-container"></div>
+
+        <div class="comment-input">
+          <input type="text" id="comment-field" placeholder="Escreva seu comentário..." class="comment-field">
+          <button class="send-btn" id="send-comment-btn">
+            <img src="./img/send_icon.png" alt="Enviar">
+          </button>
+        </div>
+
+        <div class="respostas"></div>
+      </div>
     </section>
 
     <div class="popup hidden" id="notesPopup">

@@ -518,25 +518,68 @@ function initForum() {
   onAuthStateChanged(auth, (user) => {
     if (!user) return;
     const q = query(collection(db, "posts"), orderBy("data", "desc"));
-    onSnapshot(q, (snap) => {
+    onSnapshot(q, async (snap) => {
       postsList.innerHTML = "";
-      snap.forEach((docSnap) => {
+      for (const docSnap of snap.docs) {
         const post = docSnap.data();
         const id = docSnap.id;
         const data = post.data?.toDate ? post.data.toDate().toLocaleString("pt-BR") : "";
+
+        // Fetch author info from psicologos or advogados
+        let authorNome = post.autorNome || "Usuário";
+        let authorFoto = post.autorFoto || "./img/account_icon.png";
+
+        if (post.autorId && post.autorId != "anonimo") {
+          // Try psicologos first
+          try {
+            const psiQ = query(collection(db, "psicologos"), where("uid", "==", post.autorId));
+            const psiSnap = await getDocs(psiQ);
+            if (!psiSnap.empty) {
+              const psiData = psiSnap.docs[0].data();
+              authorNome = "Dr. " + (psiData.nome || "Psicólogo");
+              authorFoto = psiData.avatar || "./img/account_icon.png";
+              console.log("Fetched psicologo for", post.autorId, authorNome);
+            } else {
+              // Try advogados
+              const advQ = query(collection(db, "advogados"), where("uid", "==", post.autorId));
+              const advSnap = await getDocs(advQ);
+              if (!advSnap.empty) {
+                const advData = advSnap.docs[0].data();
+                authorNome = "Dr. " + (advData.nome || "Advogado");
+                authorFoto = advData.avatar || "./img/account_icon.png";
+                console.log("Fetched advogado for", post.autorId, authorNome);
+              } else {
+                // Try usuarios for mothers/other
+                const userQ = query(collection(db, "usuarios"), where("uid", "==", post.autorId));
+                const userSnap = await getDocs(userQ);
+                if (!userSnap.empty) {
+                  const userData = userSnap.docs[0].data();
+                  authorNome = userData.nome || authorNome || "Usuário";
+                  authorFoto = userData.avatar || authorFoto || "./img/account_icon.png";
+                  console.log("Fetched usuario for", post.autorId, authorNome);
+                } else {
+                  console.log("No collection found for", post.autorId);
+                }
+              }
+            }
+          } catch (err) {
+            console.error("Erro ao buscar autor do post:", err);
+          }
+        }
+
         const div = document.createElement("div");
         div.className = "post-card com-brilho";
         div.dataset.id = id;
         div.innerHTML = `
           <h3 class="post-title">${post.titulo}</h3>
           <div class="post-meta">
-            <img src="${post.autorFoto || './img/account_icon.png'}" class="author-avatar">
-            <div><span class="author-name">${post.autorNome}</span><span class="post-date">${data}</span></div>
+            <img src="${authorFoto}" class="author-avatar">
+            <div><span class="author-name">${authorNome}</span><span class="post-date">${data}</span></div>
           </div>
           <p class="post-content">${post.conteudo}</p>
         `;
         postsList.appendChild(div);
-      });
+      }
 
       // Likes functionality removed as per requirements
     }, (err) => console.error("Erro snapshot posts:", err));
@@ -552,9 +595,23 @@ function initForum() {
     const conteudo = document.getElementById("conteudo").value.trim();
     if (!titulo || !conteudo) return alert("Preencha todos os campos");
     const user = auth.currentUser;
+
+    // Buscar nome do advogado
+    let advNome = "Advogado";
+    try {
+      const q = query(collection(db, "advogados"), where("uid", "==", user.uid));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const data = snap.docs[0].data();
+        advNome = data.nome || "Advogado";
+      }
+    } catch (err) {
+      console.warn("Erro fetching adv nome:", err);
+    }
+
     const newPost = {
       autorId: user.uid,
-      autorNome: "Dr. " + (user.displayName || "Advogado"),
+      autorNome: "Dr. " + advNome,
       autorFoto: user.photoURL || "./img/account_icon.png",
       titulo,
       conteudo,

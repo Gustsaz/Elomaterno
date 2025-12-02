@@ -41,11 +41,16 @@ function hideModal(modalEl) {
 let eventosPsi = [];
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
+let usuarioLogado = null;
 
 const logoutBtn = document.getElementById("logoutBtn");
 logoutBtn?.addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "logPsi.html";
+});
+
+onAuthStateChanged(auth, (user) => {
+  usuarioLogado = user;
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -465,6 +470,10 @@ document.addEventListener("DOMContentLoaded", () => {
     hideModal(document.getElementById("changeAvatarModal"));
     selectedAvatar = null;
   });
+
+  // Modal post listeners
+  document.getElementById("close-post-modal")?.addEventListener("click", () => hideModal(document.getElementById("modal-post")));
+  document.getElementById("cancelar-post")?.addEventListener("click", () => hideModal(document.getElementById("modal-post")));
 });
 
 async function atualizarStatsPainel() {
@@ -641,28 +650,97 @@ function initForum() {
   onAuthStateChanged(auth, (user) => {
     if (!user) return;
     const q = query(collection(db, "posts"), orderBy("data", "desc"));
-    onSnapshot(q, (snap) => {
+    onSnapshot(q, async (snap) => {
       postsList.innerHTML = "";
-      snap.forEach((docSnap) => {
+      for (const docSnap of snap.docs) {
         const post = docSnap.data();
         const id = docSnap.id;
         const data = post.data?.toDate ? post.data.toDate().toLocaleString("pt-BR") : "";
+
+        // Fetch author info from psicologos or advogados
+        let authorNome = post.autorNome || "Usuário";
+        let authorFoto = post.autorFoto || "./img/account_icon.png";
+
+        if (post.autorId && post.autorId != "anonimo") {
+          // Try psicologos first
+          try {
+            const psiQ = query(collection(db, "psicologos"), where("uid", "==", post.autorId));
+            const psiSnap = await getDocs(psiQ);
+            if (!psiSnap.empty) {
+              const psiData = psiSnap.docs[0].data();
+              authorNome = "Dr. " + (psiData.nome || "Psicólogo");
+              authorFoto = psiData.avatar || "./img/account_icon.png";
+              console.log("Fetched psicologo for", post.autorId, authorNome);
+            } else {
+              // Try advogados
+              const advQ = query(collection(db, "advogados"), where("uid", "==", post.autorId));
+              const advSnap = await getDocs(advQ);
+              if (!advSnap.empty) {
+                const advData = advSnap.docs[0].data();
+                authorNome = "Dr. " + (advData.nome || "Advogado");
+                authorFoto = advData.avatar || "./img/account_icon.png";
+                console.log("Fetched advogado for", post.autorId, authorNome);
+              } else {
+                // Try usuarios for mothers/other
+                const userQ = query(collection(db, "usuarios"), where("uid", "==", post.autorId));
+                const userSnap = await getDocs(userQ);
+                if (!userSnap.empty) {
+                  const userData = userSnap.docs[0].data();
+                  authorNome = userData.nome || authorNome || "Usuário";
+                  authorFoto = userData.avatar || authorFoto || "./img/account_icon.png";
+                  console.log("Fetched usuario for", post.autorId, authorNome);
+                } else {
+                  console.log("No collection found for", post.autorId);
+                }
+              }
+            }
+          } catch (err) {
+            console.error("Erro ao buscar autor do post:", err);
+          }
+        }
+
         const div = document.createElement("div");
         div.className = "post-card com-brilho";
         div.dataset.id = id;
         div.innerHTML = `
           <h3 class="post-title">${post.titulo}</h3>
           <div class="post-meta">
-            <img src="${post.autorFoto || './img/account_icon.png'}" class="author-avatar">
-            <div><span class="author-name">${post.autorNome}</span><span class="post-date">${data}</span></div>
+            <img src="${authorFoto}" class="author-avatar">
+            <div><span class="author-name">${authorNome}</span><span class="post-date">${data}</span></div>
           </div>
           <p class="post-content">${post.conteudo}</p>
         `;
         postsList.appendChild(div);
-      });
-
-      // Likes functionality removed as per requirements
+      }
     }, (err) => console.error("Erro snapshot posts:", err));
+  });
+
+  // Post click to show comments
+  document.getElementById('posts-list').addEventListener('click', async (e) => {
+    const card = e.target.closest('.post-card');
+    if (!card) return;
+    const postId = card.dataset.id;
+    if (postId) {
+      currentPostId = postId;
+      showPostComments();
+    }
+  });
+
+  // Back to forum
+  document.getElementById('back-to-forum')?.addEventListener('click', () => {
+    document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('[data-target="forum"]').classList.add('active');
+    document.querySelectorAll('.content').forEach(c => c.classList.add('hidden'));
+    document.getElementById('forum').classList.remove('hidden');
+  });
+
+  // Send comment
+  document.getElementById('send-comment-btn')?.addEventListener('click', enviarComentario);
+  document.getElementById('comment-field')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      enviarComentario();
+    }
   });
 
   addBtn?.addEventListener("click", () => showModal(modal));
@@ -675,9 +753,23 @@ function initForum() {
     const conteudo = document.getElementById("conteudo").value.trim();
     if (!titulo || !conteudo) return alert("Preencha todos os campos");
     const user = auth.currentUser;
+
+    // Buscar nome do psicólogo
+    let psiNome = "Psicólogo";
+    try {
+      const q = query(collection(db, "psicologos"), where("uid", "==", user.uid));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const data = snap.docs[0].data();
+        psiNome = data.nome || "Psicólogo";
+      }
+    } catch (err) {
+      console.warn("Erro fetching psi nome:", err);
+    }
+
     const newPost = {
       autorId: user.uid,
-      autorNome: "Dr. " + (user.displayName || "Advogado"),
+      autorNome: "Dr. " + psiNome,
       autorFoto: user.photoURL || "./img/account_icon.png",
       titulo,
       conteudo,
@@ -690,6 +782,205 @@ function initForum() {
   });
 }
 
+// ========== POST COMMENTS FUNCTIONS ==========
+let currentPostId = null;
+
+async function showPostComments() {
+  const forumSection = document.getElementById('forum');
+  const commentsSection = document.getElementById('post-comments');
+  if (!forumSection || !commentsSection) return;
+
+  forumSection.classList.add('hidden');
+  commentsSection.classList.remove('hidden');
+
+  await carregarPost(currentPostId);
+  carregarComentarios(currentPostId);
+}
+
+async function carregarPost(postId) {
+  const postContainer = document.getElementById('post-container');
+  if (!postContainer || !postId) return;
+
+  try {
+    const snap = await getDoc(doc(db, 'posts', postId));
+    if (!snap.exists()) {
+      postContainer.innerHTML = '<p>Post não encontrado.</p>';
+      return;
+    }
+
+    const p = snap.data();
+    const dataFormatada = p.data?.toDate().toLocaleString('pt-BR') || 'Agora';
+
+    let linkPerfil = '';
+    if (p.autorId !== 'anonimo') {
+      linkPerfil = usuarioLogado && usuarioLogado.uid === p.autorId ? 'perfil.html' : `perfilPessoa.html?uid=${p.autorId}`;
+    }
+
+    // Buscar avatar do autor
+    let autorFoto = p.autorFoto || './img/account_icon.png';
+    let autorNomePost = p.autorNome;
+    try {
+      if (p.autorId && p.autorId !== 'anonimo') {
+        let docRef, snapDoc;
+        // Try psicologos
+        const psiQ = query(collection(db, 'psicologos'), where('uid', '==', p.autorId));
+        const psiSnap = await getDocs(psiQ);
+        if (!psiSnap.empty) {
+          snapDoc = psiSnap.docs[0];
+        } else {
+          // Try advogados
+          const advQ = query(collection(db, 'advogados'), where('uid', '==', p.autorId));
+          const advSnap = await getDocs(advQ);
+          if (!advSnap.empty) {
+            snapDoc = advSnap.docs[0];
+          } else {
+            // Try usuarios
+            docRef = doc(db, 'usuarios', p.autorId);
+            snapDoc = await getDoc(docRef);
+          }
+        }
+        if (snapDoc && snapDoc.exists()) {
+          const dados = snapDoc.data();
+          if (dados.avatar) autorFoto = dados.avatar;
+          if (dados.nome) autorNomePost = dados.nome;
+        }
+      }
+    } catch (err) {}
+
+    postContainer.innerHTML = `
+      <div class="post-header">
+        ${p.autorId === 'anonimo' ?
+          `<img src="${autorFoto}" alt="Avatar" class="post-avatar">` :
+          `<a href="${linkPerfil}"><img src="${autorFoto}" alt="Avatar" class="post-avatar"></a>`}
+        <div class="post-info">
+          <h4>
+            ${p.autorId === 'anonimo'
+              ? 'Anônimo'
+              : `<a href="${linkPerfil}">${autorNomePost}</a>`}
+          </h4>
+          <span class="post-date">${dataFormatada}</span>
+        </div>
+      </div>
+      <h2 class="post-title">${p.titulo}</h2>
+      <p class="post-content">${p.conteudo}</p>
+
+    `;
+    ajustarLikesVisuais();
+  } catch (err) {
+    console.error('Erro ao carregar post:', err);
+    postContainer.innerHTML = '<p>Erro ao carregar post.</p>';
+  }
+}
+
+function carregarComentarios(postId) {
+  const respostasContainer = document.querySelector('#post-comments .respostas');
+  if (!respostasContainer || !postId) return;
+
+  const q = query(collection(db, 'posts', postId, 'comentarios'), orderBy('data', 'asc'));
+
+  return onSnapshot(q, async (snapshot) => {
+    respostasContainer.innerHTML = '';
+    for (const docSnap of snapshot.docs) {
+      const c = docSnap.data();
+      const dataFormatada = c.data?.toDate().toLocaleString('pt-BR') || 'Agora';
+
+      const linkPerfil = usuarioLogado && usuarioLogado.uid === c.autorId ? 'perfil.html' : `perfilPessoa.html?uid=${c.autorId}`;
+
+      // Buscar avatar
+      let autorFoto = c.autorFoto || './img/account_icon.png';
+      let autorNome = c.autorNome;
+      try {
+        if (c.autorId) {
+          let snapDoc;
+          // Try psicologos
+          const psiQ = query(collection(db, 'psicologos'), where('uid', '==', c.autorId));
+          const psiSnap = await getDocs(psiQ);
+          if (!psiSnap.empty) {
+            snapDoc = psiSnap.docs[0];
+          } else {
+            // Try advogados
+            const advQ = query(collection(db, 'advogados'), where('uid', '==', c.autorId));
+            const advSnap = await getDocs(advQ);
+            if (!advSnap.empty) {
+              snapDoc = advSnap.docs[0];
+            } else {
+              // Try usuarios
+              const docRef = doc(db, 'usuarios', c.autorId);
+              snapDoc = await getDoc(docRef);
+            }
+          }
+          if (snapDoc && snapDoc.exists()) {
+            const dados = snapDoc.data();
+            if (dados.avatar) autorFoto = dados.avatar;
+            if (dados.nome) autorNome = dados.nome;
+          }
+        }
+      } catch (err) {}
+
+      respostasContainer.innerHTML += `
+        <div class="post-card resposta-card" data-id="${docSnap.id}">
+          <div class="post-header">
+            <a href="${linkPerfil}"><img src="${autorFoto}" alt="Avatar" class="post-avatar"></a>
+            <div class="post-info">
+              <h4><a href="${linkPerfil}">${autorNome}</a></h4>
+              <span class="post-date">${dataFormatada}</span>
+            </div>
+          </div>
+          <p class="post-content">${c.conteudo}</p>
+
+          ${usuarioLogado && usuarioLogado.uid === c.autorId ? `
+            <div class="coment-actions">
+              <button class="del-coment-btn">Excluir</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+    ajustarLikesVisuais();
+  });
+}
+
+async function enviarComentario() {
+  const campo = document.getElementById('comment-field');
+  const conteudo = campo.value.trim();
+  if (!conteudo || !usuarioLogado || !currentPostId) return alert('Você precisa estar logado para comentar.');
+
+  // Buscar dados do usuário
+  let autorNome = usuarioLogado.displayName || 'Psicólogo';
+  let autorFoto = usuarioLogado.photoURL || './img/account_icon.png';
+
+  await addDoc(collection(db, 'posts', currentPostId, 'comentarios'), {
+    autorId: usuarioLogado.uid,
+    autorNome,
+    autorFoto,
+    conteudo,
+    likes: 0,
+    data: serverTimestamp()
+  });
+  campo.value = '';
+}
+
+async function ajustarLikesVisuais() {
+  if (!usuarioLogado) return;
+
+  // Post like
+  const postLikeImg = document.querySelector('#post-container .like-icon');
+  if (postLikeImg && currentPostId) {
+    const likeRef = doc(db, 'posts', currentPostId, 'likes', usuarioLogado.uid);
+    const s = await getDoc(likeRef);
+    postLikeImg.src = s.exists() ? './img/like_curtido.png' : './img/like_icon.png';
+  }
+
+  // Comment likes
+  const commentWraps = document.querySelectorAll('#post-comments .like-wrap[data-type="comentario"]');
+  for (const wrap of commentWraps) {
+    const img = wrap.querySelector('.like-icon');
+    const comentId = wrap.getAttribute('data-id');
+    const likeRef = doc(db, 'posts', currentPostId, 'comentarios', comentId, 'likes', usuarioLogado.uid);
+    const s = await getDoc(likeRef);
+    img.src = s.exists() ? './img/like_curtido.png' : './img/like_icon.png';
+  }
+}
 
 async function carregarArtigos() {
   const sec = document.getElementById("artigos");
@@ -2000,4 +2291,3 @@ async function carregarPacientes() {
     grid.innerHTML = "<p>Erro ao carregar pacientes.</p>";
   }
 }
-
