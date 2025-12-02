@@ -1646,13 +1646,10 @@ section[id="chats"] {
     display:flex !important;
 }
 
-
-
 #chats {
     width:100%;
     height:auto;
 }
-
 
 @media (max-width:1024px){
 
@@ -1667,13 +1664,13 @@ section[id="chats"] {
         width:100%;
         height:200px;
         overflow-y:auto;
-        border-bottom:1px solid #bbb;
+        border-bottom:1px solid var(--card-bg-border);
     }
 
     .chat-main{
         flex:1;
         overflow-y:auto;
-        background:#fff;
+        background:var(--card-bg);
         padding-bottom:65px;
     }
 
@@ -1687,37 +1684,28 @@ section[id="chats"] {
         bottom:0;
         left:0;
         width:100%;
-        background:#fafafa;
+        background:var(--card-bg);
         padding:10px;
-        border-top:1px solid #ccc;
+        border-top:1px solid var(--card-bg-border);
         display:flex !important;
         gap:10px;
     }
 }
 
-
-
 #chats.list-view .chat-sidebar { display:block !important; }
 #chats.list-view .chat-main { display:none !important; }
-
 
 #chats.chat-view .chat-sidebar { display:none !important; }
 #chats.chat-view .chat-main { display:flex !important; flex-direction:column !important; }
 
-
-
 .sidebar .menu-btn span {
-  color: #2a2a2a !important; 
+  color: var(--text-color) !important; 
   font-weight: 600;
 }
 
-
-
-
-
 @media (max-width: 1024px) {
   .sidebar.active .menu-btn span {
-    color: #fff !important; 
+    color: var(--menu-btn-responsivo) !important; 
   }
 }
 
