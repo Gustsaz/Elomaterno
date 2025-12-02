@@ -54,17 +54,17 @@ function extractDateString(field) {
 async function atualizarDashboard() {
   try {
     const psicologosSnap = await getDocs(collection(db, "psicologos"));
-    const advogadosSnap = await getDocs(collection(db, "advogados"));
+    const advogadosSnap  = await getDocs(collection(db, "advogados"));
 
     const psicologosAtivos = psicologosSnap.docs.filter(d => d.data().status === "aprovado").length;
-    const advogadosAtivos = advogadosSnap.docs.filter(d => d.data().status === "aprovado").length;
+    const advogadosAtivos  = advogadosSnap.docs.filter(d => d.data().status === "aprovado").length;
 
     document.getElementById("psicoCount").textContent = psicologosAtivos;
-    document.getElementById("advCount").textContent = advogadosAtivos;
+    document.getElementById("advCount").textContent   = advogadosAtivos;
 
     criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos });
 
-  } catch (e) {
+  } catch(e){
     console.error("Erro dashboard:", e);
   }
 }
@@ -73,11 +73,11 @@ async function atualizarDashboard() {
 
 
 /* ----- criar/atualizar gráfico ----- */
-function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos, }) {
+function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos,  }) {
   const ctx = document.getElementById('usageChart').getContext('2d');
 
-  const labels = ['Psicólogos', 'Advogados'];
-  const values = [psicologosAtivos, advogadosAtivos,];
+  const labels = ['Psicólogos', 'Advogados' ];
+  const values = [psicologosAtivos, advogadosAtivos,  ];
 
   const purpleColors = [
     'rgba(124,105,169,0.9)',
@@ -120,27 +120,27 @@ function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos, }) {
     }
   });
   /* ==== GRÁFICO PIZZA (NOVO, SEM ALTERAR O ORIGINAL) ==== */
-  const pie = document.getElementById('pieChart');
-  if (pie) {
+const pie = document.getElementById('pieChart');
+if(pie){
     new Chart(pie, {
-      type: 'doughnut',
-      data: {
-        labels: ['Psicólogos', 'Advogados'],
-        datasets: [{
-          data: [psicologosAtivos, advogadosAtivos],
-          backgroundColor: [
-            'rgba(124,105,169,0.9)',
-            'rgba(108,75,191,0.85)',
-            'rgba(88,62,142,0.9)'
-          ]
-        }]
-      },
-      options: {
-        cutout: '55%',
-        plugins: { legend: { position: 'bottom' } }
-      }
+        type: 'doughnut',
+        data: {
+            labels: ['Psicólogos','Advogados'],
+            datasets: [{
+                data: [psicologosAtivos, advogadosAtivos],
+                backgroundColor: [
+                    'rgba(124,105,169,0.9)',
+                    'rgba(108,75,191,0.85)',
+                    'rgba(88,62,142,0.9)'
+                ]
+            }]
+        },
+        options:{
+            cutout:'55%',
+            plugins:{ legend:{position:'bottom'} }
+        }
     });
-  }
+}
 
 }
 
@@ -173,16 +173,17 @@ async function carregarSolicitacoes() {
         <div>
           <strong>${data.nome}</strong>
           <p>${col.tipo === "psicologo"
-          ? "Psicólogo(a) | CRP: " + (data.crp || "-")
-          : "Advogado(a) | OAB: " + (data.oab || "-")}</p>
+            ? "Psicólogo(a) | CRP: " + (data.crp || "-")
+            : "Advogado(a) | OAB: " + (data.oab || "-")}</p>
           <p>Status: <span class="status ${corStatus}">${status}</span></p>
         </div>
         <div class="actions">
-          ${status === "pendente"
-          ? `<button class="approve-btn" data-id="${docSnap.id}" data-col="${col.tipo}">Aprovar</button>
+          ${
+            status === "pendente"
+              ? `<button class="approve-btn" data-id="${docSnap.id}" data-col="${col.tipo}">Aprovar</button>
                  <button class="deny-btn" data-id="${docSnap.id}" data-col="${col.tipo}">Recusar</button>`
-          : ""
-        }
+              : ""
+          }
         </div>
       `;
       requestList.appendChild(card);
@@ -220,9 +221,9 @@ async function carregarSolicitacoes() {
 async function carregarUsuarios() {
   const tbody = document.querySelector("#usuarios tbody");
   if (!tbody) return;
-
+  
   // 1. Garante a limpeza do container ANTES de iniciar qualquer busca de dados.
-  tbody.innerHTML = "";
+  tbody.innerHTML = ""; 
 
   const colecoesConfig = [
     { tipoLabel: "Psicólogo", nomeColecao: "psicologos", ref: collection(db, "psicologos") },
@@ -251,26 +252,26 @@ async function carregarUsuarios() {
 
   // 4. Renderiza todos os documentos de uma vez.
   todosOsDocs.forEach(({ docSnap, colName, colLabel }) => {
-    const data = docSnap.data();
-    const status = data.status || "pendente";
-    const corStatus =
-      status === "aprovado"
-        ? "ativo"
-        : status === "recusado"
+      const data = docSnap.data();
+      const status = data.status || "pendente";
+      const corStatus =
+        status === "aprovado"
+          ? "ativo"
+          : status === "recusado"
           ? "recusado"
           : "pendente";
 
-    // ID de linha exclusivo combinando coleção e documento ID.
-    const uniqueId = `${colName}-${docSnap.id}`;
+      // ID de linha exclusivo combinando coleção e documento ID.
+      const uniqueId = `${colName}-${docSnap.id}`;
 
-    const emailOrDoc = data.email || data.crp || data.oab || "-";
+      const emailOrDoc = data.email || data.crp || data.oab || "-";
 
-    const tr = document.createElement("tr");
-    tr.dataset.uniqueId = uniqueId;
-    tr.dataset.id = docSnap.id;
-    tr.dataset.col = colName;
-
-    tr.innerHTML = `
+      const tr = document.createElement("tr");
+      tr.dataset.uniqueId = uniqueId; 
+      tr.dataset.id = docSnap.id; 
+      tr.dataset.col = colName; 
+      
+      tr.innerHTML = `
         <td>${data.nome}</td>
         <td>${colLabel}</td>
         <td>${emailOrDoc}</td>
@@ -279,7 +280,7 @@ async function carregarUsuarios() {
           <button class="remove-btn" data-id="${docSnap.id}" data-col="${colName}">Remover</button>
         </td>
       `;
-    tbody.appendChild(tr);
+      tbody.appendChild(tr);
   });
 
   // evento remover (precisa ser reanexado, pois o DOM foi reconstruído)

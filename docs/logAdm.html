@@ -16,36 +16,35 @@
   <div class="login-container">
     <div class="login-box">
 
-      <a href="formPerfil.html">
+      <a href="admin-dashboard.html">
         <img src="./img/logo_icon.png" alt="Logo mãe" class="logo">
       </a>
 
       <h2>Faça seu login</h2>
       <p class="subtexto">Sua rede de acolhimento e suporte já começou</p>
 
-      <form action="admin-dashboard.html" method="post" class="login-form">
+      <form class="login-form" onsubmit="return false">
 
         <div class="input-group">
           <img src="./img/count_icon.png" alt="icone" class="icon">
-          <input type="text" placeholder="USERADMIN" name="useradmin">
+          <input type="email" id="emailAdm" placeholder="Email do admin">
         </div>
 
         <div class="input-group">
           <img src="./img/pass_icon.png" alt="icone" class="icon">
-          <input type="password" placeholder="Senha:" name="senha">
+          <input type="password" id="senhaAdm" placeholder="Senha">
         </div>
 
         <p class="forgot-pass"><a href="#">Esqueci minha senha</a></p>
 
-        <button type="submit" class="btn-logar">Fazer login</button>
-      </form>
+        <button id="btnLoginAdm" class="btn-logar">Fazer login</button>
+</form>
 
     </div>
   </div>
-
-</body>
 <script type="module" src="./js/firebase.js"></script>
 <script type="module" src="./js/login-adm.js"></script>
-<script type="module" src="./js/globals.js"></script>
+
+</body>
 
 </html>

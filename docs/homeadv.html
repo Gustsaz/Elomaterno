@@ -22,6 +22,8 @@
 <body>
   <header class="header">
     <h1 id="boasVindas">Bem vindo(a) Dr. </h1>
+    <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">☰</button>
+<div id="sidebar-overlay" class="hidden" aria-hidden="true"></div>
     <div class="right-section">
 
       <div class="accessibility-selector">
@@ -460,7 +462,56 @@
   <script type="module" src="./js/homeAdv.js"></script>
   <script type="module" src="./js/globals.js"></script>
 
+<script>
+// ===== Toggle do sidebar + overlay (mobile/tablet) =====
+(function () {
+  const menuBtn = document.getElementById("menu-toggle");
+  const sidebar = document.querySelector(".sidebar");
+  const overlay = document.getElementById("sidebar-overlay");
 
+  if (!menuBtn || !sidebar || !overlay) {
+    // se algum não existir, tentamos criar elementos dinamicamente (fallback)
+    return;
+  }
+
+  function openSidebar() {
+    sidebar.classList.add("active");
+    overlay.classList.add("active");
+    overlay.classList.remove("hidden");
+    // evitar rolagem do body quando aberto
+    document.documentElement.style.overflow = "hidden";
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+    overlay.classList.add("hidden");
+    document.documentElement.style.overflow = "";
+  }
+
+  menuBtn.addEventListener("click", () => {
+    if (sidebar.classList.contains("active")) closeSidebar();
+    else openSidebar();
+  });
+
+  // fechar com overlay click
+  overlay.addEventListener("click", closeSidebar);
+
+  // fechar com ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.key === "Esc") closeSidebar();
+  });
+
+  // fechar automaticamente ao clicar em um menu (útil quando usuário escolhe uma aba)
+  document.querySelectorAll(".sidebar .menu-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      // apenas fecha em telas pequenas
+      if (window.innerWidth <= 1024) closeSidebar();
+    });
+  });
+
+})();
+</script>
 </body>
 
 </html>

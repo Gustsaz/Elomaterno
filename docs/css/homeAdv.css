@@ -1333,3 +1333,391 @@ section[id="chats"] {
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* ================================
+      RESPONSIVIDADE AJUSTADA
+      MOBILE + TABLET (CORRETA)
+================================ */
+
+/* ===== MOBILE (até 480px) ===== */
+@media (max-width: 480px) {
+
+  /* Sidebar vira menu lateral mobile */
+  aside.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 250px !important;
+    height: 100vh !important;
+    background: var(--primary-color-dark, #3E2A72) !important;
+    padding-top: 80px !important;
+    transform: translateX(-100%) !important;
+    transition: 0.35s ease !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  aside.sidebar.active {
+    transform: translateX(0) !important;
+  }
+
+  /* Items organizados no mobile */
+  aside.sidebar .menu-btn {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    padding: 14px 18px !important;
+  }
+
+  .main-container {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .content {
+    padding: 12px;
+    width: 100% !important;
+  }
+
+  header.header {
+    padding-left: 55px !important;
+  }
+
+  /* Grids em 1 coluna */
+  .patients-grid, .event-list, .articles-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* ===== TABLET (481px → 1024px) ===== */
+@media (min-width: 481px) and (max-width: 1024px) {
+
+  aside.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 260px !important;
+    height: 100vh !important;
+    padding-top: 90px !important;
+    background: var(--primary-color-dark, #3E2A72) !important;
+    transform: translateX(-100%) !important;
+    transition: 0.35s ease !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  aside.sidebar.active {
+    transform: translateX(0) !important;
+  }
+
+  .menu-btn span { font-size: 15px; }
+
+  .main-container { margin-left: 0 !important; width: 100% !important; }
+
+  .content { padding: 14px; width: 100%; }
+
+  /* Tablet pode usar 2 colunas */
+  .patients-grid, .articles-grid {
+    grid-template-columns: repeat(2,1fr) !important;
+  }
+}
+
+
+/* ===== DESKTOP NORMAL (PC) — SEM MUDAR NADA ===== */
+@media (min-width: 1025px) {
+  aside.sidebar {
+    position: static !important;
+    transform: none !important;
+    height: auto;
+  }
+}
+/* ===========================================================
+   RESPONSIVIDADE COMPLETA PARA O CONTEÚDO (mobile + tablet)
+===========================================================*/
+
+/* ----- REGRA GERAL para tudo em telas pequenas ----- */
+@media (max-width: 1024px) {
+
+  /* faz todas as páginas rolarem */
+  .content, body, html, .main-container {
+    overflow-y: auto !important;
+    max-height: 100vh !important;
+  }
+
+  .content {
+    padding-bottom: 60px !important; /* evita corte de conteúdo no final */
+  }
+
+  /* ======== DASHBOARD ======== */
+  #todayAppointments, .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stat-card { width: 100% !important; }
+
+  /* ======== AGENDA / CALENDÁRIO ======== */
+  .calendar-container, .events-container {
+    width: 100% !important;
+    margin: 0 auto;
+  }
+
+  .calendar-header button {
+    padding: 6px 12px !important;
+    font-size: 15px !important;
+  }
+
+  .calendar-days div { font-size: 13px !important; }
+
+  .calendar-dates {
+    grid-template-columns: repeat(7, 1fr) !important;
+  }
+
+
+  /* ======== PACIENTES ======== */
+  .patients-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .patient-card {
+    width: 100% !important;
+    padding: 14px !important;
+    font-size: 14px !important;
+  }
+
+
+  /* ======== CONSULTAS ======== */
+  .consultas-list {
+    overflow-y: auto !important;
+    max-height: calc(100vh - 190px) !important;
+    padding-right: 4px;
+  }
+
+  .consultas-container {
+    width: 100% !important;
+    padding: 10px !important;
+  }
+
+  .tab-btn { font-size: 14px !important; padding: 6px !important; }
+
+
+  /* ========= CHAT ========= */
+  .chat-wrapper {
+    display: flex;
+    flex-direction: column !important;
+  }
+
+  .chat-sidebar {
+    width: 100% !important;
+    max-height: 200px !important;
+    overflow-y: auto;
+    border-bottom: 2px solid #ddd;
+  }
+
+  .chat-main {
+    width: 100% !important;
+  }
+
+  #messagesPsi {
+    height: calc(100vh - 250px) !important;
+    overflow-y: auto !important;
+  }
+
+  .chat-input {
+    position: sticky !important;
+    bottom: 0;
+  }
+
+
+  /* ======== ARTIGOS e FÓRUM ======== */
+  .forum-container, .articles-grid {
+    width: 100% !important;
+  }
+
+  .article-card {
+    width: 100% !important;
+  }
+}
+
+/* ====== CORRIGE BUG CRÍTICO (SEM SCROLL em mods específicos) ====== */
+.content.hidden {
+  display: none !important;
+}
+.content {
+  display: block !important;
+}
+/* ===== AJUSTE CALENDÁRIO RESPONSIVO ===== */
+@media (max-width: 1024px) {
+
+  .calendar-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .calendar-dates {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+    font-size: 12px !important;
+  }
+
+  .events-container {
+    width: 100% !important;
+    margin-top: 10px !important;
+  }
+}
+/* ========================= CONSULTAS RESPONSIVO NOVO ========================= */
+
+#consultas.content.hidden {
+    display: none !important;
+}
+
+#consultas.content:not(.hidden) {
+    display: block !important;
+}
+
+/* layout base */
+#consultas {
+    width: 100%;
+    padding: 20px;
+}
+
+.consultas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 100%;
+}
+
+.consultas-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tab-btn {
+    flex: 1;
+    min-width: 130px;
+    font-size: 15px;
+}
+
+#consultas-list {
+    margin-top: 10px;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+/* RESPONSIVO */
+@media (max-width:1024px){
+    
+    #consultas {
+        padding:12px;
+    }
+
+    .tab-btn {
+        font-size:14px !important;
+        padding:6px 8px;
+    }
+
+    #consultas-list {
+        max-height:calc(100vh - 160px);
+        padding-right:6px;
+    }
+
+    .consulta-card {
+        width:100% !important;
+        font-size:14px;
+        padding:12px;
+    }
+}
+/* ========================= CHAT RESPONSIVO NOVO ========================= */
+
+/* Garantir que não aparece fora de hora */
+#chats.content.hidden {
+    display:none !important;
+}
+
+#chats.content:not(.hidden) {
+    display:flex !important;
+}
+
+
+/* Layout desktop mantém normal */
+#chats {
+    width:100%;
+    height:auto;
+}
+
+/*** RESPONSIVO ***/
+@media (max-width:1024px){
+
+    .chat-wrapper{
+        display:flex;
+        flex-direction:column;
+        width:100vw;
+        height:100vh;
+    }
+
+    .chat-sidebar{
+        width:100%;
+        height:200px;
+        overflow-y:auto;
+        border-bottom:1px solid #bbb;
+    }
+
+    .chat-main{
+        flex:1;
+        overflow-y:auto;
+        background:#fff;
+        padding-bottom:65px;
+    }
+
+    #messagesPsi{
+        height:calc(100vh - 260px);
+        overflow-y:auto;
+    }
+
+    .chat-input{
+        position:fixed;
+        bottom:0;
+        left:0;
+        width:100%;
+        background:#fafafa;
+        padding:10px;
+        border-top:1px solid #ccc;
+        display:flex !important;
+        gap:10px;
+    }
+}
+/* ==================== CHAT FLUXO EM 2 TELAS ==================== */
+
+/* INICIAL — apenas lista */
+#chats.list-view .chat-sidebar { display:block !important; }
+#chats.list-view .chat-main { display:none !important; }
+
+/* AO CLICAR EM UM USUÁRIO */
+#chats.chat-view .chat-sidebar { display:none !important; }
+#chats.chat-view .chat-main { display:flex !important; flex-direction:column !important; }
+/* ===============================
+   MENU LATERAL - DESKTOP (normal)
+   =============================== */
+.sidebar .menu-btn span {
+  color: #2a2a2a !important; /* cor escura */
+  font-weight: 600;
+}
+
+/* ===============================
+   MENU LATERAL - RESPONSIVO
+   Ativado SOMENTE quando o sidebar abre no mobile/tablet
+   =============================== */
+@media (max-width: 1024px) {
+  .sidebar.active .menu-btn span {
+    color: #fff !important; /* cor escura no menu mobile */
+  }
+}
+

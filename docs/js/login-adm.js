@@ -8,7 +8,7 @@ document.getElementById("btnLoginAdm").addEventListener("click", (e) => {
     const email = document.getElementById("emailAdm").value.trim();
     const senha = document.getElementById("senhaAdm").value.trim();
 
-    if (email === ADMIN_EMAIL && senha === ADMIN_SENHA) {
+    if(email === ADMIN_EMAIL && senha === ADMIN_SENHA){
         localStorage.setItem("adminLogado", "true"); // mantém sessão
         window.location.href = "admin-dashboard.html"; // libera acesso
     } else {

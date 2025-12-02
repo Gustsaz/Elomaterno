@@ -629,6 +629,7 @@ async function atualizarStatus(id, novoStatus) {
   }
 }
 
+
 function initForum() {
   const postsList = document.getElementById("posts-list");
   const modal = document.getElementById("modal-post");
@@ -637,32 +638,31 @@ function initForum() {
   const closeModal = document.getElementById("close-post-modal");
   const addBtn = document.getElementById("nova-post-btn");
 
-  // Carrega posts sem exigir login
-  const q = query(collection(db, "posts"), orderBy("data", "desc"));
-  onSnapshot(q, (snap) => {
-    postsList.innerHTML = "";
-    snap.forEach((docSnap) => {
-      const post = docSnap.data();
-      const id = docSnap.id;
-      const data = post.data?.toDate
-        ? post.data.toDate().toLocaleString("pt-BR")
-        : "";
-      const div = document.createElement("div");
-      div.className = "post-card com-brilho";
-      div.dataset.id = id;
-      div.innerHTML = `
-        <h3 class="post-title">${post.titulo}</h3>
-        <div class="post-meta">
-          <img src="${post.autorFoto || "./img/account_icon.png"
-        }" class="author-avatar">
-          <div><span class="author-name">${post.autorNome
-        }</span><span class="post-date">${data}</span></div>
-        </div>
-        <p class="post-content">${post.conteudo}</p>`;
-      postsList.appendChild(div);
-    });
+  onAuthStateChanged(auth, (user) => {
+    if (!user) return;
+    const q = query(collection(db, "posts"), orderBy("data", "desc"));
+    onSnapshot(q, (snap) => {
+      postsList.innerHTML = "";
+      snap.forEach((docSnap) => {
+        const post = docSnap.data();
+        const id = docSnap.id;
+        const data = post.data?.toDate ? post.data.toDate().toLocaleString("pt-BR") : "";
+        const div = document.createElement("div");
+        div.className = "post-card com-brilho";
+        div.dataset.id = id;
+        div.innerHTML = `
+          <h3 class="post-title">${post.titulo}</h3>
+          <div class="post-meta">
+            <img src="${post.autorFoto || './img/account_icon.png'}" class="author-avatar">
+            <div><span class="author-name">${post.autorNome}</span><span class="post-date">${data}</span></div>
+          </div>
+          <p class="post-content">${post.conteudo}</p>
+        `;
+        postsList.appendChild(div);
+      });
 
-    // Likes functionality removed as per requirements
+      // Likes functionality removed as per requirements
+    }, (err) => console.error("Erro snapshot posts:", err));
   });
 
   addBtn?.addEventListener("click", () => showModal(modal));
@@ -674,26 +674,22 @@ function initForum() {
     const titulo = document.getElementById("titulo").value.trim();
     const conteudo = document.getElementById("conteudo").value.trim();
     if (!titulo || !conteudo) return alert("Preencha todos os campos");
-
-    const user = auth.currentUser || {
-      uid: "anon",
-      displayName: "Visitante",
-      photoURL: "",
-    };
+    const user = auth.currentUser;
     const newPost = {
       autorId: user.uid,
-      autorNome: "Dra. " + (user.displayName || "Psicóloga"),
+      autorNome: "Dr. " + (user.displayName || "Advogado"),
       autorFoto: user.photoURL || "./img/account_icon.png",
       titulo,
       conteudo,
       likes: 0,
-      data: serverTimestamp(),
+      data: serverTimestamp()
     };
     await addDoc(collection(db, "posts"), newPost);
     form.reset();
     hideModal(modal);
   });
 }
+
 
 async function carregarArtigos() {
   const sec = document.getElementById("artigos");
@@ -2004,3 +2000,4 @@ async function carregarPacientes() {
     grid.innerHTML = "<p>Erro ao carregar pacientes.</p>";
   }
 }
+
