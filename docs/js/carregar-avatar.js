@@ -24,7 +24,7 @@ function loadAvatar(imgElement, url) {
   };
 
   img.onerror = () => {
-    imgElement.src = "./img/avatar_usuario.png"; // 🔹 corrigido
+    imgElement.src = "./img/avatar_usuario.png"; 
     if (loader) loader.style.display = "none";
   };
 }
@@ -37,7 +37,7 @@ auth.onAuthStateChanged(async (user) => {
     if (userDoc.exists()) {
       const data = userDoc.data();
       const foto =
-        data.fotoURL || data.avatar || "./img/avatar_usuario.png"; // 🔹 cobre ambos os casos
+        data.fotoURL || data.avatar || "./img/avatar_usuario.png"; 
 
       avatars.forEach(img => loadAvatar(img, foto));
     } else {

@@ -523,7 +523,7 @@ body {
     box-shadow: 0 6px 18px rgba(88, 62, 142, 0.25);
 }
 
-/* Modal styles */
+
 .modal {
     display: flex;
     justify-content: center;
@@ -621,7 +621,7 @@ body {
 }
 
 @media (max-width: 768px) {
-    /* No specific mobile adjustments needed for modal, but ensure responsiveness */
+    
     .modal-content {
         width: 95%;
         padding: 15px;

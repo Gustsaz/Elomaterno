@@ -642,7 +642,7 @@ a {
 @media (max-width: 768px) {
   .avatar-loader-container {
     width: 80px;
-    /* ajusta o container */
+    
     height: 80px;
     display: flex;
     align-items: center;
@@ -713,15 +713,15 @@ a {
 }
 
 
-/* Extender (botão topo-central) */
+
 .extender {
   position: fixed;
   top: 8px;
-  /* ajuste se quiser mais baixo */
+  
   left: 50%;
   transform: translateX(-50%);
   z-index: 10005;
-  /* acima da maioria dos elementos */
+  
   width: 44px;
   height: 44px;
   border-radius: 22px;
@@ -738,19 +738,19 @@ a {
   backdrop-filter: blur(4px);
 }
 
-/* quando aparecer (após scroll) */
+
 .extender.visible {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* quando volta ao topo — anima reduzir opacidade (visual de 'minimizado') */
+
 .extender.minimized {
   opacity: 0.35;
   transform: translateX(-50%) translateY(-4px) scale(0.98);
 }
 
-/* estado aberto (ícone rotaciona) */
+
 .extender.open i {
   transform: rotate(180deg);
   transition: transform 240ms ease;
@@ -762,11 +762,11 @@ a {
   color: var(--accent-color);
 }
 
-/* Top-centered dropdown version of .botoes (desktop) */
+
 .botoes.top-dropdown {
   position: fixed;
   top: 56px;
-  /* abaixo do botão */
+  
   left: 50%;
   transform: translateX(-50%) translateY(-10px) scaleY(0.95);
   transform-origin: top center;
@@ -783,53 +783,53 @@ a {
   transition: transform 220ms ease, opacity 180ms ease;
 }
 
-/* menu aberto */
+
 .botoes.top-dropdown.aberto {
   transform: translateX(-50%) translateY(0) scaleY(1);
   opacity: 1;
   pointer-events: auto;
 }
 
-/* adaptações internas (mantém seu layout) */
+
 .botoes.top-dropdown .menu-user,
 .botoes.top-dropdown .botao-item {
-  /* assegura boa leitura no dropdown */
+  
   background: transparent;
   box-shadow: none;
 }
 
-/* se for mobile (mantém o comportamento lateral que você já tem) */
+
 @media (max-width: 768px) {
   .extender {
     display: none;
   }
 
-  /* não mostramos o botão no mobile (opcional) */
+  
   .botoes.top-dropdown {
     display: none;
   }
 }
 
-/* --- Centralizar o dropdown horizontalmente no modo top-dropdown --- */
+
 .botoes.top-dropdown {
   position: fixed !important;
   top: 65px;
-  /* ajuste fino se precisar */
+  
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
 
   max-width: calc(100vw - 20px);
-  /* evita ultrapassar tela */
+  
   width: auto;
-  /* deixa o container ajustar ao conteúdo */
+  
   padding: 12px 18px;
 
   animation: fadeSlideDown 0.25s ease-out;
   border-radius: 14px;
 }
 
-/* garante que o conteúdo interno também não quebre layout */
+
 .botoes.top-dropdown>* {
   max-width: 100%;
 }
@@ -841,10 +841,10 @@ a {
   z-index: 10000;
 }
 
-/* --- Custom alert modal (colocar em globals.css) --- */
+
 .custom-alert {
   z-index: 20010;
-  /* acima de outros popups */
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -884,7 +884,7 @@ a {
   margin: 6px 0 18px 0;
   color: var(--text-color2);
   white-space: pre-wrap;
-  /* preserva quebras de linha */
+  
 }
 
 .custom-alert .alert-actions {
@@ -920,4 +920,3 @@ a {
   outline: none;
 }
 
-/* animação já definida: popupFade — se quiser ajuste aí */

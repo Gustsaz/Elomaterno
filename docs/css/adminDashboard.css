@@ -248,13 +248,13 @@ button {
   }
 }
 
-/* estilo do gráfico donut */
+
 #pieChart {
   max-width: 480px;
   margin-top: 10px;
 }
 
-/* nova melhoria opcional nos stat cards (baseado no modelo que você gostou) */
+
 .stat-card {
   box-shadow: 0 4px 10px rgba(0, 0, 0, .08);
   border-radius: 14px;
@@ -276,9 +276,9 @@ button {
   max-height: 350px;
 }
 
-/* ======== MELHORIA VISUAL DO DASHBOARD ======== */
 
-/* título central mais forte e com respiro */
+
+
 #dashboard h2 {
   font-weight: 800;
   font-size: 26px;
@@ -286,14 +286,14 @@ button {
   color: #4b2c82;
 }
 
-/* deixa a área dos gráficos mais alinhada e com presença */
+
 #usageChart,
 #pieChart {
   max-width: 95%;
   height: 350px !important;
 }
 
-/* container mais equilibrado visualmente */
+
 .chart-card {
   background: white;
   border-radius: 18px;
@@ -307,7 +307,7 @@ button {
   transform: scale(1.02);
 }
 
-/* deixei os títulos dos gráficos destacados */
+
 .chart-card h3 {
   color: #4b2c82;
   font-size: 18px;
@@ -315,7 +315,7 @@ button {
   margin-bottom: 15px;
 }
 
-/* ======== GRID AJUSTADO PARA FICAR PROPORCIONAL ======== */
+
 
 #dashboard>div[style*="display:flex"] {
   width: 88%;
@@ -325,7 +325,7 @@ button {
   justify-content: center;
 }
 
-/* ======== CARDS ESTATÍSTICOS AINDA MAIS BONITOS ======== */
+
 
 .stat-card {
   background: white;
@@ -352,7 +352,7 @@ button {
   font-weight: 600;
 }
 
-/* ======== PÁGINA GANHANDO VIDA 🔥 ======== */
+
 
 .main-container {
   animation: fade .6s ease-in-out;
@@ -370,7 +370,7 @@ button {
   }
 }
 
-/* ===== CARDS DA VISÃO GERAL — ESTILIZAÇÃO UPGRADE 💜 ===== */
+
 
 .stats-grid {
   width: 95%;
@@ -397,21 +397,21 @@ button {
   transition: .25s ease;
 }
 
-/* animação e realce no hover */
+
 .stat-card:hover {
   transform: translateY(-6px) scale(1.03);
   border-color: #b38cff;
   box-shadow: 0 10px 26px rgba(110, 71, 173, .25);
 }
 
-/* NÚMERO */
+
 .stat-card span {
   font-size: 34px;
   font-weight: 900;
   color: #5d35b0;
 }
 
-/* TEXTO */
+
 .stat-card p {
   margin: 0;
   font-size: 14px;

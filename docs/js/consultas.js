@@ -1,4 +1,4 @@
-// ./js/consultas.js
+
 import { auth, db } from "./firebase.js";
 import {
     doc,
@@ -10,13 +10,13 @@ import {
     onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-/* === ELEMENTOS === */
+
 const tabAgendadas = document.getElementById("agendadas");
 const tabRealizadas = document.getElementById("realizadas");
 const tabCanceladas = document.getElementById("canceladas");
 const tabs = document.querySelectorAll(".tab");
 
-/* === SISTEMA DE ABAS === */
+
 tabs.forEach(tab => {
     tab.addEventListener("click", () => {
         tabs.forEach(t => t.classList.remove("ativo"));
@@ -28,7 +28,7 @@ tabs.forEach(tab => {
     });
 });
 
-/* === MODAL (dinâmico) === */
+
 const modal = document.createElement("div");
 modal.className = "modal hidden";
 modal.innerHTML = `
@@ -50,7 +50,7 @@ modal.addEventListener("click", (e) => {
 });
 
 
-/* === HELPERS === */
+
 function gerarBadge(status) {
     if (status === "pendente") return `<span class="badge badge-pendente">Pendente</span>`;
     if (status === "aceito") return `<span class="badge badge-aceito">Agendada</span>`;
@@ -98,7 +98,7 @@ async function abrirModalProfissionalByUidAndType(uid, tipo) {
     }
 }
 
-/* === RENDER DE CARTÕES (insere dentro das abas corretas) === */
+
 function limparAbasPadrao() {
     tabAgendadas.innerHTML = `
         <div class="loading-consultas">
@@ -121,7 +121,7 @@ function limparAbasPadrao() {
     </div>`;
 }
 
-const profissionalNameCache = new Map(); // cache `${collection}:${id}` => nome
+const profissionalNameCache = new Map(); 
 
 async function fetchProfissionalNome(profissionalId, collectionName) {
   if (!profissionalId || !collectionName) return null;
@@ -251,7 +251,7 @@ function ouvirConsultasDaMae(uidMae) {
             const existing = container.querySelector('.fazer-outros-wrapper');
             if (existing) existing.remove();
 
-            // só adiciona se existir ao menos um card
+            
             if (!container.querySelector('.consulta-card')) return;
 
             const wrapper = document.createElement('div');
@@ -267,7 +267,7 @@ function ouvirConsultasDaMae(uidMae) {
             else container.appendChild(wrapper);
         }
 
-        // adiciona o botão em cada aba que tiver cards
+        
         appendMakeMoreButton(tabAgendadas);
         appendMakeMoreButton(tabRealizadas);
         appendMakeMoreButton(tabCanceladas);
@@ -275,7 +275,7 @@ function ouvirConsultasDaMae(uidMae) {
 }
 
 
-/* === CLIQUES GLOBAIS (botões dentro dos cards) === */
+
 document.addEventListener("click", (e) => {
     const btnDetalhes = e.target.closest(".btn-detalhes");
     if (btnDetalhes) {
@@ -290,14 +290,14 @@ document.addEventListener("click", (e) => {
         const uid = btnChat.dataset.uid;
         const tipo = btnChat.dataset.tipo || "psicologo";
         if (uid) {
-            // redireciona para chat com query params contendo uid e tipo (se quiser diferenciar)
+            
             window.location.href = `chat.html?uid=${encodeURIComponent(uid)}&tipo=${encodeURIComponent(tipo)}`;
         }
         return;
     }
 });
 
-/* === PEGAR UID DO USUÁRIO AUTENTICADO === */
+
 auth.onAuthStateChanged((user) => {
     if (!user) {
         console.warn("Usuário não autenticado — carregamento de consultas pausado.");

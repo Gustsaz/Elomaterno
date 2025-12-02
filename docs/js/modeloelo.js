@@ -4,7 +4,7 @@ import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.127.0/examples/j
 
 const container = document.getElementById('container');
 
-// Função para ler a cor de uma variável CSS
+
 function getCssVarColor(name) {
     return getComputedStyle(document.body).getPropertyValue(name).trim() || '#F9F7FF';
 }
@@ -155,7 +155,7 @@ function animateModelFloat(t) {
     model.rotation.z += (baseZ - model.rotation.z) * 0.005;
 }
 
-// Observa mudanças de tema no body e atualiza as cores do Three.js
+
 const themeObserver = new MutationObserver(() => {
     const newBg = getCssVarColor('--bg-hero');
     const color = new THREE.Color(newBg);
@@ -178,21 +178,21 @@ function render() {
 }
 render();
 
-// Mostra o hero com animação suave após o modelo carregar
+
 const heroSection = document.getElementById('hero');
 
-// Assim que o modelo 3D estiver pronto, ativa o fade/slide do hero
+
 function revealHero() {
     if (heroSection && !heroSection.classList.contains('loaded')) {
         heroSection.classList.add('loaded');
     }
 }
 
-// Se o modelo carregar:
+
 if (model) {
     revealHero();
 } else {
-    // Garante que mesmo se demorar, o hero entra depois de 1.5s
+    
     setTimeout(revealHero, 1500);
 }
 

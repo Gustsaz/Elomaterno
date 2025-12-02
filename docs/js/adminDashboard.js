@@ -9,7 +9,7 @@ import {
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-/* ----- menu e navegação ----- */
+
 const menuButtons = document.querySelectorAll('.menu-btn');
 const sections = document.querySelectorAll('.content');
 
@@ -23,10 +23,10 @@ menuButtons.forEach(btn => {
   });
 });
 
-/* ----- variáveis do gráfico ----- */
+
 let usageChart = null;
 
-/* ----- utilidades de data ----- */
+
 function formatDateToDDMMYYYY(dateObj) {
   const dd = String(dateObj.getDate()).padStart(2, '0');
   const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -34,16 +34,16 @@ function formatDateToDDMMYYYY(dateObj) {
   return `${dd}/${mm}/${yyyy}`;
 }
 
-/* tenta extrair uma string DD/MM/YYYY do campo armazenado */
+
 function extractDateString(field) {
   if (!field) return null;
-  // se for string já no formato dd/mm/yyyy
+  
   if (typeof field === 'string' && field.match(/^\d{2}\/\d{2}\/\d{4}$/)) return field;
-  // se for Timestamp do Firestore
+  
   if (typeof field.toDate === 'function') {
     return formatDateToDDMMYYYY(field.toDate());
   }
-  // se for objeto com seconds (p.ex. serializado)
+  
   if (field.seconds) {
     const d = new Date(field.seconds * 1000);
     return formatDateToDDMMYYYY(d);
@@ -72,7 +72,7 @@ async function atualizarDashboard() {
 
 
 
-/* ----- criar/atualizar gráfico ----- */
+
 function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos,  }) {
   const ctx = document.getElementById('usageChart').getContext('2d');
 
@@ -87,7 +87,7 @@ function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos,  }) {
   ];
 
   if (usageChart) {
-    // atualizar dados
+    
     usageChart.data.datasets[0].data = values;
     usageChart.update();
     return;
@@ -119,7 +119,7 @@ function criarOuAtualizarGrafico({ psicologosAtivos, advogadosAtivos,  }) {
       }
     }
   });
-  /* ==== GRÁFICO PIZZA (NOVO, SEM ALTERAR O ORIGINAL) ==== */
+  
 const pie = document.getElementById('pieChart');
 if(pie){
     new Chart(pie, {
@@ -144,7 +144,7 @@ if(pie){
 
 }
 
-/* ----- carregar solicitações (autorizacoes) ----- */
+
 async function carregarSolicitacoes() {
   const requestList = document.querySelector('.request-list');
   if (!requestList) return;
@@ -159,12 +159,12 @@ async function carregarSolicitacoes() {
     const snap = await getDocs(col.ref);
     snap.forEach((docSnap) => {
       const data = docSnap.data();
-      // Renderiza apenas pendentes, para não poluir
+      
       const status = data.status || "pendente";
 
       if (status !== "pendente") return;
 
-      const corStatus = "pendente"; // O status sempre será "pendente" aqui.
+      const corStatus = "pendente"; 
 
       const card = document.createElement("div");
       card.classList.add("request-card");
@@ -190,14 +190,14 @@ async function carregarSolicitacoes() {
     });
   }
 
-  // Eventos de aprovar/recusar (sem alteração)
+  
   document.querySelectorAll(".approve-btn").forEach(btn => {
     btn.onclick = async () => {
       const col = btn.dataset.col === "psicologo" ? "psicologos" : "advogados";
       const ref = doc(db, col, btn.dataset.id);
       await updateDoc(ref, { status: "aprovado" });
       alert("Profissional aprovado!");
-      // Chamadas de atualização são importantes aqui:
+      
       carregarSolicitacoes();
       carregarUsuarios();
       atualizarDashboard();
@@ -210,19 +210,19 @@ async function carregarSolicitacoes() {
       const ref = doc(db, col, btn.dataset.id);
       await updateDoc(ref, { status: "recusado" });
       alert("Profissional recusado.");
-      // Chamadas de atualização são importantes aqui:
+      
       carregarSolicitacoes();
       atualizarDashboard();
     };
   });
 }
 
-/* ----- carregar usuarios (inclui maes) - OTIMIZADO COM Promise.all ----- */
+
 async function carregarUsuarios() {
   const tbody = document.querySelector("#usuarios tbody");
   if (!tbody) return;
   
-  // 1. Garante a limpeza do container ANTES de iniciar qualquer busca de dados.
+  
   tbody.innerHTML = ""; 
 
   const colecoesConfig = [
@@ -231,14 +231,14 @@ async function carregarUsuarios() {
     { tipoLabel: "Mãe", nomeColecao: "usuarios", ref: collection(db, "maes") }
   ];
 
-  // 2. Busca todos os dados em PARALELO, garantindo que todas as promessas terminem.
+  
   const snapshots = await Promise.all(
     colecoesConfig.map(col => getDocs(col.ref))
   );
 
   const todosOsDocs = [];
 
-  // 3. Processa e mescla os dados APENAS DEPOIS que todas as buscas terminaram.
+  
   snapshots.forEach((snap, index) => {
     const col = colecoesConfig[index];
     snap.forEach((docSnap) => {
@@ -250,7 +250,7 @@ async function carregarUsuarios() {
     });
   });
 
-  // 4. Renderiza todos os documentos de uma vez.
+  
   todosOsDocs.forEach(({ docSnap, colName, colLabel }) => {
       const data = docSnap.data();
       const status = data.status || "pendente";
@@ -261,7 +261,7 @@ async function carregarUsuarios() {
           ? "recusado"
           : "pendente";
 
-      // ID de linha exclusivo combinando coleção e documento ID.
+      
       const uniqueId = `${colName}-${docSnap.id}`;
 
       const emailOrDoc = data.email || data.crp || data.oab || "-";
@@ -283,7 +283,7 @@ async function carregarUsuarios() {
       tbody.appendChild(tr);
   });
 
-  // evento remover (precisa ser reanexado, pois o DOM foi reconstruído)
+  
   document.querySelectorAll(".remove-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
       const confirmar = confirm("Tem certeza que deseja remover este usuário?");
@@ -293,33 +293,33 @@ async function carregarUsuarios() {
       const ref = doc(db, col, btn.dataset.id);
       await deleteDoc(ref);
       alert("Usuário removido!");
-      // Chama as funções para atualizar o estado da aplicação
+      
       carregarUsuarios();
       atualizarDashboard();
     });
   });
 }
-// O restante do código pode permanecer o mesmo que na última atualização.
 
-/* ----- escutar mudanças realtime (APENAS para a dashboard e tabelas) ----- */
+
+
 function escutarMudancas() {
   const colNames = ["psicologos", "advogados", "maes"];
   colNames.forEach(colName => {
     onSnapshot(collection(db, colName), () => {
-      // Apenas atualiza o Dashboard com os novos contadores
+      
       atualizarDashboard();
 
-      // Para que as tabelas de Usuários/Solicitações sejam atualizadas,
-      // você precisa chamar a função. O importante é que cada uma destas
-      // FUNÇÕES LIMPAM A SI MESMAS antes de renderizar (`innerHTML = ""`).
+      
+      
+      
       carregarUsuarios();
       if (colName !== "maes") carregarSolicitacoes();
     });
   });
 }
 
-/* ----- inicialização ----- */
-// 1. Carregamento inicial de todas as seções
+
+
 carregarSolicitacoes();
 carregarUsuarios();
 atualizarDashboard();

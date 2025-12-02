@@ -44,7 +44,7 @@ async function carregarUltimosArtigos() {
       const mini = document.createElement("a");
       mini.className = "mini-card artigo-card com-brilho";
       mini.href = href;
-      // abre dentro do app
+      
       mini.innerHTML = `
         <img src="${img}" alt="${escapeHtml(titulo)}" class="mini-cover">
         <h4 class="mini-title">${escapeHtml(titulo)}</h4>

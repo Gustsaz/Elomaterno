@@ -32,7 +32,7 @@ form.addEventListener('submit', async (e) => {
 
     if (snap.exists()) {
 
-      // 🔥 Atualiza login_load → mae: true
+      
       await updateDoc(ref, {
         "extras.login_load.mae": true
       });
@@ -83,7 +83,7 @@ form.addEventListener('submit', async (e) => {
 });
 
 
-// --- LOGIN COM GOOGLE ---
+
 const googleBtn = document.getElementById("googleLogin");
 if (googleBtn) {
   googleBtn.addEventListener("click", async () => {

@@ -1,4 +1,4 @@
-// js/calendario.js (SUBSTITUIR TODO O ARQUIVO)
+
 import { db, auth } from './firebase.js';
 import {
   doc,
@@ -62,14 +62,14 @@ function populateMonthYearSelects() {
   updateMonthTitle();
 }
 
-/* normalize a mixed array of event-like objects to { data: Date, titulo, descricao, id, type, ... } */
+
 function parsePossibleDate(raw) {
   if (!raw) return null;
   if (raw.toDate && typeof raw.toDate === 'function') {
     try {
       const d = raw.toDate();
       if (!isNaN(d)) return d;
-    } catch (e) { /* ignore */ }
+    } catch (e) {  }
   }
   if (raw instanceof Date) {
     if (!isNaN(raw)) return raw;
@@ -101,7 +101,7 @@ function normalizeEventosArray(arr = []) {
   }).filter(e => e.data instanceof Date && !isNaN(e.data));
 }
 
-/* ----------------- Rendering calendar ----------------- */
+
 function renderCalendar(month, year, eventos = []) {
   const firstDay = new Date(year, month, 1).getDay();
   const lastDate = new Date(year, month + 1, 0).getDate();
@@ -260,12 +260,12 @@ function renderEventList(eventos = []) {
   });
 }
 
-/* ----------------- Firestore listeners and merging ----------------- */
 
-// caches to hold latest snapshots
-let inscritosCache = [];   // events from usuarios.eventosInscritos
-let consultasCache = [];   // consultations from collection Consultas
-const profissionalNameCache = new Map(); // cache `${collection}:${id}` => nome
+
+
+let inscritosCache = [];   
+let consultasCache = [];   
+const profissionalNameCache = new Map(); 
 
 function renderCombinedFromCaches() {
   const combined = [...inscritosCache, ...consultasCache];
@@ -294,7 +294,7 @@ async function fetchProfissionalNome(profissionalId, collectionName) {
 
 async function setupConsultasListenerForUser(uid) {
   if (consultasUnsubscribe) {
-    try { consultasUnsubscribe(); } catch (e) { /* ignore */ }
+    try { consultasUnsubscribe(); } catch (e) {  }
     consultasUnsubscribe = null;
   }
 
@@ -370,7 +370,7 @@ async function setupConsultasListenerForUser(uid) {
 
 async function setupUserListener(uid) {
   if (userUnsubscribe) {
-    try { userUnsubscribe(); } catch (e) { /* ignore */ }
+    try { userUnsubscribe(); } catch (e) {  }
     userUnsubscribe = null;
   }
 
@@ -419,7 +419,7 @@ async function carregarEventosDoUsuario() {
   }
 }
 
-/* ----------------- Modal for events (adaptado para consultas) ----------------- */
+
 function showEventsModalForDate(eventosDoDia = []) {
   const overlay = document.createElement('div');
   overlay.className = 'em-overlay';
@@ -474,7 +474,7 @@ function showEventsModalForDate(eventosDoDia = []) {
   overlay.addEventListener('click', (ev) => { if (ev.target === overlay) overlay.remove(); });
 }
 
-/* ----------------- Hook header buttons & initial listeners ----------------- */
+
 function connectHeaderButtons() {
   const buttons = calendarHeader.querySelectorAll('button');
   if (buttons.length >= 2) {
@@ -492,7 +492,7 @@ connectHeaderButtons();
 monthSelect.addEventListener('change', onMonthChange);
 yearSelect.addEventListener('change', onYearChange);
 
-/* ----------------- Auth state: start listeners ----------------- */
+
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (!user) {
@@ -506,11 +506,11 @@ onAuthStateChanged(auth, (user) => {
   carregarEventosDoUsuario();
 });
 
-/* expose prev/next for markup usage */
+
 window.prevMonth = prevMonth;
 window.nextMonth = nextMonth;
 
-/* ----------------- styled alert helper (kept from your code) -------------- */
+
 function showStyledAlert(message, type = "info") {
   const overlay = document.createElement("div");
   overlay.className = "em-overlay";

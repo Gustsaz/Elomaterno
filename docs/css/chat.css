@@ -172,7 +172,7 @@ body {
   to { transform: translateY(0) translateX(0); opacity: 1; }
 }
 
-/* Indicador de digitando (bolinhas pulando) */
+
 .typing-indicator {
   max-width: 50%;
   align-self: flex-start;
@@ -389,7 +389,7 @@ body {
   flex-direction: column;
 }
 
-/* PLAYER CUSTOMIZADO */
+
 .custom-audio {
   display: flex;
   align-items: center;

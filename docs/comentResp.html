@@ -264,13 +264,6 @@
 
     <div class="post-card com-brilho" id="post-container"></div>
 
-    <div class="comment-input">
-      <input type="text" placeholder="Escreva seu comentário..." class="comment-field">
-      <button class="send-btn">
-        <img src="./img/send_icon.png" alt="Enviar">
-      </button>
-    </div>
-
     <div class="respostas"></div>
   </main>
 
@@ -315,12 +308,32 @@
 
     const postContainer = document.getElementById("post-container");
     const respostasContainer = document.querySelector(".respostas");
-    const campoComentario = document.querySelector(".comment-field");
-    const btnEnviar = document.querySelector(".send-btn");
 
     let usuarioLogado = null;
     let comentarioParaEditar = null;
     let comentarioParaExcluir = null;
+
+    async function getUserData(uid) {
+      // Check psicologos collection by uid field
+      const psicoQuery = await getDocs(query(collection(db, "psicologos"), where("uid", "==", uid)));
+      if (psicoQuery.size > 0) {
+        return psicoQuery.docs[0].data();
+      }
+
+      // Check advogados collection by uid field
+      const advQuery = await getDocs(query(collection(db, "advogados"), where("uid", "==", uid)));
+      if (advQuery.size > 0) {
+        return advQuery.docs[0].data();
+      }
+
+      // Check usuarios collection by doc id
+      const usuSnap = await getDoc(doc(db, "usuarios", uid));
+      if (usuSnap.exists()) {
+        return usuSnap.data();
+      }
+
+      return null;
+    }
 
     onAuthStateChanged(auth, (user) => {
       usuarioLogado = user;
@@ -347,41 +360,31 @@
           : `perfilPessoa.html?uid=${p.autorId}`;
       }
 
-      // buscar avatar atualizado do autor do post
+      // buscar dados atualizados do autor do post usando a mesma lógica do forum.html
       let autorFoto = p.autorFoto || "./img/account_icon.png";
       let autorNomePost = p.autorNome;
-      try {
-        const autorSnap = await getDoc(doc(db, "usuarios", p.autorId));
-        if (autorSnap.exists()) {
-          const dadosAutor = autorSnap.data();
-          if (dadosAutor.fotoURL) autorFoto = dadosAutor.fotoURL;
-          else if (dadosAutor.avatar) autorFoto = dadosAutor.avatar;
+      if (p.autorId && p.autorId !== "anonimo") {
+        console.log("Buscando dados do autor do post usando getUserData, uid:", p.autorId);
+        const dadosAutor = await getUserData(p.autorId);
+        if (dadosAutor) {
+          console.log("Dados do autor encontrados:", dadosAutor);
+          autorNomePost = dadosAutor.nome || autorNomePost;
+          if (dadosAutor.fotoURL) {
+            autorFoto = dadosAutor.fotoURL;
+          } else if (dadosAutor.avatar) {
+            autorFoto = dadosAutor.avatar;
+          } else if (dadosAutor.tipo === 'advogado') {
+            autorFoto = "./img/advogadossavatar/11.png";
+          } else {
+            autorFoto = "./img/account_icon.png";
+          }
+          console.log("Autor do post final: nome =", autorNomePost, "foto =", autorFoto);
+        } else {
+          console.log("Nenhum dado encontrado para autor do post");
         }
-      } catch (err) {
-        console.error("Erro ao buscar avatar do autor do post:", err);
       }
 
-      // verificar se o autor do post é advogado
-      try {
-        console.log("Buscando advogado para autor do post, uid:", p.autorId);
-        const q = query(collection(db, "advogados"), where("uid", "==", p.autorId));
-        const advSnapQuery = await getDocs(q);
-        // I need to import getDocs
-        console.log("Resultado da busca do advogado para post:", advSnapQuery.size > 0);
-        if (advSnapQuery.size > 0) {
-          const advDoc = advSnapQuery.docs[0];
-          const dadosAdv = advDoc.data();
-          console.log("Dados do advogado para post:", dadosAdv);
-          if (dadosAdv.avatar) autorFoto = dadosAdv.avatar;
-          if (dadosAdv.nome) autorNomePost = dadosAdv.nome;
-          console.log("Avatar do post atualizado para:", autorFoto);
-          console.log("Nome do post atualizado para:", autorNomePost);
-        } else {
-          console.log("Documento do advogado para post não existe");
-        }
-      } catch (err) {
-        console.error("Erro ao buscar avatar do advogado para post:", err);
-      }
+      console.log("Final: autorFoto =", autorFoto, "autorNomePost =", autorNomePost);
 
       postContainer.innerHTML = `
       <a href="forum.html" class="back-btn">
@@ -411,12 +414,57 @@
       ajustarLikesVisuais();
     }
 
-    function carregarComentarios() {
+    async function carregarComentarios() {
       const q = query(collection(db, "posts", postId, "comentarios"), orderBy("data", "asc"));
 
-      onSnapshot(q, (snapshot) => {
+      onSnapshot(q, async (snapshot) => {
         respostasContainer.innerHTML = "";
-        snapshot.forEach(async (docSnap) => {
+
+        const comentarios = [];
+        snapshot.forEach(docSnap => comentarios.push(docSnap));
+
+        // First, collect all unique autorIds for comments
+        const autorIdsComentarios = [...new Set(comentarios.map(docSnap => docSnap.data().autorId).filter(id => id && id !== "anonimo"))];
+
+        // Build userCache for comment authors
+        const userCacheComentarios = new Map();
+        for (const uid of autorIdsComentarios) {
+          try {
+            console.log("Building userCache for comentario autor uid:", uid);
+            const data = await getUserData(uid);
+            if (data) {
+              const nome = data.nome || "Usuário";
+              let foto;
+              if (data.fotoURL) {
+                foto = data.fotoURL;
+              } else if (data.avatar) {
+                foto = data.avatar;
+              } else if (data.tipo === 'advogado') {
+                foto = "./img/advogadossavatar/11.png";
+              } else {
+                foto = "./img/account_icon.png";
+              }
+              userCacheComentarios.set(uid, {
+                nome,
+                foto
+              });
+              console.log("Set userCache comentario for uid", uid, "nome:", nome, "foto:", foto);
+            } else {
+              userCacheComentarios.set(uid, {
+                nome: "Usuário",
+                foto: "./img/account_icon.png"
+              });
+            }
+          } catch (err) {
+            console.error("Erro ao buscar usuário comentario:", uid, err);
+            userCacheComentarios.set(uid, {
+              nome: "Usuário",
+              foto: "./img/account_icon.png"
+            });
+          }
+        }
+
+        const htmlStrings = comentarios.map((docSnap) => {
           const c = docSnap.data();
           const dataFormatada = c.data?.toDate().toLocaleString("pt-BR") || "Agora";
 
@@ -424,47 +472,22 @@
             ? "perfil.html"
             : `perfilPessoa.html?uid=${c.autorId}`;
 
-          // buscar avatar atualizado do autor do comentário
-          let autorFoto = c.autorFoto || "./img/account_icon.png";
-          let autorNome = c.autorNome;
-          try {
-            const autorSnap = await getDoc(doc(db, "usuarios", c.autorId));
-            if (autorSnap.exists()) {
-              const dadosAutor = autorSnap.data();
-              if (dadosAutor.fotoURL) autorFoto = dadosAutor.fotoURL;
-              else if (dadosAutor.avatar) autorFoto = dadosAutor.avatar;
-            }
-          } catch (err) {
-            console.error("Erro ao buscar avatar do comentário:", err);
+          let nomeAutor = c.autorNome || "Usuário";
+          let fotoAutor = c.autorFoto || "./img/account_icon.png";
+
+          if (c.autorId && userCacheComentarios.has(c.autorId)) {
+            const cached = userCacheComentarios.get(c.autorId);
+            nomeAutor = cached.nome || nomeAutor;
+            fotoAutor = cached.foto || fotoAutor;
+            console.log("Comentario autor final: uid =", c.autorId, "nome =", nomeAutor, "foto =", fotoAutor);
           }
 
-          // verificar se é advogado e sobrescrever com dados de advogados se existir
-          try {
-            console.log("Buscando advogado para comentario, uid:", c.autorId);
-            const q = query(collection(db, "advogados"), where("uid", "==", c.autorId));
-            const advSnapQuery = await getDocs(q);
-            console.log("Resultado da busca do advogado:", advSnapQuery.size > 0);
-            if (advSnapQuery.size > 0) {
-              const advDoc = advSnapQuery.docs[0];
-              const dadosAdv = advDoc.data();
-              console.log("Dados do advogado:", dadosAdv);
-              if (dadosAdv.avatar) autorFoto = dadosAdv.avatar;
-              if (dadosAdv.nome) autorNome = dadosAdv.nome;
-              console.log("Avatar atualizado para:", autorFoto);
-              console.log("Nome atualizado para:", autorNome);
-            } else {
-              console.log("Documento do advogado não existe");
-            }
-          } catch (err) {
-            console.error("Erro ao buscar avatar do advogado no comentário:", err);
-          }
-
-          respostasContainer.innerHTML += `
+          return `
           <div class="post-card resposta-card" data-id="${docSnap.id}">
             <div class="post-header">
-              <a href="${linkPerfil}"><img src="${autorFoto}" alt="Avatar" class="post-avatar"></a>
+              <a href="${linkPerfil}"><img src="${fotoAutor}" alt="Avatar" class="post-avatar"></a>
               <div class="post-info">
-                <h4><a href="${linkPerfil}">${autorNome}</a></h4>
+                <h4><a href="${linkPerfil}">${nomeAutor}</a></h4>
                 <span class="post-date">${dataFormatada}</span>
               </div>
             </div>
@@ -483,6 +506,8 @@
           </div>
         `;
         });
+
+        respostasContainer.innerHTML = htmlStrings.join("");
         ajustarLikesVisuais();
       });
     }
@@ -495,34 +520,21 @@
         return;
       }
 
-      const usuarioSnap = await getDoc(doc(db, "usuarios", usuarioLogado.uid));
-      const dadosUsuario = usuarioSnap.exists() ? usuarioSnap.data() : {};
+      // Check user permissions
+      const dadosUsuario = await getUserData(usuarioLogado.uid);
+      if (!dadosUsuario) {
+        alert("Erro ao verificar permissões.");
+        return;
+      }
+      if (dadosUsuario.tipo !== 'psicologo' && dadosUsuario.tipo !== 'advogado' || dadosUsuario.status !== 'aprovado') {
+        alert("Somente advogados e psicólogos podem comentar.");
+        return;
+      }
 
       let autorNome = dadosUsuario.nome || "Usuário";
       let autorFoto = "./img/account_icon.png";
       if (dadosUsuario.fotoURL) autorFoto = dadosUsuario.fotoURL;
       else if (dadosUsuario.avatar) autorFoto = dadosUsuario.avatar;
-
-      // verificar se é advogado e sobrescrever com dados de advogados se existir
-      try {
-        console.log("Buscando advogado para enviar comentario, uid:", usuarioLogado.uid);
-        const q = query(collection(db, "advogados"), where("uid", "==", usuarioLogado.uid));
-        const advSnapQuery = await getDocs(q);
-        console.log("Resultado da busca do advogado para enviar:", advSnapQuery.size > 0);
-        if (advSnapQuery.size > 0) {
-          const advDoc = advSnapQuery.docs[0];
-          const dadosAdv = advDoc.data();
-          console.log("Dados do advogado para enviar:", dadosAdv);
-          if (dadosAdv.avatar) autorFoto = dadosAdv.avatar;
-          if (dadosAdv.nome) autorNome = dadosAdv.nome;
-          console.log("Avatar definido para comentario:", autorFoto);
-          console.log("Nome definido para comentario:", autorNome);
-        } else {
-          console.log("Documento do advogado para enviar não existe");
-        }
-      } catch (err) {
-        console.error("Erro ao buscar dados do advogado para comentário:", err);
-      }
 
       await addDoc(collection(db, "posts", postId, "comentarios"), {
         autorId: usuarioLogado.uid,
@@ -535,13 +547,7 @@
       campoComentario.value = "";
     }
 
-    btnEnviar.addEventListener("click", enviarComentario);
-    campoComentario.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        enviarComentario();
-      }
-    });
+
 
     document.body.addEventListener("click", async (e) => {
       const likeBtn = e.target.closest(".like-icon");

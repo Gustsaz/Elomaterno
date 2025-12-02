@@ -85,7 +85,7 @@ form.addEventListener('submit', async (e) => {
 });
 
 
-// --- GOOGLE CADASTRO ---
+
 const googleBtn = document.getElementById("googleSignUp");
 if (googleBtn) {
   googleBtn.addEventListener("click", async () => {

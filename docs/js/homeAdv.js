@@ -1,4 +1,4 @@
-// ./js/homeAdv.js  (versão corrigida para loader + listas separadas)
+
 import { auth, db } from "./firebase.js";
 import {
   onAuthStateChanged,
@@ -22,7 +22,7 @@ import {
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-/* ========== HELPERS DE MODAL (forçam inline styles para evitar problemas de stacking) ========== */
+
 function showModal(modalEl) {
   if (!modalEl) return;
   modalEl.classList.remove("hidden");
@@ -40,20 +40,20 @@ function hideModal(modalEl) {
   modalEl.style.display = "none";
 }
 
-/* FECHAR MODAIS AO CLICAR NO BACKDROP OU ESCAPE (global) */
+
 document.addEventListener("click", (e) => {
   const modal = e.target.closest(".modal");
-  if (!modal || modal.id === "firstAvatarModal") return; // Don't close first avatar modal by click
+  if (!modal || modal.id === "firstAvatarModal") return; 
   const inner = modal.querySelector(".modal-content, .popup-content, .detalhes-consulta-card");
   if (inner && !inner.contains(e.target)) hideModal(modal);
 });
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") document.querySelectorAll(".modal:not(.hidden):not(#firstAvatarModal), .popup:not(.hidden)").forEach(m => hideModal(m)); // Don't close first avatar modal with Escape
+  if (e.key === "Escape") document.querySelectorAll(".modal:not(.hidden):not(#firstAvatarModal), .popup:not(.hidden)").forEach(m => hideModal(m)); 
 });
 
-/* -----------------------
-   VARS GLOBAIS
-   ----------------------- */
+
+
+
 let eventosParceiro = [];
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
@@ -62,11 +62,11 @@ let consultas = [];
 let consultasGlobal = [];
 let usuarioAtual = null;
 
-/* -----------------------
-   ELEMENTOS (modal e cabeçalho)
-   ----------------------- */
+
+
+
 const logoutBtn = document.getElementById("logoutBtn");
-const lista = document.getElementById("consultas-list"); // lista principal de "Consultas" (tela completa)
+const lista = document.getElementById("consultas-list"); 
 const titulo = document.getElementById("titulo-consultas");
 const boasVindasEl = document.getElementById("boasVindas");
 
@@ -80,9 +80,9 @@ const detalhesHoraConsulta = document.getElementById("detalhesHoraConsulta");
 const detalhesStatus = document.getElementById("detalhesStatus");
 const detalhesModalActions = detalhesModal?.querySelector(".modal-actions");
 
-/* -----------------------
-   LOGOUT
-   ----------------------- */
+
+
+
 logoutBtn?.addEventListener("click", async () => {
   try {
     await signOut(auth);
@@ -92,7 +92,7 @@ logoutBtn?.addEventListener("click", async () => {
   }
 });
 
-/* DOMContentLoaded */
+
 document.addEventListener("DOMContentLoaded", () => {
   initMenuButtons();
   initTabs();
@@ -113,11 +113,11 @@ function initMenuButtons() {
   const contents = document.querySelectorAll(".content");
   const lastSection = localStorage.getItem('homeadv_lastSection') || 'dashboard';
 
-  // Clear all active classes and hide all contents
+  
   buttons.forEach(button => button.classList.remove('active'));
   contents.forEach(content => content.classList.add('hidden'));
 
-  // Set initial active based on lastSection
+  
   buttons.forEach(btn => {
     const target = btn.getAttribute("data-target");
     if (target === lastSection) {
@@ -130,7 +130,7 @@ function initMenuButtons() {
     }
   });
 
-  // Event listeners
+  
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
       buttons.forEach(b => b.classList.remove("active"));
@@ -156,9 +156,9 @@ function initTabs() {
   }
 }
 
-/* -----------------------
-   HELPERS: loader para consultas (aparece em duas posições)
-   ----------------------- */
+
+
+
 function consultasLoaderMarkup() {
   return `
     <div class="loader">
@@ -170,9 +170,9 @@ function consultasLoaderMarkup() {
 }
 function showConsultasLoader() {
   try {
-    // loader na tela de consultas (principal)
+    
     if (lista) lista.innerHTML = consultasLoaderMarkup();
-    // loader também na coluna do calendário (sidebar)
+    
     const side = document.querySelector("#calendario .event-list-consultas");
     if (side) side.innerHTML = consultasLoaderMarkup();
   } catch (err) { console.warn("Erro showConsultasLoader:", err); }
@@ -185,9 +185,9 @@ function hideConsultasLoader() {
   } catch (err) { console.warn("Erro hideConsultasLoader:", err); }
 }
 
-/* -----------------------
-   CARREGAR EVENTOS (parceiros) — renderiza apenas em .event-list-eventos
-   ----------------------- */
+
+
+
 async function carregarEventos() {
   const eventList = document.querySelector("#calendario .event-list-eventos");
   if (eventList) {
@@ -214,12 +214,12 @@ async function carregarEventos() {
     eventosParceiro = eventos;
     inicializarSelects();
     renderCalendar();
-    // renderiza os eventos em container separado (não toca na lista de consultas)
+    
     renderListaEventos();
   } catch (err) {
     console.error("erro ao carregar eventos:", err);
   } finally {
-    // limpa loader de eventos (se existir)
+    
     if (eventList && eventList.querySelector(".loader")) eventList.querySelector(".loader").remove();
   }
 }
@@ -308,7 +308,7 @@ async function marcarDiasComDisponibilidade() {
   }
 }
 
-/* initDisponibilidade (mantido como antes) */
+
 function initDisponibilidade() {
   const calendar = document.getElementById("calendarDates");
   if (!calendar) return;
@@ -446,9 +446,9 @@ function initDisponibilidade() {
   });
 }
 
-/* -----------------------
-   RENDERIZAÇÃO DE EVENTOS (PARCEIRO) -> usa .event-list-eventos
-   ----------------------- */
+
+
+
 function renderListaEventos() {
   const list = document.querySelector("#calendario .event-list-eventos");
   if (!list) return;
@@ -462,9 +462,9 @@ function renderListaEventos() {
   });
 }
 
-/* -----------------------
-   ARTIGOS / FÓRUM (mantidos)
-   ----------------------- */
+
+
+
 async function carregarArtigos() {
   const sec = document.getElementById("artigos");
   if (!sec) return;
@@ -869,9 +869,9 @@ function openDetalhesModal(consulta) {
   showModal(detalhesModal);
 }
 
-/* -----------------------
-   DELEGATION: BOTOES
-   ----------------------- */
+
+
+
 document.addEventListener("click", async (e) => {
   const aceitarBtn = e.target.closest(".btn-aceitar");
   const recusarBtn = e.target.closest(".btn-recusar");
@@ -921,9 +921,9 @@ document.addEventListener("click", async (e) => {
   }
 });
 
-/* -----------------------
-   ATUALIZAR STATUS (Firestore)
-   ----------------------- */
+
+
+
 async function atualizarStatus(id, novoStatus) {
   try {
     await updateDoc(doc(db, "Consultas", id), { status: novoStatus });
@@ -936,9 +936,9 @@ async function atualizarStatus(id, novoStatus) {
   }
 }
 
-/* -----------------------
-   BUSCAR NOME DO PERFIL E ATUALIZAR CABEÇALHO
-   ----------------------- */
+
+
+
 async function fetchAndSetProfileName(uid) {
   try {
     const userRef = doc(db, "usuarios", uid);
@@ -969,9 +969,9 @@ async function fetchAndSetProfileName(uid) {
   }
 }
 
-/* -----------------------
-   AVATAR LOGIC
-   ----------------------- */
+
+
+
 async function loadAdvAvatar(uid) {
   try {
     const q = query(collection(db, "advogados"), where("uid", "==", uid));
@@ -984,13 +984,13 @@ async function loadAdvAvatar(uid) {
     const docRef = docAdv.ref;
     const data = docAdv.data();
 
-    // Load current avatar
+    
     if (data.avatar) {
       const currentAvatar = document.getElementById("currentAvatar");
       currentAvatar.src = data.avatar;
     }
 
-    // Check if first time (no avatar set)
+    
     if (!data.avatar || data.avatar === "") {
       await setupAvatarModal("firstAvatarModal", "confirmFirstAvatar", "firstAvatarGrid", docRef);
       showModal(document.getElementById("firstAvatarModal"));
@@ -1000,7 +1000,7 @@ async function loadAdvAvatar(uid) {
   }
 }
 
-// Avatar button to open change modal
+
 document.getElementById("avatarBtn")?.addEventListener("click", async () => {
   const q = query(collection(db, "advogados"), where("uid", "==", auth.currentUser.uid));
   const snap = await getDocs(q);
@@ -1016,7 +1016,7 @@ document.getElementById("closeChangeAvatar")?.addEventListener("click", () => {
   hideModal(document.getElementById("changeAvatarModal"));
 });
 
-// Function to setup avatar selection
+
 async function setupAvatarModal(modalId, confirmBtnId, gridId, docRef) {
   const modal = document.getElementById(modalId);
   const grid = document.getElementById(gridId);
@@ -1030,7 +1030,7 @@ async function setupAvatarModal(modalId, confirmBtnId, gridId, docRef) {
     window.selectedAvatar = num;
   }
 
-  // Add listeners to existing images
+  
   options.forEach(img => {
     const num = img.getAttribute("data-avatar");
     img.addEventListener("click", () => selectAvatar(img, num));
@@ -1049,7 +1049,7 @@ async function setupAvatarModal(modalId, confirmBtnId, gridId, docRef) {
       window.selectedAvatar = null;
       confirmBtn.disabled = true;
       if (modalId === "firstAvatarModal") {
-        // Optionally handle first time logic
+        
       }
     } catch (err) {
       console.error("Erro ao salvar avatar:", err);
@@ -1060,9 +1060,9 @@ async function setupAvatarModal(modalId, confirmBtnId, gridId, docRef) {
   confirmBtn.addEventListener("click", handleConfirm, { once: true });
 }
 
-/* -----------------------
-   AUTH STATE (ponto único)
-   ----------------------- */
+
+
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "logAdv.html";
@@ -1071,31 +1071,31 @@ onAuthStateChanged(auth, async (user) => {
 
   usuarioAtual = user.uid;
   await fetchAndSetProfileName(usuarioAtual);
-  await loadAdvAvatar(usuarioAtual); // load avatar before other things
+  await loadAdvAvatar(usuarioAtual); 
 
-  // carrega dados
+  
   await carregarEventos();
   initDisponibilidade();
   await carregarArtigos();
   initForum();
 
-  // carregar consultas REAIS do Firestore (agora controla loader/tela)
+  
   await carregarConsultas();
   await carregarPacientesVinculados();
 
-  // filtrar e já renderiza a sidebar (carregarConsultas já chama renderConsultasSidebar e filtrar)
+  
 
-  // Render dashboard appointments and stats
+  
   renderDashboardAppointments();
   renderStats();
 
-  // Load and render last activities (proximas consultas aceitas)
+  
   renderLastActivities();
 });
 
-/* -----------------------
-   DASHBOARD: Appointments and Stats
-   ----------------------- */
+
+
+
 
 function renderDashboardAppointments() {
   const container = document.getElementById("dashboard-appointments");
@@ -1130,7 +1130,7 @@ function renderDashboardAppointments() {
       </div>
       <button class="contact-btn">Entrar em contato</button>
     `;
-    // Optionally add click handler for contact
+    
 
     container.appendChild(card);
   });
@@ -1166,9 +1166,9 @@ function renderStats() {
   }
 }
 
-/* -----------------------
-   LAST ACTIVITIES: Próximas Consultas
-   ----------------------- */
+
+
+
 
 function renderLastActivities() {
   const lastActivities = document.querySelector(".last-activities");
@@ -1185,7 +1185,7 @@ function renderLastActivities() {
   const futureAccepted = consultas
     .filter(c => c.status === "aceito" && c.Datahora?.toDate() > now)
     .sort((a, b) => a.Datahora?.toDate() - b.Datahora?.toDate())
-    .slice(0, 3); // limit 3
+    .slice(0, 3); 
 
   if (futureAccepted.length === 0) {
     list.innerHTML = "<p>Nenhuma consulta aceita futura.</p>";
@@ -1202,15 +1202,15 @@ function renderLastActivities() {
   list.appendChild(ul);
 }
 
-/* -----------------------
-   PACIENTES VINCULADOS (advogado) — renderiza .patients-grid
-   ----------------------- */
+
+
+
 
 async function carregarPacientesVinculados() {
   const grid = document.querySelector(".patients-grid");
   if (!grid) return;
 
-  // loader
+  
   grid.innerHTML = consultasLoaderMarkup();
 
   try {
@@ -1219,11 +1219,11 @@ async function carregarPacientesVinculados() {
       return;
     }
 
-    // pega todas as consultas onde Advogado == usuarioAtual
+    
     const qCons = query(collection(db, "Consultas"), where("Advogado", "==", usuarioAtual));
     const snapCons = await getDocs(qCons);
 
-    // extrai UIDs únicos das mães (campo 'Mae' nas consultas)
+    
     const maesUids = [...new Set(snapCons.docs.map(d => d.data().Mae).filter(Boolean))];
 
     if (maesUids.length === 0) {
@@ -1231,7 +1231,7 @@ async function carregarPacientesVinculados() {
       return;
     }
 
-    // Busca batch de usuarios para eficiência
+    
     const maePromises = maesUids.map(uid => getDoc(doc(db, "usuarios", uid)));
     const maeSnaps = await Promise.all(maePromises);
     const maeMap = Object.fromEntries(
@@ -1264,7 +1264,7 @@ async function carregarPacientesVinculados() {
           ultimaStr = `${d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })} • ${d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
         }
 
-        // monta o card (markup sem variáveis inexistentes)
+        
         const card = document.createElement("div");
         card.className = "patient-card";
         card.dataset.uid = uidMae;
@@ -1303,7 +1303,7 @@ async function carregarPacientesVinculados() {
       }
     }
 
-    // delegação única (evita adicionar N listeners)
+    
     if (!grid._boundClicks) {
       grid._boundClicks = true;
       grid.addEventListener("click", async (e) => {
@@ -1316,7 +1316,7 @@ async function carregarPacientesVinculados() {
             const dadosMae = maeSnap.exists() ? maeSnap.data() : { nome: "Usuário", avatar: "./img/avatar_usuario.png" };
             abrirChatInternoAdv(uid, dadosMae);
 
-            // troca para a section de chats
+            
             document.querySelectorAll(".content").forEach(c => c.classList.add("hidden"));
             const chatsSection = document.getElementById("chats");
             if (chatsSection) chatsSection.classList.remove("hidden");
@@ -1344,7 +1344,7 @@ async function carregarPacientesVinculados() {
 }
 
 
-// Abrir modal de perfil
+
 async function abrirPerfilPaciente(uid) {
   const docRef = doc(db, "usuarios", uid);
   const snap = await getDoc(docRef);
@@ -1352,7 +1352,7 @@ async function abrirPerfilPaciente(uid) {
 
   const dados = snap.data();
 
-  // garante que o modal exista no HTML (ver instrução de HTML abaixo)
+  
   const modal = document.getElementById("perfilPacienteModal");
   if (!modal) {
     console.warn("perfilPacienteModal não encontrado no DOM. Adicione o HTML do modal conforme instruções.");
@@ -1374,14 +1374,14 @@ document.getElementById("closePerfilPaciente").onclick = () => {
   hideModal(modal);
 };
 
-// Clicar fora fecha
+
 document.getElementById("perfilPacienteModal").onclick = (e) => {
   if (e.target.id === "perfilPacienteModal") {
     e.target.classList.add("hidden");
   }
 };
 
-// Ativar cliques no botão "Ver perfil"
+
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("ver-perfil-btn")) {
     const uid = e.target.getAttribute("data-uid");
@@ -1389,10 +1389,10 @@ document.addEventListener("click", (e) => {
   }
 });
 
-/* ===========================
-   CHAT DO ADVOGADO (adaptado de homePsi)
-   Mostra somente usuários que têm vínculo via Consultas (Advogado == user.uid)
-   =========================== */
+
+
+
+
 
 let currentChatUserAdv = null;
 let unsubscribeMessagesAdv = null;
@@ -1400,7 +1400,7 @@ let currentChatIdAdv = null;
 let mediaRecorderAdv = null;
 let audioChunksAdv = [];
 
-// 1) carregar lista de usuários (mães) vinculadas por Consultas onde Advogado == user.uid
+
 async function carregarChatsAdv() {
   const listEl = document.getElementById("chatUsersList");
   if (!listEl) return;
@@ -1415,7 +1415,7 @@ async function carregarChatsAdv() {
   if (!user) return;
 
   try {
-    // pega consultas do advogado
+    
     const q = query(collection(db, "Consultas"), where("Advogado", "==", user.uid));
     const snap = await getDocs(q);
 
@@ -1424,7 +1424,7 @@ async function carregarChatsAdv() {
       return;
     }
 
-    // lista única de UIDs das mães
+    
     const maes = [...new Set(snap.docs.map(d => d.data().Mae))];
 
     listEl.innerHTML = "";
@@ -1461,11 +1461,11 @@ async function carregarChatsAdv() {
   }
 }
 
-// 2) abrir chat interno (cria doc se necessário) e carregar mensagens
+
 async function abrirChatInternoAdv(uidMae, dadosMae) {
   currentChatUserAdv = uidMae;
 
-  // mostrar avatar e título corretamente
+  
   const avatarEl = document.getElementById("chatAvatarAdv");
   const titleEl = document.getElementById("chatTitleAdv");
   const messageForm = document.getElementById("messageFormAdv");
@@ -1481,11 +1481,11 @@ async function abrirChatInternoAdv(uidMae, dadosMae) {
   if (messageForm) messageForm.classList.remove("hidden");
   if (backBtn) backBtn.classList.remove("hidden");
 
-  // para mobile: mostra a área de chat principal
+  
   const chatMain = document.querySelector(".chat-main");
   if (chatMain) chatMain.classList.add("active");
 
-  // encontrar chat (onde o advogado atual é participante e o outro participante é a mãe)
+  
   const user = auth.currentUser;
   const chatsRef = collection(db, "chats");
   const q = query(chatsRef, where("participantes", "array-contains", user.uid));
@@ -1551,12 +1551,12 @@ function carregarMensagensAdv(chatId) {
       messagesEl.appendChild(div);
     });
 
-    // scroll to bottom
+    
     messagesEl.scrollTop = messagesEl.scrollHeight;
   });
 }
 
-// 4) enviar mensagem de texto (form submit)
+
 document.addEventListener("submit", async (e) => {
   if (e.target && e.target.id === "messageFormAdv") {
     e.preventDefault();
@@ -1573,7 +1573,7 @@ document.addEventListener("submit", async (e) => {
         lido: false
       });
 
-      // atualiza meta do chat
+      
       await updateDoc(doc(db, "chats", currentChatIdAdv), {
         ultimoMensagem: texto,
         ultimoEnviadoPor: auth.currentUser.uid,
@@ -1594,7 +1594,7 @@ if (voiceBtnAdv) {
   voiceBtnAdv.addEventListener("click", async () => {
     if (!currentChatIdAdv) return alert("Abra um chat antes de gravar.");
 
-    // iniciar gravação
+    
     if (!mediaRecorderAdv || mediaRecorderAdv.state === "inactive") {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1641,7 +1641,7 @@ if (voiceBtnAdv) {
       return;
     }
 
-    // parar gravação
+    
     if (mediaRecorderAdv.state === "recording") {
       mediaRecorderAdv.stop();
       voiceBtnAdv.classList.remove("recording");
@@ -1649,29 +1649,29 @@ if (voiceBtnAdv) {
   });
 }
 
-// 6) mobilidade: botão voltar (apenas para UX em telas pequenas)
+
 const backBtnAdv = document.getElementById("backBtnAdv");
 if (backBtnAdv) {
   backBtnAdv.addEventListener("click", () => {
-    // mostra a lista novamente (para mobile behavior pode-se controlar classes)
+    
     document.querySelector(".chat-main")?.classList.remove("active");
     document.querySelector(".chat-sidebar")?.classList.remove("hidden");
   });
 }
 
-// 7) Integração com menu: quando o usuário clicar no menu 'chats', carregamos
-//    (adapte se sua função initMenuButtons estiver noutro lugar)
+
+
 (function patchMenuForChats() {
   const buttons = document.querySelectorAll(".menu-btn");
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
       const target = btn.getAttribute("data-target");
       if (target === "chats") {
-        // carregar chats só quando abrir a aba
+        
         carregarChatsAdv().catch(err => console.error("carregarChatsAdv erro:", err));
       }
       if (target === "pacientes") {
-        // carregar pacientes vinculados só quando abrir a aba
+        
         carregarPacientesVinculados().catch(err => console.error("carregarPacientesVinculados erro:", err));
       }
     });

@@ -23,7 +23,7 @@ const messageInput = document.getElementById("messageInput");
 const chatHeader = document.getElementById("chatHeader");
 
 let currentUser = null;
-// Ler psicólogo vindo da URL
+
 function getPsiFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get("psi");
@@ -65,10 +65,10 @@ onAuthStateChanged(auth, async (user) => {
   loadUsers();
   listenUserChats();
 
-  // se veio um psiUid na URL, abrir automaticamente
+  
   const psiFromURL = getPsiFromURL();
   if (psiFromURL) {
-    // esperar loadUsers terminar de montar a lista
+    
     const waitList = setInterval(() => {
       const state = chatListState.get(psiFromURL);
       if (state) {
@@ -109,7 +109,7 @@ async function loadUsers() {
   }
 
   try {
-    // 1) pegar consultas da mãe logada
+    
     const consultasRef = collection(db, "Consultas");
     const q = query(consultasRef, where("Mae", "==", currentUser.uid));
     const snapConsultas = await getDocs(q);
@@ -119,7 +119,7 @@ async function loadUsers() {
       return;
     }
 
-    // 2) extrair UIDs de psicólogos e advogados (sem duplicatas)
+    
     const psicSet = new Set();
     const advSet = new Set();
 
@@ -137,7 +137,7 @@ async function loadUsers() {
       return;
     }
 
-    // 3) BUSCAR PSICÓLOGOS
+    
     let psicDocs = [];
     if (psicUids.length > 0) {
       if (psicUids.length <= 10) {
@@ -158,7 +158,7 @@ async function loadUsers() {
       }
     }
 
-    // 4) BUSCAR ADVOGADOS
+    
     let advDocs = [];
     if (advUids.length > 0) {
       if (advUids.length <= 10) {
@@ -179,7 +179,7 @@ async function loadUsers() {
       }
     }
 
-    // 5) LIMPAR LISTA
+    
     userListEl.innerHTML = "";
 
     // 6) RENDERIZAR PSICÓLOGOS
@@ -206,7 +206,7 @@ async function loadUsers() {
       });
     });
 
-    // 7) RENDERIZAR ADVOGADOS
+    
     advDocs.forEach(a => {
       const uid = a.uid || a.id;
       const li = document.createElement("li");
@@ -282,7 +282,7 @@ async function openChatWith(otherUid, userData) {
 
   messageForm.classList.remove("hidden");
 
-  // Carregar mensagens da subcoleção "mensagens" dentro do chat
+  
   const msgsRef = collection(db, "chats", currentChatId, "mensagens");
   const qMsgs = query(
     msgsRef,
@@ -446,12 +446,12 @@ messageForm.addEventListener("submit", async (e) => {
     }, { merge: true });
   } catch (error) {
     console.error("Erro ao enviar mensagem:", error);
-    // Remove optimistic message on failure
+    
     if (messagesDiv.lastOptimisticEl) {
       messagesDiv.lastOptimisticEl.remove();
       messagesDiv.lastOptimisticEl = null;
     }
-    // Restore message input
+    
     messageInput.value = texto;
     alert("Erro ao enviar mensagem. Tente novamente.");
   }
@@ -585,15 +585,15 @@ async function markMessagesAsRead(chatId, otherUid) {
   }
 }
 
-// Notificações e som quando chegar mensagem nova
-// Observa globalmente todas as mensagens dos chats do usuário (aproveita listenUserChats para ordem)
+
+
 const globalMsgUnsub = (() => {
   const chatsRef = collection(db, "chats");
   const qChats = query(chatsRef, where("participantes", "array-contains", auth.currentUser?.uid || "__placeholder__"));
   let innerUnsubs = [];
 
   onAuthStateChanged(auth, (u) => {
-    // reconfigura quando logar
+    
     innerUnsubs.forEach((fn) => fn());
     innerUnsubs = [];
     if (!u) return;
@@ -611,7 +611,7 @@ const globalMsgUnsub = (() => {
           const isFromOther = msg.enviadoPor && msg.enviadoPor !== u.uid;
           if (!isFromOther) return;
 
-          // Se o chat desse usuário está aberto, não toca e não notifica
+          
           if (currentChatId === chatDoc.id) return;
 
           try { if (notifyAudio) notifyAudio.play().catch(() => { }); } catch (_) { }
@@ -632,7 +632,7 @@ const globalMsgUnsub = (() => {
   });
 })();
 
-// Indicador de digitando...
+
 let typingTimeout = null;
 const TYPING_DEBOUNCE_MS = 1200;
 
@@ -647,7 +647,7 @@ messageInput.addEventListener("input", async () => {
   }, TYPING_DEBOUNCE_MS);
 });
 
-// Mostra loader de digitando do outro usuário no chat aberto
+
 function renderTypingIndicator(show) {
   const existing = messagesDiv.querySelector(".typing-indicator");
   if (show) {
@@ -662,7 +662,7 @@ function renderTypingIndicator(show) {
   }
 }
 
-// Observa o doc do chat atual para exibir o typing do outro participante
+
 let unsubTyping = null;
 async function watchTyping(chatId, otherUid) {
   if (unsubTyping) unsubTyping();
@@ -675,9 +675,9 @@ async function watchTyping(chatId, otherUid) {
   });
 }
 
-/* ======================================================
-      SISTEMA DE ÁUDIO – GRAVAÇÃO E ENVIO
-====================================================== */
+
+
+
 
 let mediaRecorder = null;
 let audioChunks = [];
@@ -686,7 +686,7 @@ const voiceBtn = document.getElementById("voiceBtn");
 voiceBtn.addEventListener("click", async () => {
   if (!currentChatId) return;
 
-  // SE COMEÇAR A GRAVAR
+  
   if (!mediaRecorder || mediaRecorder.state === "inactive") {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -739,7 +739,7 @@ voiceBtn.addEventListener("click", async () => {
     return;
   }
 
-  // SE PARAR A GRAVAÇÃO
+  
   if (mediaRecorder.state === "recording") {
     mediaRecorder.stop();
     voiceBtn.classList.remove("recording");
@@ -758,13 +758,13 @@ function setupCustomPlayer(id) {
 
   let isDragging = false;
 
-  // Quando carregar metadata
+  
   audio.addEventListener("loadedmetadata", () => {
     range.max = Math.floor(audio.duration);
     timeLabel.textContent = "00:" + String(Math.floor(audio.duration)).padStart(2, "0");
   });
 
-  // Play/pause
+  
   btn.addEventListener("click", () => {
     if (audio.paused) {
       audio.play();
@@ -775,7 +775,7 @@ function setupCustomPlayer(id) {
     }
   });
 
-  // Atualiza range conforme áudio toca
+  
   audio.addEventListener("timeupdate", () => {
     if (!isDragging) range.value = audio.currentTime;
 
@@ -783,18 +783,18 @@ function setupCustomPlayer(id) {
       "00:" + String(Math.floor(audio.currentTime)).padStart(2, "0");
   });
 
-  // Usuario arrastando slider
+  
   range.addEventListener("input", () => {
     isDragging = true;
   });
 
-  // Usuario soltou slider
+  
   range.addEventListener("change", () => {
     isDragging = false;
     audio.currentTime = range.value;
   });
 
-  // Reset ao finalizar
+  
   audio.addEventListener("ended", () => {
     btn.innerHTML = `<i class="fa fa-play"></i>`;
     audio.currentTime = 0;

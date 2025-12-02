@@ -18,12 +18,13 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const nome = form.querySelector('[name="nomeadv"]').value.trim();
+  const email = form.querySelector('[name="emailadv"]').value.trim();
   const oab = form.querySelector('[name="oab"]').value.trim();
   const atuacao = form.querySelector('[name="atuacaoadv"]').value.trim();
   const senha = form.querySelector('[name="senha"]').value;
   const senha2 = form.querySelector('[name="senha2"]').value;
 
-  if (!nome || !oab || !atuacao || !senha || !senha2) {
+  if (!nome || !email || !oab || !atuacao || !senha || !senha2) {
     alert("Preencha todos os campos.");
     return;
   }
@@ -33,7 +34,7 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Verifica se OAB já existe
+  
   const advRef = collection(db, "advogados");
   const q = query(advRef, where("oab", "==", oab));
   const querySnapshot = await getDocs(q);
@@ -42,26 +43,35 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
+  
+  const qEmail = query(advRef, where("email", "==", email));
+  const querySnapshotEmail = await getDocs(qEmail);
+  if (!querySnapshotEmail.empty) {
+    alert("Este e-mail já está cadastrado.");
+    return;
+  }
+
   try {
-    // Cria o usuário no Auth com email genérico (OAB + domínio)
-    const fakeEmail = `${oab}@elomaterno.com`;
-    const cred = await createUserWithEmailAndPassword(auth, fakeEmail, senha);
+    
+    const cred = await createUserWithEmailAndPassword(auth, email, senha);
     const uid = cred.user.uid;
 
-    // Adiciona documento na coleção advogados
+    
     await addDoc(advRef, {
       nome,
+      email,
       oab,
       atuacao,
       tipo: "advogado",
       status: "pendente",
+      avatar: null,
       uid
     });
 
-    // 🔥 CRIA TAMBÉM O DOCUMENTO EM "usuarios"
+    
     await setDoc(doc(db, "usuarios", uid), {
       nome,
-      email: fakeEmail,
+      email,
       telefone: "",
       tipo: "advogado",
       avatar: null,
@@ -91,7 +101,7 @@ form.addEventListener("submit", async (e) => {
   } catch (error) {
     console.error("Erro ao cadastrar advogado:", error);
     let msg = "Erro ao cadastrar.";
-    if (error.code === "auth/email-already-in-use") msg = "OAB já cadastrada.";
+    if (error.code === "auth/email-already-in-use") msg = "E-mail já utilizado em outra conta.";
     if (error.code === "auth/weak-password") msg = "Senha muito fraca.";
     alert(msg);
   }

@@ -20,7 +20,7 @@ import {
   arrayRemove,
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-/* ========== HELPERS DE MODAL ========== */
+
 function showModal(modalEl) {
   if (!modalEl) return;
   modalEl.classList.remove("hidden");
@@ -59,11 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const lastSection = localStorage.getItem('homepsi_lastSection') || 'dashboard';
 
-  // Clear all active classes and hide all contents
+  
   buttons.forEach(button => button.classList.remove('active'));
   contents.forEach(content => content.classList.add('hidden'));
 
-  // Set initial active based on lastSection
+  
   buttons.forEach(btn => {
     const target2 = btn.getAttribute("data-target");
     if (target2 === lastSection) {
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Load if needed
+  
   if (lastSection === "agenda") carregarEventos();
   if (lastSection === "chats") carregarChatsPsi();
   if (lastSection === "pacientes") carregarPacientes();
@@ -201,7 +201,7 @@ async function renderCalendar() {
     calendarDates.appendChild(document.createElement("div"));
   }
 
-  // Render cada dia
+  
   for (let d = 1; d <= daysInMonth; d++) {
     const div = document.createElement("div");
     div.classList.add("date");
@@ -215,7 +215,7 @@ async function renderCalendar() {
     calendarDates.appendChild(div);
   }
 
-  // 🔹 Depois de renderizar o calendário, marcar dias com disponibilidade do Firebase
+  
   await marcarDiasComDisponibilidade();
 }
 
@@ -232,7 +232,7 @@ async function marcarDiasComDisponibilidade() {
     const data = snap.docs[0].data();
     const disponibilidade = data.disponibilidade || [];
 
-    // Filtra horários dentro do mês atual
+    
     const diasComHorarios = new Set();
     disponibilidade.forEach((t) => {
       const d = t.toDate();
@@ -241,7 +241,7 @@ async function marcarDiasComDisponibilidade() {
       }
     });
 
-    // Adiciona a classe "has-event" aos dias que têm horários salvos
+    
     document.querySelectorAll("#calendarDates .date").forEach((div) => {
       const dia = parseInt(div.textContent);
       if (diasComHorarios.has(dia)) {
@@ -271,9 +271,9 @@ function renderListaEventos() {
     });
 }
 
-/* ================================
-   SEÇÃO DE CONSULTAS
-================================ */
+
+
+
 
 const lista = document.getElementById("consultas-list");
 const tituloConsultas = document.getElementById("titulo-consultas");
@@ -282,7 +282,7 @@ const abas = document.querySelectorAll(".tab-btn");
 let consultasCache = [];
 let statusAtual = "pendente";
 
-// Trocar abas
+
 abas.forEach(btn => {
   btn.addEventListener("click", () => {
     abas.forEach(b => b.classList.remove("active"));
@@ -293,7 +293,7 @@ abas.forEach(btn => {
   });
 });
 
-// Ouvir consultas em tempo real
+
 auth.onAuthStateChanged(async (user) => {
   if (!user) return;
 
@@ -305,7 +305,7 @@ auth.onAuthStateChanged(async (user) => {
     for (const docSnap of snapshot.docs) {
       const consulta = { id: docSnap.id, ...docSnap.data() };
 
-      // Buscar nome da mãe
+      
       try {
         const maeRef = doc(db, "usuarios", consulta.Mae);
         const maeSnap = await getDoc(maeRef);
@@ -348,14 +348,14 @@ async function carregarUltimasAtividades() {
 
   const agora = new Date();
 
-  // 🔹 Última concluída
+  
   const concluidas = consultas
     .filter(c => c.status === "realizado" && c.Datahora)
     .sort((a, b) => b.Datahora.toDate() - a.Datahora.toDate());
 
   const ultimaConcluida = concluidas.sort((a, b) => b.Datahora.toDate() - a.Datahora.toDate())[0];
 
-  // 🔹 Próxima agendada
+  
   const futuras = consultas
     .filter(c => c.status === "aceito" && c.Datahora?.toDate() > agora)
     .sort((a, b) => a.Datahora.toDate() - b.Datahora.toDate());
@@ -456,22 +456,22 @@ function setupAvatarSelection(modalId, confirmBtnId) {
   });
 }
 
-// Setup for both modals
+
 document.addEventListener("DOMContentLoaded", () => {
   setupAvatarSelection("firstAvatarModal", "confirmFirstAvatar");
   setupAvatarSelection("changeAvatarModal", "confirmChangeAvatar");
 
-  // Disable confirm buttons initially
+  
   document.getElementById("confirmFirstAvatar").disabled = true;
   document.getElementById("confirmChangeAvatar").disabled = true;
 
-  // Cancel for change modal
+  
   document.getElementById("cancelChangeAvatar")?.addEventListener("click", () => {
     hideModal(document.getElementById("changeAvatarModal"));
     selectedAvatar = null;
   });
 
-  // Modal post listeners
+  
   document.getElementById("close-post-modal")?.addEventListener("click", () => hideModal(document.getElementById("modal-post")));
   document.getElementById("cancelar-post")?.addEventListener("click", () => hideModal(document.getElementById("modal-post")));
 });
@@ -511,7 +511,7 @@ onAuthStateChanged(auth, () => {
   atualizarStatsPainel();
 });
 
-// Renderiza de acordo com a aba selecionada
+
 function renderizarConsultas() {
   lista.innerHTML = "";
 
@@ -558,17 +558,17 @@ function renderizarConsultas() {
       </div>
     `;
 
-    // Aceitar
+    
     card.querySelector(".btn-aceitar")?.addEventListener("click", () => {
       atualizarStatus(consulta.id, "aceito");
     });
 
-    // Recusar
+    
     card.querySelector(".btn-recusar")?.addEventListener("click", () => {
       atualizarStatus(consulta.id, "negado");
     });
 
-    // Finalizar
+    
     card.querySelector(".btn-finalizar")?.addEventListener("click", () => {
       atualizarStatus(consulta.id, "realizado");
     });
@@ -577,30 +577,30 @@ function renderizarConsultas() {
   });
 }
 
-// Atualiza status no Firebase
-// Atualiza status no Firebase (substitua pela versão abaixo)
+
+
 async function atualizarStatus(id, novoStatus) {
   try {
     const consultaRef = doc(db, "Consultas", id);
 
-    // busca dados atuais da consulta (precisamos do Datahora e do Psicologo)
+    
     const consultaSnap = await getDoc(consultaRef);
     if (!consultaSnap.exists()) {
       console.warn("Consulta não encontrada ao atualizar status:", id);
-      // tenta apenas atualizar o status mesmo assim
+      
       await updateDoc(consultaRef, { status: novoStatus });
       return;
     }
 
     const consultaData = consultaSnap.data();
 
-    // 1) atualiza o status da consulta
+    
     await updateDoc(consultaRef, { status: novoStatus });
 
-    // 2) se a consulta foi finalizada ou negada, devolver horário ao array 'disponibilidade'
+    
     if (novoStatus === "realizado" || novoStatus === "negado") {
       const psicologoId = consultaData.Psicologo;
-      const datahora = consultaData.Datahora; // deve ser um Timestamp
+      const datahora = consultaData.Datahora; 
 
       if (psicologoId && datahora) {
         try {
@@ -615,8 +615,8 @@ async function atualizarStatus(id, novoStatus) {
 
           const psiRef = doc(db, "psicologos", snapPsi.docs[0].id);
 
-          // remove dos agendados e adiciona em disponibilidade
-          // (arrayRemove/arrayUnion tratam objetos Timestamp corretamente)
+          
+          
           await updateDoc(psiRef, {
             agendados: arrayRemove(datahora),
             disponibilidade: arrayUnion(datahora),
@@ -662,7 +662,7 @@ function initForum() {
         let authorFoto = post.autorFoto || "./img/account_icon.png";
 
         if (post.autorId && post.autorId != "anonimo") {
-          // Try psicologos first
+          
           try {
             const psiQ = query(collection(db, "psicologos"), where("uid", "==", post.autorId));
             const psiSnap = await getDocs(psiQ);
@@ -672,7 +672,7 @@ function initForum() {
               authorFoto = psiData.avatar || "./img/account_icon.png";
               console.log("Fetched psicologo for", post.autorId, authorNome);
             } else {
-              // Try advogados
+              
               const advQ = query(collection(db, "advogados"), where("uid", "==", post.autorId));
               const advSnap = await getDocs(advQ);
               if (!advSnap.empty) {
@@ -681,7 +681,7 @@ function initForum() {
                 authorFoto = advData.avatar || "./img/account_icon.png";
                 console.log("Fetched advogado for", post.autorId, authorNome);
               } else {
-                // Try usuarios for mothers/other
+                
                 const userQ = query(collection(db, "usuarios"), where("uid", "==", post.autorId));
                 const userSnap = await getDocs(userQ);
                 if (!userSnap.empty) {
@@ -715,7 +715,7 @@ function initForum() {
     }, (err) => console.error("Erro snapshot posts:", err));
   });
 
-  // Post click to show comments
+  
   document.getElementById('posts-list').addEventListener('click', async (e) => {
     const card = e.target.closest('.post-card');
     if (!card) return;
@@ -726,7 +726,7 @@ function initForum() {
     }
   });
 
-  // Back to forum
+  
   document.getElementById('back-to-forum')?.addEventListener('click', () => {
     document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector('[data-target="forum"]').classList.add('active');
@@ -734,7 +734,7 @@ function initForum() {
     document.getElementById('forum').classList.remove('hidden');
   });
 
-  // Send comment
+  
   document.getElementById('send-comment-btn')?.addEventListener('click', enviarComentario);
   document.getElementById('comment-field')?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -754,7 +754,7 @@ function initForum() {
     if (!titulo || !conteudo) return alert("Preencha todos os campos");
     const user = auth.currentUser;
 
-    // Buscar nome do psicólogo
+    
     let psiNome = "Psicólogo";
     try {
       const q = query(collection(db, "psicologos"), where("uid", "==", user.uid));
@@ -782,7 +782,7 @@ function initForum() {
   });
 }
 
-// ========== POST COMMENTS FUNCTIONS ==========
+
 let currentPostId = null;
 
 async function showPostComments() {
@@ -816,25 +816,25 @@ async function carregarPost(postId) {
       linkPerfil = usuarioLogado && usuarioLogado.uid === p.autorId ? 'perfil.html' : `perfilPessoa.html?uid=${p.autorId}`;
     }
 
-    // Buscar avatar do autor
+    
     let autorFoto = p.autorFoto || './img/account_icon.png';
     let autorNomePost = p.autorNome;
     try {
       if (p.autorId && p.autorId !== 'anonimo') {
         let docRef, snapDoc;
-        // Try psicologos
+        
         const psiQ = query(collection(db, 'psicologos'), where('uid', '==', p.autorId));
         const psiSnap = await getDocs(psiQ);
         if (!psiSnap.empty) {
           snapDoc = psiSnap.docs[0];
         } else {
-          // Try advogados
+          
           const advQ = query(collection(db, 'advogados'), where('uid', '==', p.autorId));
           const advSnap = await getDocs(advQ);
           if (!advSnap.empty) {
             snapDoc = advSnap.docs[0];
           } else {
-            // Try usuarios
+            
             docRef = doc(db, 'usuarios', p.autorId);
             snapDoc = await getDoc(docRef);
           }
@@ -886,25 +886,25 @@ function carregarComentarios(postId) {
 
       const linkPerfil = usuarioLogado && usuarioLogado.uid === c.autorId ? 'perfil.html' : `perfilPessoa.html?uid=${c.autorId}`;
 
-      // Buscar avatar
+      
       let autorFoto = c.autorFoto || './img/account_icon.png';
       let autorNome = c.autorNome;
       try {
         if (c.autorId) {
           let snapDoc;
-          // Try psicologos
+          
           const psiQ = query(collection(db, 'psicologos'), where('uid', '==', c.autorId));
           const psiSnap = await getDocs(psiQ);
           if (!psiSnap.empty) {
             snapDoc = psiSnap.docs[0];
           } else {
-            // Try advogados
+            
             const advQ = query(collection(db, 'advogados'), where('uid', '==', c.autorId));
             const advSnap = await getDocs(advQ);
             if (!advSnap.empty) {
               snapDoc = advSnap.docs[0];
             } else {
-              // Try usuarios
+              
               const docRef = doc(db, 'usuarios', c.autorId);
               snapDoc = await getDoc(docRef);
             }
@@ -945,7 +945,7 @@ async function enviarComentario() {
   const conteudo = campo.value.trim();
   if (!conteudo || !usuarioLogado || !currentPostId) return alert('Você precisa estar logado para comentar.');
 
-  // Buscar dados do usuário
+  
   let autorNome = usuarioLogado.displayName || 'Psicólogo';
   let autorFoto = usuarioLogado.photoURL || './img/account_icon.png';
 
@@ -971,7 +971,7 @@ async function ajustarLikesVisuais() {
     postLikeImg.src = s.exists() ? './img/like_curtido.png' : './img/like_icon.png';
   }
 
-  // Comment likes
+  
   const commentWraps = document.querySelectorAll('#post-comments .like-wrap[data-type="comentario"]');
   for (const wrap of commentWraps) {
     const img = wrap.querySelector('.like-icon');
@@ -2266,7 +2266,7 @@ async function carregarPacientes() {
     document.querySelectorAll('.open-chat-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const uid = btn.dataset.uid;
-        // Switch to chats tab and open chat
+        
         const contents = document.querySelectorAll(".content");
         document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("active"));
         contents.forEach(c => c.classList.add("hidden"));
@@ -2277,7 +2277,7 @@ async function carregarPacientes() {
         const menuBtn = document.querySelector('.menu-btn[data-target="chats"]');
         if (menuBtn) menuBtn.classList.add("active");
 
-        // Load mae data
+        
         const refMae = doc(db, "usuarios", uid);
         const snapMae = await getDoc(refMae);
         if (snapMae.exists()) {

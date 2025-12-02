@@ -1,4 +1,4 @@
-// perfilPsi.js
+
 import { db } from "./firebase.js";
 import {
   doc,
@@ -12,9 +12,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 const params = new URLSearchParams(window.location.search);
-const uidParam = params.get("uid"); // pode ser documentId OU o campo uid do doc
+const uidParam = params.get("uid"); 
 
-// elementos
+
 const nomeEl = document.getElementById("perfil-nome");
 const tipoEl = document.getElementById("perfil-tipo");
 const emailEl = document.getElementById("perfil-email");
@@ -55,13 +55,13 @@ async function carregarPerfil() {
   let dados = null;
 
   try {
-    // 1) tenta carregar por document id
+    
     const snap = await getDoc(doc(db, "psicologos", uidParam));
     if (snap.exists()) {
       docRefId = snap.id;
       dados = snap.data();
     } else {
-      // 2) fallback: busca por campo `uid` igual ao uidParam
+      
       const q = query(collection(db, "psicologos"), where("uid", "==", uidParam));
       const snaps = await getDocs(q);
       if (!snaps.empty) {
@@ -73,7 +73,7 @@ async function carregarPerfil() {
 
     if (!dados) {
       console.error("Usuário (psicólogo) não encontrado na coleção 'psicologos' para:", uidParam);
-      // mostra mensagem simples na UI
+      
       nomeEl.textContent = "Perfil não encontrado";
       tipoEl.textContent = "";
       return;

@@ -74,13 +74,13 @@ btn.addEventListener("click", async () => {
   }
 });
 
-// Fechar modal
+
 fecharModal.addEventListener("click", () => {
   modal.style.display = "none";
   empresaConfirmada = null;
 });
 
-// Confirmar cadastro
+
 confirmarCNPJ.addEventListener("click", async () => {
   if (!empresaConfirmada) return;
 
@@ -96,7 +96,7 @@ confirmarCNPJ.addEventListener("click", async () => {
 
     const uid = cred.user.uid;
 
-    // 👉 SALVA NA COLEÇÃO "parceiros"
+    
     await setDoc(doc(db, "parceiros", uid), {
       cnpj: empresaConfirmada.cnpj,
       nomeEmpresa: empresaConfirmada.nome,
@@ -106,7 +106,7 @@ confirmarCNPJ.addEventListener("click", async () => {
       criadoEm: new Date().toISOString(),
     });
 
-    // 👉 CRIA DOCUMENTO NA COLEÇÃO "usuarios"
+    
     await setDoc(doc(db, "usuarios", uid), {
       nome: empresaConfirmada.nome,
       email: empresaConfirmada.email,

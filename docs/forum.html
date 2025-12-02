@@ -317,7 +317,7 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import {
       doc, getDoc, getDocs, collection, addDoc, serverTimestamp,
-      query, orderBy, limit, startAfter,
+      query, where, orderBy, limit, startAfter,
       onSnapshot, setDoc, deleteDoc, updateDoc, increment,
       getCountFromServer
     } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -338,14 +338,25 @@
     let postParaExcluir = null;
 
     async function getUserData(uid) {
-      let snap = await getDoc(doc(db, "usuarios", uid));
-      if (snap.exists()) return snap.data();
+      // Check psicologos collection by uid field
+      const psicoQuery = await getDocs(query(collection(db, "psicologos"), where("uid", "==", uid)));
+      if (psicoQuery.size > 0) {
+        const data = psicoQuery.docs[0].data();
+        console.log("Psicologo data found for uid:", uid, data);
+        return data;
+      }
 
-      snap = await getDoc(doc(db, "advogados", uid));
-      if (snap.exists()) return snap.data();
+      // Check advogados collection by uid field
+      const advQuery = await getDocs(query(collection(db, "advogados"), where("uid", "==", uid)));
+      if (advQuery.size > 0) {
+        return advQuery.docs[0].data();
+      }
 
-      snap = await getDoc(doc(db, "psicologos", uid));
-      if (snap.exists()) return snap.data();
+      // Check usuarios collection by doc id
+      const usuSnap = await getDoc(doc(db, "usuarios", uid));
+      if (usuSnap.exists()) {
+        return usuSnap.data();
+      }
 
       return null;
     }
@@ -451,7 +462,9 @@
 
           await Promise.all(autorIds.map(async (uid) => {
             try {
+              console.log("Building userCache for uid:", uid);
               const data = await getUserData(uid);
+              console.log("Data retrieved for uid", uid, ":", data);
               if (data) {
                 const nome = data.nome || "Usuário";
                 let foto;
@@ -464,11 +477,13 @@
                 } else {
                   foto = "./img/account_icon.png";
                 }
+                console.log("Setting userCache for uid", uid, "with nome:", nome, "foto:", foto);
                 userCache.set(uid, {
                   nome,
                   foto
                 });
               } else {
+                console.log("No data for uid", uid, "setting default");
                 userCache.set(uid, {
                   nome: "Usuário",
                   foto: "./img/account_icon.png"
@@ -513,6 +528,8 @@
               nomeAutor = "Anônimo";
               fotoAutor = "./img/account_icon.png";
             }
+
+            console.log("Rendering post", postId, "autorId:", p.autorId, "final nomeAutor:", nomeAutor, "final fotoAutor:", fotoAutor);
 
             const dataFormatada = p.data?.toDate().toLocaleString("pt-BR") || "Agora";
 

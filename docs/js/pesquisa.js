@@ -12,28 +12,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!input || !resultsBox) return;
 
-    // ... código anterior do arquivo continua igual ...
+    
 
     filterBtn?.addEventListener("click", () => {
-        // alterna visibilidade
+        
         const isHidden = filterMenu.classList.toggle("hidden");
 
         if (isHidden) {
-            // se escondeu, não precisa posicionar
+            
             return;
         }
 
-        // posiciona o menu na viewport (usando bounding rect sem scrollY)
+        
         const rect = filterBtn.getBoundingClientRect();
         const menuWidth = 180;
         let left = rect.left;
 
-        // evita que o menu "vaze" para fora da viewport à direita
+        
         if (left + menuWidth > window.innerWidth - 10) {
             left = window.innerWidth - menuWidth - 10;
             if (left < 10) left = 10;
         }
-        // top deve ser logo abaixo do botão (relative à viewport)
+        
         const top = rect.bottom + 5;
 
         filterMenu.style.position = "fixed";
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setupFilters();
 
-    // reposiciona o menu quando a janela muda de tamanho (se ele estiver visível)
+    
     window.addEventListener("resize", () => {
         if (!filterMenu || filterMenu.classList.contains("hidden")) return;
         const rect = filterBtn.getBoundingClientRect();
@@ -250,10 +250,10 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem("highlightEvento");
     }
 
-    // fecha o menu ao clicar fora
+    
     document.addEventListener("click", (e) => {
         if (!filterMenu || filterMenu.classList.contains("hidden")) return;
-        // se o click não for no botão nem dentro do menu, fecha
+        
         if (!e.target.closest(".btn-filter") && !e.target.closest("#filter-menu")) {
             filterMenu.classList.add("hidden");
         }

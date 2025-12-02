@@ -223,3 +223,35 @@ i {
     width: 20px;
     text-align: center;
 }
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.modal-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#reset-password-btn {
+    background: #583E8E;
+    color: #fff;
+}
+
+#reset-password-btn:hover {
+    background: #432e6a;
+}
+
+#cancel-reset-btn {
+    background: #ccc;
+    color: #333;
+}
+
+#cancel-reset-btn:hover {
+    background: #aaa;
+}

@@ -1,6 +1,7 @@
 import { auth, db } from "./firebase.js";
 import {
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 import {
@@ -60,7 +61,7 @@ form.addEventListener("submit", async (e) => {
     const userRef = doc(db, "usuarios", user.uid);
     const snap = await getDoc(userRef);
 
-    // Se não existir um documento espelho em "usuarios", cria
+    
     if (!snap.exists()) {
       await setDoc(userRef, {
         nome: emailEncontrado,
@@ -106,5 +107,58 @@ form.addEventListener("submit", async (e) => {
     } else {
       msgPopup.textContent = "Erro ao fazer login. Tente novamente.";
     }
+  }
+});
+
+
+const forgotBtn = document.getElementById("forgot-pass");
+const modal = document.getElementById("resetModal");
+const closeModal = document.getElementById("closeModal");
+const resetEmailInput = document.getElementById("resetEmail");
+const sendResetBtn = document.getElementById("sendReset");
+
+forgotBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  modal.classList.remove("hidden");
+});
+
+closeModal.addEventListener("click", () => {
+  modal.classList.add("hidden");
+});
+
+sendResetBtn.addEventListener("click", async () => {
+  const email = resetEmailInput.value.trim();
+  if (!email) {
+    
+    document.querySelector("#popup-message").textContent = "Digite um e-mail válido.";
+    document.querySelector("#popup").classList.remove("hidden");
+    return;
+  }
+
+  try {
+    
+    const parceirosRef = collection(db, "parceiros");
+    const q = query(parceirosRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      document.querySelector("#popup-message").textContent = "E-mail não encontrado na lista de parceiros.";
+      document.querySelector("#popup").classList.remove("hidden");
+      return;
+    }
+
+    
+    await sendPasswordResetEmail(auth, email);
+    document.querySelector("#popup-message").textContent = "Enviamos o link para redefinir sua senha!";
+    document.querySelector("#popup").classList.remove("hidden");
+    modal.classList.add("hidden");
+    resetEmailInput.value = "";
+  } catch (err) {
+    console.error("Erro reset:", err.code, err.message);
+    let msg = "Erro ao processar.";
+    if (err.code === "auth/user-not-found") msg = "Conta não encontrada.";
+    else if (err.code === "auth/invalid-email") msg = "E-mail inválido.";
+    document.querySelector("#popup-message").textContent = msg;
+    document.querySelector("#popup").classList.remove("hidden");
   }
 });

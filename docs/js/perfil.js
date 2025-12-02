@@ -1,7 +1,7 @@
 import { auth, db } from "./firebase.js"
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js"
 import { doc, getDoc, updateDoc, collection, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js"
-// Removido upload de foto do modal de edição
+
 
 const nomeEl = document.querySelector(".perfil-info h2")
 const tagEl = document.querySelector(".perfil-tag")

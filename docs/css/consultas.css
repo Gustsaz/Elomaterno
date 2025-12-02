@@ -103,7 +103,7 @@ p {
     }
 }
 
-/* Cards */
+
 .consulta-card {
     background: var(--postbackground);
     padding: 18px;
@@ -136,7 +136,7 @@ p {
     background: #6c63ff;
 }
 
-/* Botão psicólogo */
+
 .btn-psi {
     margin-top: 12px;
     padding: 10px 14px;
@@ -170,7 +170,7 @@ p {
     color: var(--text-color2);
 }
 
-/* MODAL */
+
 .modal {
     position: fixed;
     inset: 0;
@@ -227,7 +227,7 @@ p {
     border-radius: 100%;
 }
 
-/* === MODAL GLOBAL === */
+
 .modal {
     position: fixed;
     top: 0;
@@ -269,7 +269,7 @@ p {
     color: var(--text-color);
 }
 
-/* animação */
+
 @keyframes fadeInScale {
     from {
         opacity: 0;
@@ -282,7 +282,7 @@ p {
     }
 }
 
-/* Foto do profissional */
+
 .psi-foto-modal {
     width: 110px;
     height: 110px;
@@ -291,7 +291,7 @@ p {
     margin-bottom: 15px;
 }
 
-/* Botão de detalhes */
+
 .btn-detalhes {
     background: var(--accent-color);
     color: white;
@@ -325,7 +325,7 @@ p {
     transform: translateY(-2px);
 }
 
-/* --- Botão "Fazer outros agendamentos" --- */
+
 .fazer-outros-wrapper {
     display: flex;
     justify-content: center;
@@ -355,7 +355,7 @@ p {
     box-shadow: 0 14px 38px rgba(62, 42, 114, 0.2);
 }
 
-/* garante responsividade */
+
 @media (max-width: 480px) {
     .fazer-outros-btn {
         width: 92%;

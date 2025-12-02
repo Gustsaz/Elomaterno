@@ -1,12 +1,12 @@
-// ./js/avatar.js
+
 import * as fb from "./firebase.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ==========================
-     TROCA DE PARTES E CORES
-  =========================== */
+  
+
+
   const avatarParts = {
     base: { index: 1, max: 8, color: null },
     camisa: { index: 1, max: 6, color: null },
@@ -18,17 +18,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const img = document.getElementById(part);
     if (!img) return;
 
-    // === CABELO ===
+    
     if (part === "cabelo") {
       const cabeloTras = document.getElementById("cabelotras");
       const cabeloIndex = avatarParts[part].index;
       const basePath = "./img/mamaesemfundo/cabelos/";
 
-      // Atualiza frente e trás
+      
       img.src = `${basePath}${cabeloIndex}.png`;
       if (cabeloTras) cabeloTras.src = `${basePath}${cabeloIndex}_tras.png`;
 
-      // Remove filtros antigos (evita sobreposição de cor de versão anterior)
+      
       const colorLayer = document.getElementById("cabelo-colored");
       const colorLayerTras = document.getElementById("cabelotras-colored");
       if (colorLayer) colorLayer.style.backgroundColor = "transparent";
@@ -41,12 +41,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // === BASE ===
+    
     if (part === "base") {
       const basePath = "./img/mamaesemfundo/bases/";
       img.src = `${basePath}${avatarParts[part].index}.png`;
 
-      // Atualiza orelha correspondente
+      
       const orelha = document.getElementById("orelha");
       if (orelha) {
         orelha.src = `${basePath}${avatarParts[part].index}_orelha.png`;
@@ -56,14 +56,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // === OUTROS ===
+    
     const basePath = `./img/mamaesemfundo/${part}s/`;
     img.src = `${basePath}${avatarParts[part].index}.png`;
 
     if (avatarParts[part].color) applyHueFilter(part, avatarParts[part].color);
   }
 
-  // Botões anterior / próximo
+  
   document.querySelectorAll(".prev, .next").forEach(btn => {
     btn.addEventListener("click", () => {
       const part = btn.dataset.part;
@@ -81,9 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* ==========================
-     MUDANÇA DE COR — FILTRO
-  =========================== */
+  
+
+
   const colorPickers = document.querySelectorAll(".color-picker");
   colorPickers.forEach(picker => {
     picker.addEventListener("input", () => {
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const color = picker.value;
       applyHueFilter(part, color);
 
-      if (part === "cabelo") applyHueFilter("cabelotras", color); // aplica também no cabelo de trás
+      if (part === "cabelo") applyHueFilter("cabelotras", color); 
     });
   });
 
@@ -140,30 +140,30 @@ document.addEventListener("DOMContentLoaded", () => {
     // Saturação e brilho levemente ajustados pra não "lavar" as cores
     img.style.filter = `hue-rotate(${hsl.h * 360}deg) saturate(${1 + hsl.s}) brightness(${0.9 + hsl.l / 2})`;
 
-    // Armazena a cor para manter ao trocar a peça
+    
     avatarParts[part].color = color;
   }
 
 
-  /* ==========================
-     SELEÇÃO DE AVATAR PRÉ-DEFINIDO
-  =========================== */
+  
+
+
   let selectedAvatarUrl = null;
 
   const avatarBtns = document.querySelectorAll('.avatar-btn');
   const confirmarBtn = document.querySelector('.confirmar-btn');
 
   avatarBtns.forEach(btn => {
-    if (btn.id === 'criar-avatar-btn') return; // Ignorar o botão de criar avatar, tratado separadamente
+    if (btn.id === 'criar-avatar-btn') return; 
 
     btn.addEventListener('click', () => {
-      // Remove seleção de todos
+      
       avatarBtns.forEach(b => b.classList.remove('selecionado'));
-      // Adiciona seleção ao clicado
+      
       btn.classList.add('selecionado');
-      // Habilita botão confirmar
+      
       confirmarBtn.disabled = false;
-      // Armazena a URL
+      
       selectedAvatarUrl = btn.dataset.url;
     });
   });
@@ -179,10 +179,10 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // Salvar no Firestore
+        
         await setDoc(doc(fb.db, "usuarios", user.uid), { avatar: selectedAvatarUrl }, { merge: true });
 
-        // Exibe modal de sucesso
+        
         const successModal = document.getElementById("successModal");
         if (successModal) {
           successModal.style.display = "flex";
@@ -207,9 +207,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ==========================
-     ABRIR E FECHAR MODAL
-  =========================== */
+  
+
+
   const criarAvatarBtn = document.getElementById("criar-avatar-btn");
   const avatarModal = document.getElementById("avatarModal");
 
@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     criarAvatarBtn.addEventListener("click", () => {
       avatarModal.style.display = "flex";
-      // Reseta seleção ao abrir modal (opcional)
+      
       avatarBtns.forEach(b => b.classList.remove('selecionado'));
       confirmarBtn.disabled = true;
       selectedAvatarUrl = null;
@@ -235,9 +235,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ==========================
-     SALVAR AVATAR COMO PNG
-  =========================== */
+  
+
+
   const salvarBtn = document.getElementById("salvarAvatarBtn");
   if (salvarBtn) {
     salvarBtn.addEventListener("click", async () => {
@@ -263,12 +263,12 @@ document.addEventListener("DOMContentLoaded", () => {
         for (const img of layers) {
           await new Promise(resolve => {
             const draw = () => {
-              // Pega o filtro atual (matiz)
+              
               const part = img.id;
               const color = avatarParts[part]?.color || null;
 
               if (color) {
-                // Converte o hex em HSL e aplica o filtro
+                
                 const r = parseInt(color.substr(1, 2), 16);
                 const g = parseInt(color.substr(3, 2), 16);
                 const b = parseInt(color.substr(5, 2), 16);
@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
               }
 
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              ctx.filter = "none"; // reseta pro próximo layer
+              ctx.filter = "none"; 
               resolve();
             };
 
@@ -310,10 +310,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const imageUrl = result.data.image.url;
 
-        // Salvar no Firestore
+        
         await setDoc(doc(fb.db, "usuarios", user.uid), { avatar: imageUrl }, { merge: true });
 
-        // Exibe modal de sucesso
+        
         const successModal = document.getElementById("successModal");
         if (successModal) {
           successModal.style.display = "flex";

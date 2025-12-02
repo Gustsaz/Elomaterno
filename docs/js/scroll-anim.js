@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (rect.top < windowHeight && rect.bottom > 0) {
             const total = rect.height;
 
-            // qunto j� percorremos dentro da section
+            
             const scrolled = Math.min(total, windowHeight - rect.top);
 
             verticalBar.style.height = `${scrolled}px`;

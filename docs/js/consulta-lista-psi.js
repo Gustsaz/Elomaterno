@@ -1,4 +1,4 @@
-// consulta-lista-psi.js
+
 import { db, auth } from "./firebase.js";
 import {
   collection,
@@ -13,19 +13,19 @@ import {
   where
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-let snapGlobal = null; // manter snapshot de psicólogos + advogados (array de docs)
+let snapGlobal = null; 
 
 document.addEventListener("DOMContentLoaded", async () => {
   const psiContainer = document.querySelector(".psi-container");
 
   try {
-    // Carrega psicólogos e advogados
+    
     const [snapPsi, snapAdv] = await Promise.all([
       getDocs(collection(db, "psicologos")),
       getDocs(collection(db, "advogados"))
     ]);
 
-    // Concatena todos os docs em um único array de "document snapshots"
+    
     const docsAll = [
       ...snapPsi.docs.map(d => {
         d._tipo = "psicologo";
@@ -46,11 +46,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Remove card de exemplo estático (se houver)
+    
     const exemplo = document.querySelector(".psi-card");
     if (exemplo) exemplo.remove();
 
-    // Opcional: ordenar por nome (se existir campo nome)
+    
     docsAll.sort((a, b) => {
       const na = (a.data().nome || "").toLowerCase();
       const nb = (b.data().nome || "").toLowerCase();
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const card = document.createElement("div");
       card.classList.add("psi-card");
 
-      // meta para identificar o tipo e o documento
+      
       card.dataset.tipo = tipo;
       card.dataset.docid = docSnapshot.id;
       card.dataset.uid = data.uid || docSnapshot.id;
@@ -128,10 +128,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       psiContainer.appendChild(card);
     });
 
-    // Guardar snapGlobal como lista de docs (usado ao agendar)
+    
     snapGlobal = docsAll;
 
-    // Funcionalidade de busca
+    
     const buscaPsi = document.getElementById('busca-psi');
     buscaPsi.addEventListener('input', (e) => {
       const termo = e.target.value.toLowerCase().trim();
@@ -157,9 +157,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
 
-    /* === EVENTOS GLOBAIS === */
+    
 
-    // Clique em "Ver perfil completo"
+    
     document.addEventListener("click", (e) => {
       const link = e.target.closest(".ver-perfil");
       if (!link) return;
@@ -169,15 +169,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       const uid = card.dataset.uid;
 
       if (tipo === "psicologo") {
-        // redireciona para perfil Psi
+        
         window.location.href = `perfilPsi.html?uid=${encodeURIComponent(uid)}`;
       } else {
-        // redireciona para perfil Advogado
+        
         window.location.href = `perfilAdv.html?uid=${encodeURIComponent(uid)}`;
       }
     });
 
-    // Selecionar data
+    
     document.addEventListener("click", (e) => {
       const btn = e.target.closest(".data");
       if (!btn) return;
@@ -189,14 +189,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       const docSnapshot = snapGlobal.find(d => d.id === docId);
       const disponibilidade = processarDisponibilidade(docSnapshot.data().disponibilidade || []);
 
-      // atualizar ativo nas datas
+      
       btn.parentElement.querySelectorAll(".data").forEach((b) => b.classList.remove("ativo"));
       btn.classList.add("ativo");
 
       horariosDiv.innerHTML = gerarHorarios(disponibilidade, btn.dataset.data);
     });
 
-    // Selecionar horário
+    
     document.addEventListener("click", (e) => {
       const horarioBtn = e.target.closest(".horarios button");
       if (!horarioBtn) return;
@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       horarioBtn.classList.add("ativo");
     });
 
-    // Clique em Agendar
+    
     document.addEventListener("click", (e) => {
       const btn = e.target.closest(".btn-agendar");
       if (!btn) return;
@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const cargoText = card.querySelector(".psi-cargo").textContent;
       const area = card.querySelector(".psi-abordagem").textContent;
       const foto = card.querySelector(".psi-foto").src;
-      const dataStr = dataBtn.dataset.data; // YYYY-MM-DD
+      const dataStr = dataBtn.dataset.data; 
       const dataFormatada = formatarBotaoData(dataStr).replace("<br><b>", " ").replace("</b>", "");
       const hora = horaBtn.textContent;
       const docId = card.dataset.docid;
@@ -393,7 +393,7 @@ function abrirModal({ nome, cargoText, area, foto, dataFormatada, hora, dataStr,
     const dataConsulta = new Date(`${dataStr}T${horaH}:${horaM}:00`);
     const timestampFinal = Timestamp.fromDate(dataConsulta);
 
-    // localizar o docSnapshot na snapGlobal
+    
     const profissionalDoc = snapGlobal.find(d => d.id === docId);
     if (!profissionalDoc) {
       alert("Erro: não foi possível localizar o profissional (snapshot).");
@@ -402,7 +402,7 @@ function abrirModal({ nome, cargoText, area, foto, dataFormatada, hora, dataStr,
 
     const timestampsDisponiveis = profissionalDoc.data().disponibilidade || [];
 
-    // encontrar o timestamp original (compara ano/mês/dia/hora/minutos)
+    
     const timestampOriginal = timestampsDisponiveis.find((t) => {
       const d = t?.toDate ? t.toDate() : new Date(t);
       return (
@@ -422,7 +422,7 @@ function abrirModal({ nome, cargoText, area, foto, dataFormatada, hora, dataStr,
     try {
       const maeToSave = maeDocId || maeAuthUid;
 
-      // criar documento em Consultas com o campo correto (Psicologo ou Advogado)
+      
       const payload = {
         Mae: maeToSave,
         Datahora: timestampFinal,
@@ -435,11 +435,11 @@ function abrirModal({ nome, cargoText, area, foto, dataFormatada, hora, dataStr,
 
       await addDoc(collection(db, "Consultas"), payload);
 
-      // atualizar o documento do profissional respectivo
+      
       const collectionName = tipo === "psicologo" ? "psicologos" : "advogados";
       const profRef = doc(db, collectionName, docId);
 
-      // remover da disponibilidade e adicionar em agendados (mesmo timestampOriginal)
+      
       await updateDoc(profRef, {
         disponibilidade: arrayRemove(timestampOriginal)
       });

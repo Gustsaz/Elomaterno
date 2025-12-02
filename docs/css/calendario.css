@@ -648,21 +648,21 @@ select {
 }
 
 
-/* estilo para itens do tipo consulta na lista lateral */
+
 .consult {
   background-color: var(--card-bg);
-  border-left: 5px solid #2d56b4; /* cor diferente para destacar consultas */
+  border-left: 5px solid #2d56b4; 
   border-radius: 8px;
   padding: 12px;
   box-shadow: 0 0 5px rgba(0,0,0,0.04);
 }
 
-/* se quiser alterar a cor do título dentro de consult */
+
 .consult strong {
-  color: var(--blue-consult); /* tom mais quente para consultas */
+  color: var(--blue-consult); 
 }
 
-/* manter mesmo comportamento de .event para meta/descricao */
+
 .consult .meta,
 .consult .descricao {
   color: var(--text-color2);

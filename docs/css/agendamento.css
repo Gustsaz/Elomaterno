@@ -1,4 +1,4 @@
-/* ======= CONTAINER PRINCIPAL ======= */
+
 .agendamento-container {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
@@ -16,7 +16,7 @@
   }
 }
 
-/* ======= FORMULÁRIO ======= */
+
 .agendamento-form {
   display: flex;
   flex-direction: column;
@@ -75,7 +75,7 @@
   background-color: #8c5cb0;
 }
 
-/* ======= CALENDÁRIO ======= */
+
 .calendar-container {
   background: #faf8fc;
   border: 1px solid #e8dff0;
@@ -157,7 +157,7 @@
   font-weight: bold;
 }
 
-/* ======= LISTA DE CONSULTAS ======= */
+
 .consultas-lista {
   margin-top: 1.3rem;
 }

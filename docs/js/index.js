@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const skipSplashButton = document.getElementById('skip-splash');
     const alreadyShown = localStorage.getItem('splashShown');
 
-    // --- SPLASH SCREEN ---
+    
     if (splash) {
         if (!alreadyShown) {
             const hideSplash = () => {
@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- TEMA CLARO/ESCURO ---
+    
     const themeToggleIcon = document.getElementById('theme-toggle-icon');
     const body = document.body;
 
-    // Função para atualizar imagens conforme o tema
+    
     function updateThemeImages() {
         const isDark = body.hasAttribute('data-theme');
         document.querySelectorAll('img[data-dark-src]').forEach(img => {
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Aplica tema salvo
+    
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         body.setAttribute('data-theme', 'dark');
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateThemeImages();
 
-    // Alterna tema ao clicar no ícone
+    
     themeToggleIcon.addEventListener('click', function () {
         const isDark = body.hasAttribute('data-theme');
 
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateThemeImages();
     });
 
-    // --- MENU MOBILE ---
+    
     const mobileMenuIcon = document.querySelector('.mobile-menu-icon');
     const menu = document.querySelector('.menu');
 
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- TEXTO DIGITADO (Typed.js) ---
+    
     if (document.getElementById('typed-text')) {
         new Typed('#typed-text', {
             strings: ['comunidade.', 'força.', 'rede de apoio.'],
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- SWIPER ---
+    
     if (document.querySelector('.swiper-container')) {
         new Swiper('.swiper-container', {
             loop: true,

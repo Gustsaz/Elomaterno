@@ -33,7 +33,7 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Verifica se o CRP já existe
+  
   const psicologosRef = collection(db, "psicologos");
   const q = query(psicologosRef, where("crp", "==", crp));
   const querySnapshot = await getDocs(q);
@@ -42,7 +42,7 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Validação CRP (opcional)
+  
   try {
     const resposta = await fetch(`https://api.crpapi.vercel.app/validate?crp=${crp}`);
     const dados = await resposta.json();
@@ -61,10 +61,10 @@ form.addEventListener("submit", async (e) => {
   }
 
   try {
-    // Cria usuário no Auth
+    
     const cred = await createUserWithEmailAndPassword(auth, email, senha);
 
-    // Cria DOCUMENTO com UID fixo (não addDoc)
+    
     await setDoc(doc(db, "psicologos", cred.user.uid), {
       nome,
       email,
@@ -73,7 +73,7 @@ form.addEventListener("submit", async (e) => {
       status: "pendente",
       uid: cred.user.uid,
 
-      // 🔥 EXTRAS INCLUÍDOS AQUI
+      
       extras: {
         login_load: {
           mae: false,

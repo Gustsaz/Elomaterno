@@ -34,12 +34,25 @@
           <input type="password" placeholder="Senha:" name="senha">
         </div>
 
-        <p class="forgot-pass"><a href="#">Esqueci minha senha</a></p>
+        <p class="forgot-pass"><a href="#" id="forgot-password-link">Esqueci minha senha</a></p>
 
         <button type="submit" class="btn-logar">Fazer login</button>
       </form>
 
       <p class="cad-link">Não possui conta? <a href="cadAdv.html">Registrar-se</a></p>
+    </div>
+  </div>
+
+  
+  <div id="oab-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Digite seu número da OAB</h3>
+      <p>Para receber o link de redefinição de senha, informe seu número da OAB:</p>
+      <input type="text" id="reset-oab-input" placeholder="Digite a OAB">
+      <div class="modal-buttons">
+        <button id="reset-password-btn">Enviar</button>
+        <button id="cancel-reset-btn">Cancelar</button>
+      </div>
     </div>
   </div>
 

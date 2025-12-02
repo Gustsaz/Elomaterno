@@ -469,7 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
       contents.forEach((c) => c.classList.add("hidden"));
       target.classList.remove("hidden");
 
-      // 💡 SE ACESSAR A ABA ARTIGOS → CARREGA OS ARTIGOS
+      
       if (targetId === "artigos") {
         carregarArtigosNaAbaArtigos(nomeEmpresaAtual);
       }
@@ -838,7 +838,7 @@ async function carregarArtigosNaAbaArtigos(nomeEmpresa) {
       </div>
     `;
 
-    // EXCLUIR
+    
     card.querySelector(".delete-btn").addEventListener("click", () => {
       itemParaExcluir = d.id;
       tipoParaExcluir = "artigo";

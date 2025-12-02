@@ -40,7 +40,7 @@ function renderArtigos(artigos) {
     categorias[cat].forEach(art => {
       const card = document.createElement("div");
 
-      // 👉 aplica classe de cor no card
+      
       const categoriaClass = "cat-" + art.categoria;
       card.className = `article-card ${categoriaClass}`;
 

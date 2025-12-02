@@ -199,7 +199,7 @@ body {
   }
 }
 
-/* ==== Regras do criador de avatar === */
+
 .avatar-preview {
   width: 250px;
   height: 250px;
@@ -242,7 +242,7 @@ body {
   width: 95%;
   max-height: 90vh;
   overflow: hidden;
-  /* impede rolagem interna */
+  
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -260,7 +260,7 @@ body {
   align-items: center;
 }
 
-/* ==== Ajuste visual do criador de avatar ==== */
+
 #avatar-criador-area {
   display: flex;
   flex-direction: column;

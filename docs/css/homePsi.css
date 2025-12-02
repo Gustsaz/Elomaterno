@@ -789,7 +789,7 @@ header .profile-img {
 section[id="chats"] {
   padding: 0;
   height: calc(100vh - 120px);
-  /* Adjust for header */
+  
   width: 100%;
   display: flex;
 }
@@ -942,7 +942,7 @@ section[id="chats"] {
   color: var(--text-color);
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .chat-wrapper {
     position: relative;
@@ -1025,37 +1025,37 @@ section[id="chats"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Agora os cards centralizam */
+  
 }
 
 
-/* ---------------------------
-   GLOBAL MODAL / POPUP FIXES
-   --------------------------- */
 
-/* Força comportamento de modais quando visíveis.
-   Mantém a classe .hidden como controlador de visibilidade. */
+
+
+
+
+
 .modal,
 .popup {
   position: fixed !important;
   inset: 0 !important;
-  /* top/right/bottom/left = 0 */
+  
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   background: rgba(0, 0, 0, 0.55) !important;
   z-index: 2147483646 !important;
-  /* muito alto para superar quase tudo */
+  
   pointer-events: auto !important;
 }
 
-/* Esconder quando a classe hidden estiver presente */
+
 .modal.hidden,
 .popup.hidden {
   display: none !important;
 }
 
-/* Conteúdo do modal sempre acima do backdrop */
+
 .modal .modal-content,
 .popup .popup-content,
 .modal .detalhes-consulta-card,
@@ -1070,8 +1070,8 @@ section[id="chats"] {
   transform: none !important;
 }
 
-/* Evita que ancestores com transform "cortem" a interação — cuidamos disso no JS
-   mas garantir transform:none do próprio modal-content ajuda onde possível. */
+
+
 .modal,
 .popup,
 .modal *,
@@ -1079,7 +1079,7 @@ section[id="chats"] {
   transform: none !important;
 }
 
-/* Botão fechar padrão */
+
 .close-modal,
 #popup-close {
   cursor: pointer;
@@ -1089,13 +1089,13 @@ section[id="chats"] {
   line-height: 1;
 }
 
-/* Cliques fora do conteúdo não propagam para elementos abaixo */
+
 .modal,
 .popup {
   touch-action: manipulation;
 }
 
-/* Ajustes para mobile */
+
 @media (max-width: 600px) {
 
   .modal .modal-content,
@@ -1146,7 +1146,7 @@ section[id="chats"] {
   flex-direction: column;
 }
 
-/* Ajuste do áudio dentro das mensagens */
+
 .msg audio {
   width: 100%;
   min-width: 220px;
@@ -1154,9 +1154,9 @@ section[id="chats"] {
   margin-top: 5px;
 }
 
-/* -------------------------
-   CUSTOM AUDIO PLAYER
--------------------------- */
+
+
+
 
 .audio-wrapper {
   width: 100%;
@@ -1210,7 +1210,7 @@ section[id="chats"] {
   font-weight: 600;
 }
 
-/* Pacientes Section Styles */
+
 #pacientes .patient-card {
   background: var(--card-bg);
   border-radius: 10px;
@@ -1303,7 +1303,7 @@ section[id="chats"] {
   margin: 0;
 }
 
-/* Avatar Styles */
+
 .avatar-btn {
   display: flex;
   align-items: center;
@@ -1370,15 +1370,15 @@ section[id="chats"] {
   color: var(--datapost);
 }
 
-/* ================================
-      RESPONSIVIDADE AJUSTADA
-      MOBILE + TABLET (CORRETA)
-================================ */
 
-/* ===== MOBILE (até 480px) ===== */
+
+
+
+
+
 @media (max-width: 480px) {
 
-  /* Sidebar vira menu lateral mobile */
+  
   aside.sidebar {
     position: fixed !important;
     top: 0 !important;
@@ -1398,7 +1398,7 @@ section[id="chats"] {
     transform: translateX(0) !important;
   }
 
-  /* Items organizados no mobile */
+  
   aside.sidebar .menu-btn {
     width: 100% !important;
     justify-content: flex-start !important;
@@ -1419,7 +1419,7 @@ section[id="chats"] {
     padding-left: 55px !important;
   }
 
-  /* Grids em 1 coluna */
+  
   .patients-grid,
   .event-list,
   .articles-grid {
@@ -1428,7 +1428,7 @@ section[id="chats"] {
 }
 
 
-/* ===== TABLET (481px → 1024px) ===== */
+
 @media (min-width: 481px) and (max-width: 1024px) {
 
   aside.sidebar {
@@ -1464,7 +1464,7 @@ section[id="chats"] {
     width: 100%;
   }
 
-  /* Tablet pode usar 2 colunas */
+  
   .patients-grid,
   .articles-grid {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -1472,7 +1472,7 @@ section[id="chats"] {
 }
 
 
-/* ===== DESKTOP NORMAL (PC) — SEM MUDAR NADA ===== */
+
 @media (min-width: 1025px) {
   aside.sidebar {
     position: static !important;
@@ -1481,14 +1481,14 @@ section[id="chats"] {
   }
 }
 
-/* ===========================================================
-   RESPONSIVIDADE COMPLETA PARA O CONTEÚDO (mobile + tablet)
-===========================================================*/
 
-/* ----- REGRA GERAL para tudo em telas pequenas ----- */
+
+
+
+
 @media (max-width: 1024px) {
 
-  /* faz todas as páginas rolarem */
+  
   .content,
   body,
   html,
@@ -1499,10 +1499,10 @@ section[id="chats"] {
 
   .content {
     padding-bottom: 60px !important;
-    /* evita corte de conteúdo no final */
+    
   }
 
-  /* ======== DASHBOARD ======== */
+  
   #todayAppointments,
   .stats {
     display: flex;
@@ -1514,7 +1514,7 @@ section[id="chats"] {
     width: 100% !important;
   }
 
-  /* ======== AGENDA / CALENDÁRIO ======== */
+  
   .calendar-container,
   .events-container {
     width: 100% !important;
@@ -1535,7 +1535,7 @@ section[id="chats"] {
   }
 
 
-  /* ======== PACIENTES ======== */
+  
   .patients-grid {
     display: grid !important;
     grid-template-columns: 1fr !important;
@@ -1550,7 +1550,7 @@ section[id="chats"] {
   }
 
 
-  /* ======== CONSULTAS ======== */
+  
   .consultas-list {
     overflow-y: auto !important;
     max-height: calc(100vh - 190px) !important;
@@ -1568,7 +1568,7 @@ section[id="chats"] {
   }
 
 
-  /* ========= CHAT ========= */
+  
   .chat-wrapper {
     display: flex;
     flex-direction: column !important;
@@ -1596,7 +1596,7 @@ section[id="chats"] {
   }
 
 
-  /* ======== ARTIGOS e FÓRUM ======== */
+  
   .forum-container,
   .articles-grid {
     width: 100% !important;
@@ -1607,7 +1607,7 @@ section[id="chats"] {
   }
 }
 
-/* ====== CORRIGE BUG CRÍTICO (SEM SCROLL em mods específicos) ====== */
+
 .content.hidden {
   display: none !important;
 }
@@ -1616,7 +1616,7 @@ section[id="chats"] {
   display: block !important;
 }
 
-/* ===== AJUSTE CALENDÁRIO RESPONSIVO ===== */
+
 @media (max-width: 1024px) {
 
   .calendar-container {
@@ -1637,7 +1637,7 @@ section[id="chats"] {
   }
 }
 
-/* ========================= CONSULTAS RESPONSIVO NOVO ========================= */
+
 
 #consultas.content.hidden {
   display: none !important;
@@ -1647,7 +1647,7 @@ section[id="chats"] {
   display: block !important;
 }
 
-/* layout base */
+
 #consultas {
   width: 100%;
   padding: 20px;
@@ -1678,7 +1678,7 @@ section[id="chats"] {
   max-height: calc(100vh - 200px);
 }
 
-/* RESPONSIVO */
+
 @media (max-width:1024px) {
 
   #consultas {
@@ -1702,9 +1702,9 @@ section[id="chats"] {
   }
 }
 
-/* ========================= CHAT RESPONSIVO NOVO ========================= */
 
-/* Garantir que não aparece fora de hora */
+
+
 #chats.content.hidden {
   display: none !important;
 }
@@ -1714,13 +1714,13 @@ section[id="chats"] {
 }
 
 
-/* Layout desktop mantém normal */
+
 #chats {
   width: 100%;
   height: auto;
 }
 
-/*** RESPONSIVO ***/
+
 @media (max-width:1024px) {
 
   .chat-wrapper {
@@ -1762,9 +1762,9 @@ section[id="chats"] {
   }
 }
 
-/* ==================== CHAT FLUXO EM 2 TELAS ==================== */
 
-/* INICIAL — apenas lista */
+
+
 #chats.list-view .chat-sidebar {
   display: block !important;
 }
@@ -1773,7 +1773,7 @@ section[id="chats"] {
   display: none !important;
 }
 
-/* AO CLICAR EM UM USUÁRIO */
+
 #chats.chat-view .chat-sidebar {
   display: none !important;
 }
@@ -1783,7 +1783,7 @@ section[id="chats"] {
   flex-direction: column !important;
 }
 
-/* ===================== COR DO MENU APENAS NO RESPONSIVO ===================== */
+
 @media (max-width: 1024px) {
   .sidebar .menu-btn span {
     color: var(--menu-btn-responsivo) !important;
@@ -1791,10 +1791,10 @@ section[id="chats"] {
 
   .sidebar .menu-btn i {
     color: var(--text-color) !important;
-    /* ícones também */
+    
   }
 
-  /* Quando selecionado (ativo) fica normal */
+  
   .sidebar .menu-btn.active span,
   .sidebar .menu-btn.active i {
     color: var(--menu-btn-responsivo) !important;

@@ -16,9 +16,9 @@ const postsDiv = document.getElementById("perfil-posts");
 function normalizePath(url) {
   if (!url) return "./img/avatar_usuario.png";
   try {
-    // Se já é absoluta (http, https, data, blob)
+    
     if (/^(https?:|data:|blob:)/i.test(url)) return url;
-    // Remove possíveis "./" duplos e mantém relativo ao docs/
+    
     return url.replace(/^\.\//, "./");
   } catch (_) {
     return "./img/avatar_usuario.png";
@@ -34,7 +34,7 @@ async function carregarPerfil() {
 
   try {
     let dados;
-    // Carrega dados do perfil dos 'usuarios'
+    
     console.log("Carregando dados do perfil dos usuarios");
     const snapUser = await getDoc(doc(db, "usuarios", uid));
     console.log("snapUser.exists():", snapUser.exists());
@@ -43,7 +43,7 @@ async function carregarPerfil() {
       console.log("Dados do usuário carregados:", dados);
     } else {
       console.log("Perfil não encontrado em usuarios");
-      // tenta advogados
+      
       console.log("Tentando carregando de advogados");
       const snapAdv = await getDoc(doc(db, "advogados", uid));
       if (snapAdv.exists()) {
@@ -62,17 +62,17 @@ async function carregarPerfil() {
     filhosEl.textContent = `Filhos: ${dados.filhos || "Não informado"}`;
     empregoEl.textContent = `Emprego: ${dados.emprego || "Não informado"}`;
 
-    // Para advogados, usa o avatar específico da coleção 'advogados'
+    
     if (dados.tipo === "advogado") {
       console.log("Usuario é advogado, tentando carregar avatar de advogados");
       let dadosAdv = null;
-      // Primeiro, tenta buscar pelo documento com ID = uid
+      
       const snapAdv = await getDoc(doc(db, "advogados", uid));
       if (snapAdv.exists()) {
         dadosAdv = snapAdv.data();
         console.log("Dados do advogado para avatar (por ID):", dadosAdv);
       } else {
-        // Se não encontrou, busca pela query where uid == uid
+        
         console.log("Documento com ID não encontrado, tentando query por uid");
         const q = query(collection(db, "advogados"), where("uid", "==", uid));
         const querySnapshot = await getDocs(q);

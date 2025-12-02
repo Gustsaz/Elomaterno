@@ -7,7 +7,7 @@ const nomeEl = document.getElementById("menu-nome");
 const emailEl = document.getElementById("menu-email");
 
 
-// === Atualiza avatar/nome/email no header (corrigido) ===
+
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
@@ -122,7 +122,7 @@ applyTheme(localStorage.getItem("theme") === "dark");
   }
 });
 
-// ===== REPLACE: initAccessibility() with firestore syncing + active-class support =====
+
 function initAccessibility() {
   const toggles = document.querySelectorAll("#accessibility-toggle, #accessibility-toggle-mobile");
   const menus = document.querySelectorAll("#accessibility-menu, #accessibility-menu-mobile");
@@ -145,7 +145,7 @@ function initAccessibility() {
   const selectAll = (action) =>
     document.querySelectorAll(`#${action}, [data-action="${action}"]`);
 
-  // --- local state we persist to localStorage + Firestore ---
+  
   let savedAccessibility =
     JSON.parse(localStorage.getItem("accessibilitySettings")) || {
       readingMask: false,
@@ -160,12 +160,12 @@ function initAccessibility() {
       letras_destaque: false
     };
 
-  // helper: write localStorage
+  
   function saveAccessibilityLocal() {
     localStorage.setItem("accessibilitySettings", JSON.stringify(savedAccessibility));
   }
 
-  // helper to toggle active class for both desktop + mobile list items
+  
   function setActiveFor(action, isActive) {
     selectAll(action).forEach(el => {
       if (!el) return;
@@ -173,7 +173,7 @@ function initAccessibility() {
     });
   }
 
-  // update all active classes according to savedAccessibility/currentModeIndex
+  
   function updateActiveStates() {
     const fonteActive = (savedAccessibility.fonte_number || 1) !== 1;
     setActiveFor("increase-font", fonteActive);
@@ -190,11 +190,11 @@ function initAccessibility() {
     setActiveFor("reading-mask", !!savedAccessibility.mascara_leitura);
     setActiveFor("bold-text", !!savedAccessibility.letras_destaque);
 
-    // high-contrast is kept local in the implementation; reflect its active state too
+    
     setActiveFor("high-contrast", !!savedAccessibility.highContrast);
   }
 
-  // helper: resolve current logged user doc ref (waits once if needed)
+  
   async function getUserDocRefOrNull() {
     let user = auth.currentUser;
     if (!user) {
@@ -209,7 +209,7 @@ function initAccessibility() {
     return doc(db, "usuarios", user.uid);
   }
 
-  // helper: save specific fields under extras map in Firestore
+  
   async function saveExtrasToFirestore(updates = {}) {
     try {
       const userDocRef = await getUserDocRefOrNull();
@@ -230,7 +230,7 @@ function initAccessibility() {
     }
   }
 
-  // ---------- Colorblind / filtro daltonismo (modes array) ----------
+  
   const modes = [
     { name: "Filtros Daltonismo", className: "" },
     { name: "Protanopia", className: "colorblind-protanopia" },
@@ -248,7 +248,7 @@ function initAccessibility() {
     return modeName;
   }
 
-  // apply colorblind mode and optionally persist
+  
   function applyColorblindMode(index, persist = true) {
     const classesToRemove = modes.map((m) => m.className).filter(Boolean);
     if (classesToRemove.length) document.body.classList.remove(...classesToRemove);
@@ -270,12 +270,12 @@ function initAccessibility() {
     updateActiveStates();
   }
 
-  // Try to hydrate savedAccessibility from Firestore (if available)
+  
   (async function hydrateFromFirestore() {
     try {
       const userDocRef = await getUserDocRefOrNull();
       if (!userDocRef) {
-        // still apply UI active states from localStorage
+        
         updateActiveStates();
         return;
       }
@@ -292,7 +292,7 @@ function initAccessibility() {
       if (typeof extras.mascara_leitura === "boolean") savedAccessibility.mascara_leitura = extras.mascara_leitura;
       if (typeof extras.letras_destaque === "boolean") savedAccessibility.letras_destaque = extras.letras_destaque;
 
-      // apply to localStorage/UI
+      
       if (savedAccessibility.leitura_voz) localStorage.setItem("screenReader", "true");
       else localStorage.removeItem("screenReader");
 
@@ -304,7 +304,7 @@ function initAccessibility() {
       }
 
       saveAccessibilityLocal();
-      // update UI to reflect hydration
+      
       applyColorblindMode(currentModeIndex, false);
       updateActiveStates();
     } catch (err) {
@@ -313,7 +313,7 @@ function initAccessibility() {
     }
   })();
 
-  // ---------- Font-size logic (updated with fonte_number) ----------
+  
   const increaseBtns = selectAll("increase-font");
   const decreaseBtns = selectAll("decrease-font");
   const defaultFontSize = parseFloat(getComputedStyle(document.body).fontSize);
@@ -359,7 +359,7 @@ function initAccessibility() {
     })
   );
 
-  // Colorblind toggles
+  
   selectAll("colorblind-filter").forEach((btn) =>
     btn.addEventListener("click", () => {
       currentModeIndex = (currentModeIndex + 1) % modes.length;
@@ -367,7 +367,7 @@ function initAccessibility() {
     })
   );
 
-  // ---------- Screen reader ----------
+  
   let speechEnabled = localStorage.getItem("screenReader") === "true";
   let navigationMode = "mouse";
   let lastSpokenElement = null;
@@ -426,22 +426,22 @@ function initAccessibility() {
     navigationMode = "mouse";
   });
 
-  // ---------- Reading mask (updated: follows mouse vertically) ----------
+  
   const readingMaskOverlay = document.getElementById("reading-mask-overlay");
   const highlightWindow = readingMaskOverlay?.querySelector(".highlight-window");
 
-  // ensure highlightWindow exists and is non-interactive
+  
   if (highlightWindow) {
     highlightWindow.style.pointerEvents = "none";
   }
 
-  // Use the same key used elsewhere / in Firestore
+  
   if (savedAccessibility.mascara_leitura && readingMaskOverlay) {
     readingMaskOverlay.style.display = "block";
     document.body.classList.add("reading-mask-active");
   }
 
-  // handlers for following mouse vertically
+  
   let readingMaskAttached = false;
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
@@ -449,19 +449,19 @@ function initAccessibility() {
     if (!highlightWindow) return;
     const viewportH = window.innerHeight;
     const h = highlightWindow.offsetHeight || 120;
-    // center highlight on cursor vertically, but keep within viewport
+    
     const top = clamp(clientY - Math.round(h / 2), 0, Math.max(0, viewportH - h));
     highlightWindow.style.top = `${top}px`;
   }
 
   function onReadingMouseMove(e) {
-    // e.clientY for mouse, for touch use touches[0]
+    
     const clientY = e.touches?.[0]?.clientY ?? e.clientY;
     if (typeof clientY === "number") updateHighlightPositionByClientY(clientY);
   }
 
   function onReadingScrollOrResize() {
-    // keep current top within new viewport if resized/scrolled
+    
     if (!highlightWindow) return;
     const currentTop = parseInt(highlightWindow.style.top || "0", 10) || 0;
     const h = highlightWindow.offsetHeight || 120;
@@ -488,29 +488,29 @@ function initAccessibility() {
     readingMaskAttached = false;
   }
 
-  // toggle via menu items (desktop + mobile)
+  
   selectAll("reading-mask").forEach((btn) =>
     btn.addEventListener("click", () => {
       const active = readingMaskOverlay.style.display === "block";
-      // toggle display + class
+      
       readingMaskOverlay.style.display = active ? "none" : "block";
       document.body.classList.toggle("reading-mask-active", !active);
 
-      // update saved state under the key used elsewhere
+      
       savedAccessibility.mascara_leitura = !active;
       saveAccessibilityLocal();
       saveExtrasToFirestore({ mascara_leitura: savedAccessibility.mascara_leitura });
 
-      // attach/detach listeners and set initial position
+      
       if (!active) {
-        // show -> attach and place highlight centered vertically under mouse if possible
+        
         attachReadingMaskListeners();
-        // try position at current mouse if available, otherwise center viewport
-        // if there's a last known mouse position, update; fallback center:
+        
+        
         const centerY = window.innerHeight / 2;
         updateHighlightPositionByClientY(centerY);
       } else {
-        // hide -> detach
+        
         detachReadingMaskListeners();
       }
 
@@ -518,15 +518,15 @@ function initAccessibility() {
     })
   );
 
-  // if overlay is visible on init, attach listeners so it follows
+  
   if (readingMaskOverlay && readingMaskOverlay.style.display === "block") {
     attachReadingMaskListeners();
-    // center on load
+    
     updateHighlightPositionByClientY(window.innerHeight / 2);
   }
 
 
-  // ---------- Bold text ----------
+  
   if (savedAccessibility.boldText) document.body.classList.add("bold-text-active");
 
   selectAll("bold-text").forEach((btn) =>
@@ -539,7 +539,7 @@ function initAccessibility() {
     })
   );
 
-  // ---------- High contrast (kept local only) ----------
+  
   selectAll("high-contrast").forEach((btn) =>
     btn.addEventListener("click", () => {
       const active = document.body.classList.toggle("high-contrast-active");
@@ -549,7 +549,7 @@ function initAccessibility() {
     })
   );
 
-  // ---------- Line spacing (numeric espacamento_number) ----------
+  
   function applyLineSpacing(state) {
     document.body.classList.remove(
       "line-spacing-sm",
@@ -581,7 +581,7 @@ function initAccessibility() {
     })
   );
 
-  // ---------- Reset accessibility (resets local + firestore fields) ----------
+  
   selectAll("reset-accessibility").forEach((btn) =>
     btn.addEventListener("click", () => {
       const removeClasses = [
@@ -634,34 +634,34 @@ function initAccessibility() {
         letras_destaque: false
       });
 
-      // limpa estados visuais
+      
       updateActiveStates();
     })
   );
 
-  // initial update of active states (in case localStorage had something)
+  
   updateActiveStates();
 }
 
 initAccessibility();
 
-// ---------------- Extender top / dropdown behavior ----------------
+
 const extenderToggle = document.getElementById("extenderToggle");
-// botoesMenu já existe no seu globals.js: const botoesMenu = document.querySelector(".botoes");
+
 let lastScrollY = window.scrollY || 0;
 let ticking = false;
 
 function handleScrollForExtender() {
   const y = window.scrollY || window.pageYOffset;
-  // aparecer após pequeno scroll
+  
   if (y > 30) {
     extenderToggle?.classList.add("visible");
     extenderToggle?.classList.remove("minimized");
   } else {
-    // volta ao topo -> anima reduzir opacidade e depois some se menu fechado
+    
     if (extenderToggle) {
       extenderToggle.classList.add("minimized");
-      // se o menu está fechado, escondemos depois do efeito
+      
       setTimeout(() => {
         if ((window.scrollY || window.pageYOffset) <= 5 && !extenderToggle.classList.contains("open")) {
           extenderToggle.classList.remove("visible");
@@ -669,7 +669,7 @@ function handleScrollForExtender() {
       }, 260);
     }
 
-    // se abriu como top-dropdown e usuário voltou ao topo, fecha
+    
     if (botoesMenu && botoesMenu.classList.contains("aberto") && window.innerWidth > 768) {
       botoesMenu.classList.remove("aberto", "top-dropdown");
       extenderToggle?.classList.remove("open");
@@ -688,28 +688,28 @@ window.addEventListener("scroll", () => {
   }
 });
 
-// clique no extender
+
 extenderToggle?.addEventListener("click", (e) => {
   e.stopPropagation();
   if (!botoesMenu) return;
 
   const desktop = window.innerWidth > 768;
   if (desktop) {
-    // posiciona como top-dropdown e abre/fecha
+    
     botoesMenu.classList.toggle("top-dropdown");
     botoesMenu.classList.toggle("aberto");
     extenderToggle.classList.toggle("open");
     const expanded = extenderToggle.classList.contains("open");
     extenderToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
   } else {
-    // mobile: apenas mantém o toggle lateral já existente
+    
     botoesMenu.classList.toggle("aberto");
     extenderToggle.classList.toggle("open");
     extenderToggle.setAttribute("aria-expanded", botoesMenu.classList.contains("aberto") ? "true" : "false");
   }
 });
 
-// cliques fora fecham (para o dropdown top)
+
 document.addEventListener("click", (event) => {
   if (!botoesMenu || !extenderToggle) return;
   if (botoesMenu.classList.contains("aberto") && window.innerWidth > 768) {
@@ -721,7 +721,7 @@ document.addEventListener("click", (event) => {
   }
 });
 
-// adapta ao redimensionamento (se trocar para mobile, remove top-dropdown)
+
 window.addEventListener("resize", () => {
   if (!botoesMenu || !extenderToggle) return;
   if (window.innerWidth <= 768) {
@@ -732,7 +732,7 @@ window.addEventListener("resize", () => {
 });
 
 
-// === Intercepta links para consultoria.html e redireciona conforme extras.consult_load ===
+
 document.addEventListener("click", async (ev) => {
   const a = ev.target.closest && ev.target.closest("a[href]");
   if (!a) return;
@@ -745,14 +745,14 @@ document.addEventListener("click", async (ev) => {
   const normalized = hrefAttr.split("?")[0].split("#")[0].toLowerCase();
   if (!normalized.endsWith("consultoria.html")) return;
 
-  // intercepta o comportamento padrão do link
+  
   ev.preventDefault();
 
   try {
-    // aguarda auth (usa currentUser se disponível)
+    
     let user = auth.currentUser;
     if (!user) {
-      // espera uma vez pelo onAuthStateChanged (se ainda inicializando)
+      
       user = await new Promise((resolve) => {
         const unsub = onAuthStateChanged(auth, (u) => {
           unsub();
@@ -761,13 +761,13 @@ document.addEventListener("click", async (ev) => {
       });
     }
 
-    // se não autenticado, vai para a página informativa (consultoria)
+    
     if (!user) {
       window.location.href = "consultoria.html";
       return;
     }
 
-    // lê o documento do usuário
+    
     const userSnap = await getDoc(doc(db, "usuarios", user.uid));
     if (!userSnap.exists()) {
       window.location.href = "consultoria.html";
@@ -782,14 +782,14 @@ document.addEventListener("click", async (ev) => {
     }
   } catch (err) {
     console.error("[globals] Erro ao verificar consult_load:", err);
-    // fallback seguro
+    
     window.location.href = "consultoria.html";
   }
 });
 
-/* --- Substitui window.alert por um modal estilizado --- */
+
 (function () {
-  // Evita sobrescrever duas vezes se já for carregado
+  
   if (window._customAlertInstalled) return;
   window._customAlertInstalled = true;
 
@@ -815,10 +815,10 @@ document.addEventListener("click", async (ev) => {
     content.className = 'popup-content';
     content.tabIndex = -1;
 
-    // opcional: título
-    // const title = document.createElement('div');
-    // title.className = 'alert-title';
-    // title.textContent = 'Aviso';
+    
+    
+    
+    
 
     const msg = document.createElement('div');
     msg.className = 'alert-msg';
@@ -834,8 +834,8 @@ document.addEventListener("click", async (ev) => {
 
     actions.appendChild(btnOk);
 
-    // montar
-    // content.appendChild(title); // se ativar título, descomente
+    
+    
     content.appendChild(msg);
     content.appendChild(actions);
     overlay.appendChild(content);
@@ -854,13 +854,13 @@ document.addEventListener("click", async (ev) => {
 
     const previousActive = document.activeElement;
 
-    // comportamento de fechamento
+    
     function closeAlert() {
       try {
         overlay.removeEventListener('click', overlayClick);
         document.removeEventListener('keydown', onKeyDown);
         btnOk.removeEventListener('click', onOk);
-      } catch (e) { /* ignore */ }
+      } catch (e) {  }
 
       if (overlay.parentElement) overlay.parentElement.removeChild(overlay);
       enableBodyScroll();
@@ -868,7 +868,7 @@ document.addEventListener("click", async (ev) => {
         try { previousActive.focus(); } catch (e) { }
       }
       showing = false;
-      // mostra próximo se houver na fila
+      
       setTimeout(showNext, 10);
     }
 
@@ -884,11 +884,11 @@ document.addEventListener("click", async (ev) => {
         return;
       }
       if (e.key === 'Enter') {
-        // Enter fecha (comportamento comum)
+        
         e.preventDefault();
         closeAlert();
       }
-      // simples foco-trap: se Tab e só um botão, evita sair
+      
       if (e.key === 'Tab') {
         e.preventDefault();
         btnOk.focus();
@@ -896,11 +896,11 @@ document.addEventListener("click", async (ev) => {
     }
 
     function overlayClick(e) {
-      // evita fechar ao clicar no conteúdo
+      
       if (!content.contains(e.target)) {
-        // opcional: fechar clicando no fundo
-        // closeAlert();
-        // por enquanto não fecha clicando no backdrop, apenas via OK/Escape
+        
+        
+        
         e.stopPropagation();
       }
     }
@@ -908,31 +908,31 @@ document.addEventListener("click", async (ev) => {
     document.body.appendChild(overlay);
     disableBodyScroll();
 
-    // listeners
+    
     btnOk.addEventListener('click', onOk);
     document.addEventListener('keydown', onKeyDown);
     overlay.addEventListener('click', overlayClick);
 
-    // focus
+    
     setTimeout(() => {
       try { btnOk.focus(); } catch (e) { }
     }, 30);
   }
 
-  // API: manter assinatura igual (não-blocking)
+  
   window.alert = function (message) {
     try {
       alertQueue.push({ message });
-      // exibe em seguida (se não estiver mostrando)
+      
       setTimeout(showNext, 0);
     } catch (err) {
-      // fallback para alert original se der erro
+      
       try { window.__nativeAlert__ && window.__nativeAlert__(String(message)); } catch (e) { }
     }
-    // retorna undefined como o alert nativo
+    
     return undefined;
   };
 
-  // guarda referência do alert nativo caso queira usar
+  
   if (!window.__nativeAlert__) window.__nativeAlert__ = window.alert;
 })();
